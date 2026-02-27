@@ -1,147 +1,115 @@
+using Supercell.Magic.Titan.CSV;
+using Supercell.Magic.Titan.Debug;
+
 namespace Supercell.Magic.Logic.Data
 {
-    using Supercell.Magic.Titan.CSV;
-    using Supercell.Magic.Titan.Debug;
+	public class LogicResourceData : LogicData
+	{
+		private string m_resourceIconExportName;
+		private string m_hudInstanceName;
+		private string m_capFullTID;
+		private string m_bundleIconExportName;
 
-    public class LogicResourceData : LogicData
-    {
-        private string m_resourceIconExportName;
-        private string m_hudInstanceName;
-        private string m_capFullTID;
-        private string m_bundleIconExportName;
+		private int m_stealLimitMid;
+		private int m_stealLimitBig;
+		private int m_textRed;
+		private int m_textGreen;
+		private int m_textBlue;
+		private int m_villageType;
 
-        private int m_stealLimitMid;
-        private int m_stealLimitBig;
-        private int m_textRed;
-        private int m_textGreen;
-        private int m_textBlue;
-        private int m_villageType;
+		private bool m_premiumCurrency;
 
-        private bool m_premiumCurrency;
+		private LogicEffectData m_collectEffect;
+		private LogicEffectData m_stealEffect;
+		private LogicResourceData m_warResourceReferenceData;
+		private LogicEffectData m_stealEffectMid;
+		private LogicEffectData m_stealEffectBig;
 
-        private LogicEffectData m_collectEffect;
-        private LogicEffectData m_stealEffect;
-        private LogicResourceData m_warResourceReferenceData;
-        private LogicEffectData m_stealEffectMid;
-        private LogicEffectData m_stealEffectBig;
+		public LogicResourceData(CSVRow row, LogicDataTable table) : base(row, table)
+		{
+			// LogicResourceData.
+		}
 
-        public LogicResourceData(CSVRow row, LogicDataTable table) : base(row, table)
-        {
-            // LogicResourceData.
-        }
+		public override void CreateReferences()
+		{
+			base.CreateReferences();
 
-        public override void CreateReferences()
-        {
-            base.CreateReferences();
+			m_stealEffect = LogicDataTables.GetEffectByName(GetValue("StealEffect", 0), this);
+			m_collectEffect = LogicDataTables.GetEffectByName(GetValue("CollectEffect", 0), this);
 
-            this.m_stealEffect = LogicDataTables.GetEffectByName(this.GetValue("StealEffect", 0), this);
-            this.m_collectEffect = LogicDataTables.GetEffectByName(this.GetValue("CollectEffect", 0), this);
+			m_resourceIconExportName = GetValue("ResourceIconExportName", 0);
+			m_stealLimitMid = GetIntegerValue("StealLimitMid", 0);
+			m_stealEffectMid = LogicDataTables.GetEffectByName(GetValue("StealEffectMid", 0), this);
+			m_stealLimitBig = GetIntegerValue("StealLimitBig", 0);
+			m_stealEffectBig = LogicDataTables.GetEffectByName(GetValue("StealEffectBig", 0), this);
+			m_premiumCurrency = GetBooleanValue("PremiumCurrency", 0);
+			m_hudInstanceName = GetValue("HudInstanceName", 0);
+			m_capFullTID = GetValue("CapFullTID", 0);
+			m_textRed = GetIntegerValue("TextRed", 0);
+			m_textGreen = GetIntegerValue("TextGreen", 0);
+			m_textBlue = GetIntegerValue("TextBlue", 0);
+			m_bundleIconExportName = GetValue("BundleIconExportName", 0);
+			m_villageType = GetIntegerValue("VillageType", 0);
 
-            this.m_resourceIconExportName = this.GetValue("ResourceIconExportName", 0);
-            this.m_stealLimitMid = LogicDataTables.GetEffectByName(this.GetValue("StealLimitMid", 0), this);
-            this.m_stealEffectMid = LogicDataTables.GetEffectByName(this.GetValue("StealEffectMid", 0), this);
-            this.m_stealLimitBig = this.GetIntegerValue("StealLimitBig", 0);
-            this.m_stealEffectBig = this.GetValue("StealEffectBig", 0);
-            this.m_premiumCurrency = this.GetBooleanValue("PremiumCurrency", 0);
-            this.m_hudInstanceName = this.GetValue("HudInstanceName", 0);
-            this.m_capFullTID = this.GetValue("CapFullTID", 0);
-            this.m_textRed = this.GetIntegerValue("TextRed", 0);
-            this.m_textGreen = this.GetIntegerValue("TextGreen", 0);
-            this.m_textBlue = this.GetIntegerValue("TextBlue", 0);
-            this.m_bundleIconExportName = this.GetValue("BundleIconExportName", 0);
-            this.m_villageType = this.GetIntegerValue("VillageType", 0);
+			if ((uint)m_villageType >= 2)
+			{
+				Debugger.Error("invalid VillageType");
+			}
 
-            if ((uint) this.m_villageType >= 2)
-            {
-                Debugger.Error("invalid VillageType");
-            }
+			string warRefResource = GetValue("WarRefResource", 0);
 
-            string warRefResource = this.GetValue("WarRefResource", 0);
+			if (warRefResource.Length > 0)
+			{
+				m_warResourceReferenceData = LogicDataTables.GetResourceByName(warRefResource, this);
+			}
+		}
 
-            if (warRefResource.Length > 0)
-            {
-                this.m_warResourceReferenceData = LogicDataTables.GetResourceByName(warRefResource, this);
-            }
-        }
+		public LogicResourceData GetWarResourceReferenceData()
+			=> m_warResourceReferenceData;
 
-        public LogicResourceData GetWarResourceReferenceData()
-        {
-            return this.m_warResourceReferenceData;
-        }
+		public LogicEffectData GetCollectEffect()
+			=> m_collectEffect;
 
-        public LogicEffectData GetCollectEffect()
-        {
-            return this.m_collectEffect;
-        }
+		public string GetResourceIconExportName()
+			=> m_resourceIconExportName;
 
-        public string GetResourceIconExportName()
-        {
-            return this.m_resourceIconExportName;
-        }
+		public LogicEffectData GetStealEffect()
+			=> m_stealEffect;
 
-        public LogicEffectData GetStealEffect()
-        {
-            return this.m_stealEffect;
-        }
+		public int GetStealLimitMid()
+			=> m_stealLimitMid;
 
-        public int GetStealLimitMid()
-        {
-            return this.m_stealLimitMid;
-        }
+		public LogicEffectData GetStealEffectMid()
+			=> m_stealEffectMid;
 
-        public string GetStealEffectMid()
-        {
-            return this.m_stealEffectMid;
-        }
+		public int GetStealLimitBig()
+			=> m_stealLimitBig;
 
-        public int GetStealLimitBig()
-        {
-            return this.m_stealLimitBig;
-        }
+		public LogicEffectData GetStealEffectBig()
+			=> m_stealEffectBig;
 
-        public string GetStealEffectBig()
-        {
-            return this.m_stealEffectBig;
-        }
+		public bool IsPremiumCurrency()
+			=> m_premiumCurrency;
 
-        public bool IsPremiumCurrency()
-        {
-            return this.m_premiumCurrency;
-        }
+		public string GetHudInstanceName()
+			=> m_hudInstanceName;
 
-        public string GetHudInstanceName()
-        {
-            return this.m_hudInstanceName;
-        }
+		public string GetCapFullTID()
+			=> m_capFullTID;
 
-        public string GetCapFullTID()
-        {
-            return this.m_capFullTID;
-        }
+		public int GetTextRed()
+			=> m_textRed;
 
-        public int GetTextRed()
-        {
-            return this.m_textRed;
-        }
+		public int GetTextGreen()
+			=> m_textGreen;
 
-        public int GetTextGreen()
-        {
-            return this.m_textGreen;
-        }
+		public int GetTextBlue()
+			=> m_textBlue;
 
-        public int GetTextBlue()
-        {
-            return this.m_textBlue;
-        }
+		public string GetBundleIconExportName()
+			=> m_bundleIconExportName;
 
-        public string GetBundleIconExportName()
-        {
-            return this.m_bundleIconExportName;
-        }
-
-        public int GetVillageType()
-        {
-            return this.m_villageType;
-        }
-    }
+		public int GetVillageType()
+			=> m_villageType;
+	}
 }
