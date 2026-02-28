@@ -1,124 +1,122 @@
-﻿namespace Supercell.Magic.Servers.Core.Cluster
+using System.Diagnostics;
+using System.Threading;
+
+using NetMQ;
+using NetMQ.Sockets;
+
+using Supercell.Magic.Servers.Core.Network;
+using Supercell.Magic.Servers.Core.Network.Message;
+
+namespace Supercell.Magic.Servers.Core.Cluster
 {
-    using System.Diagnostics;
-    using System.Threading;
+	public class ClusterInstance
+	{
+		private bool m_started;
 
-    using NetMQ;
-    using NetMQ.Sockets;
+		protected readonly int m_id;
+		private readonly int m_logicUpdateFrequency;
 
-    using Supercell.Magic.Servers.Core.Network;
-    using Supercell.Magic.Servers.Core.Network.Message;
+		private readonly Thread m_networkThread;
+		private readonly Thread m_logicThread;
+		private readonly PushSocket m_pushSocket;
+		private readonly PullSocket m_pullSocket;
+		private readonly Stopwatch m_pingWatch;
 
-    public class ClusterInstance
-    {
-        private bool m_started;
+		protected int m_ping;
 
-        protected readonly int m_id;
-        private readonly int m_logicUpdateFrequency;
+		public ClusterInstance(int id, int logicUpdateFrequency = -1)
+		{
+			m_started = true;
+			m_id = id;
+			m_pullSocket = new PullSocket();
+			m_pullSocket.Bind(GetConnectionString());
+			m_pushSocket = new PushSocket();
+			m_pushSocket.Connect(GetConnectionString());
+			m_networkThread = new Thread(NetworkUpdate);
+			m_networkThread.Name = string.Format("Cluster #{0}: Network Thread", m_id);
 
-        private readonly Thread m_networkThread;
-        private readonly Thread m_logicThread;
-        private readonly PushSocket m_pushSocket;
-        private readonly PullSocket m_pullSocket;
-        private readonly Stopwatch m_pingWatch;
+			if (logicUpdateFrequency >= 0)
+			{
+				m_logicUpdateFrequency = logicUpdateFrequency;
+				m_logicThread = new Thread(LogicUpdate);
+				m_logicThread.Name = string.Format("Cluster #{0}: Logic Thread", m_id);
+				m_logicThread.Start();
+			}
 
-        protected int m_ping;
+			m_networkThread.Start();
+			m_pingWatch = new Stopwatch();
+		}
 
-        public ClusterInstance(int id, int logicUpdateFrequency = -1)
-        {
-            this.m_started = true;
-            this.m_id = id;
-            this.m_pullSocket = new PullSocket();
-            this.m_pullSocket.Bind(this.GetConnectionString());
-            this.m_pushSocket = new PushSocket();
-            this.m_pushSocket.Connect(this.GetConnectionString());
-            this.m_networkThread = new Thread(this.NetworkUpdate);
-            this.m_networkThread.Name = string.Format("Cluster #{0}: Network Thread", this.m_id);
+		public void Stop()
+		{
+			m_started = false;
+		}
 
-            if (logicUpdateFrequency >= 0)
-            {
-                this.m_logicUpdateFrequency = logicUpdateFrequency;
-                this.m_logicThread = new Thread(this.LogicUpdate);
-                this.m_logicThread.Name = string.Format("Cluster #{0}: Logic Thread", this.m_id);
-                this.m_logicThread.Start();
-            }
+		private void NetworkUpdate()
+		{
+			while (m_started)
+			{
+				NetMQMessage message = m_pullSocket.ReceiveMultipartMessage();
 
-            this.m_networkThread.Start();
-            this.m_pingWatch = new Stopwatch();
-        }
+				while (!message.IsEmpty)
+				{
+					OnReceive(message.Pop().Buffer);
+				}
+			}
+		}
 
-        public void Stop()
-        {
-            this.m_started = false;
-        }
+		private void LogicUpdate()
+		{
+			while (m_started)
+			{
+				Thread.Sleep(m_logicUpdateFrequency);
+				Tick();
+			}
+		}
 
-        private void NetworkUpdate()
-        {
-            while (this.m_started)
-            {
-                NetMQMessage message = this.m_pullSocket.ReceiveMultipartMessage();
+		private void OnReceive(byte[] buffer)
+		{
+			if (buffer.Length > 0)
+			{
+				ServerMessage message = ServerMessaging.ReadMessage(buffer, buffer.Length);
 
-                while (!message.IsEmpty)
-                {
-                    this.OnReceive(message.Pop().Buffer);
-                }
-            }
-        }
+				if (message != null)
+				{
+					ReceiveMessage(message);
+				}
+			}
+			else
+			{
+				m_pingWatch.Stop();
+				m_ping = (int)m_pingWatch.ElapsedMilliseconds;
+				OnPingTestCompleted();
+			}
+		}
 
-        private void LogicUpdate()
-        {
-            while (this.m_started)
-            {
-                Thread.Sleep(this.m_logicUpdateFrequency);
-                this.Tick();
-            }
-        }
+		private string GetConnectionString()
+			=> "inproc://cluster-" + m_id;
 
-        private void OnReceive(byte[] buffer)
-        {
-            if (buffer.Length > 0)
-            {
-                ServerMessage message = ServerMessaging.ReadMessage(buffer, buffer.Length);
+		protected virtual void ReceiveMessage(ServerMessage message)
+		{
+		}
 
-                if (message != null)
-                {
-                    this.ReceiveMessage(message);
-                }
-            }
-            else
-            {
-                this.m_pingWatch.Stop();
-                this.m_ping = (int) this.m_pingWatch.ElapsedMilliseconds;
-                this.OnPingTestCompleted();
-            }
-        }
+		protected virtual void Tick()
+		{
+		}
 
-        private string GetConnectionString()
-        {
-            return "inproc://cluster-" + this.m_id;
-        }
+		protected virtual void OnPingTestCompleted()
+		{
+		}
 
-        protected virtual void ReceiveMessage(ServerMessage message)
-        {
-        }
+		public void SendMessage(ServerMessage message)
+		{
+			m_pushSocket.SendFrame(ServerMessaging.WriteMessage(message));
+		}
 
-        protected virtual void Tick()
-        {
-        }
-
-        protected virtual void OnPingTestCompleted()
-        {
-        }
-
-        public void SendMessage(ServerMessage message)
-        {
-            this.m_pushSocket.SendFrame(ServerMessaging.WriteMessage(message));
-        }
-
-        public void SendPing()
-        {
-            this.m_pingWatch.Start();
-            this.m_pushSocket.SendFrame(new byte[0]);
-        }
-    }
+		public void SendPing()
+		{
+			m_pingWatch.Start();
+			m_pushSocket.SendFrame(new byte[0]);
+		}
+	}
 }

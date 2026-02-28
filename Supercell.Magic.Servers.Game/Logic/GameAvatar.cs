@@ -1,176 +1,188 @@
-﻿namespace Supercell.Magic.Servers.Game.Logic
+using Supercell.Magic.Logic.Command;
+using Supercell.Magic.Logic.Command.Server;
+using Supercell.Magic.Logic.Message.Avatar.Stream;
+using Supercell.Magic.Servers.Core;
+using Supercell.Magic.Servers.Core.Database.Document;
+using Supercell.Magic.Servers.Core.Network;
+using Supercell.Magic.Servers.Core.Network.Message;
+using Supercell.Magic.Servers.Core.Network.Message.Account;
+using Supercell.Magic.Servers.Core.Network.Message.Request.Stream;
+using Supercell.Magic.Servers.Core.Network.Message.Session;
+using Supercell.Magic.Servers.Core.Network.Request;
+using Supercell.Magic.Servers.Core.Util;
+
+using Supercell.Magic.Servers.Game.Session;
+using Supercell.Magic.Titan.Math;
+
+namespace Supercell.Magic.Servers.Game.Logic
 {
-    using Supercell.Magic.Logic.Command;
-    using Supercell.Magic.Logic.Command.Server;
-    using Supercell.Magic.Logic.Message.Avatar.Stream;
-    using Supercell.Magic.Servers.Core;
-    using Supercell.Magic.Servers.Core.Database.Document;
-    using Supercell.Magic.Servers.Core.Network;
-    using Supercell.Magic.Servers.Core.Network.Message;
-    using Supercell.Magic.Servers.Core.Network.Message.Account;
-    using Supercell.Magic.Servers.Core.Network.Message.Request.Stream;
-    using Supercell.Magic.Servers.Core.Network.Message.Session;
-    using Supercell.Magic.Servers.Core.Network.Request;
-    using Supercell.Magic.Servers.Core.Util;
+	public class GameAvatar : GameDocument
+	{
+		public GameSession CurrentSession
+		{
+			get; set;
+		}
+		public GameHomeLock CurrentHomeLock
+		{
+			get; set;
+		}
 
-    using Supercell.Magic.Servers.Game.Session;
-    using Supercell.Magic.Titan.Math;
+		public bool PendingAllianceJoinResponse
+		{
+			get; set;
+		}
 
-    public class GameAvatar : GameDocument
-    {
-        public GameSession CurrentSession { get; set; }
-        public GameHomeLock CurrentHomeLock { get; set; }
+		public GameAvatar() : base() { }
+		public GameAvatar(LogicLong id) : base(id) { }
 
-        public bool PendingAllianceJoinResponse { get; set; }
+		public bool HasServerCommandOfType(LogicCommandType type)
+		{
+			for (int i = 0; i < ServerCommands.Size(); i++)
+			{
+				if (ServerCommands[i].GetCommandType() == type)
+					return true;
+			}
 
-        public GameAvatar() : base() { }
-        public GameAvatar(LogicLong id) : base(id) { }
+			return false;
+		}
 
-        public bool HasServerCommandOfType(LogicCommandType type)
-        {
-            for (int i = 0; i < this.ServerCommands.Size(); i++)
-            {
-                if (this.ServerCommands[i].GetCommandType() == type)
-                    return true;
-            }
+		public void AddRecentlyMatchedEnemy(LogicLong id)
+		{
+			if (RecentlyMatchedEnemies.Size() > 50)
+				RecentlyMatchedEnemies.Remove(0);
+			RecentlyMatchedEnemies.Add(new RecentlyEnemy(id, TimeUtil.GetTimestamp()));
+		}
 
-            return false;
-        }
+		public bool HasRecentlyMatchedWithEnemy(LogicLong id)
+		{
+			int timestamp = TimeUtil.GetTimestamp();
 
-        public void AddRecentlyMatchedEnemy(LogicLong id)
-        {
-            if (this.RecentlyMatchedEnemies.Size() > 50)
-                this.RecentlyMatchedEnemies.Remove(0);
-            this.RecentlyMatchedEnemies.Add(new RecentlyEnemy(id, TimeUtil.GetTimestamp()));
-        }
+			for (int i = 0; i < RecentlyMatchedEnemies.Size(); i++)
+			{
+				RecentlyEnemy enemy = RecentlyMatchedEnemies[i];
 
-        public bool HasRecentlyMatchedWithEnemy(LogicLong id)
-        {
-            int timestamp = TimeUtil.GetTimestamp();
+				if (LogicLong.Equals(enemy.AvatarId, id) && timestamp - enemy.Timestamp <= 60 * 15)
+					return true;
+			}
 
-            for (int i = 0; i < this.RecentlyMatchedEnemies.Size(); i++)
-            {
-                RecentlyEnemy enemy = this.RecentlyMatchedEnemies[i];
+			return false;
+		}
 
-                if (LogicLong.Equals(enemy.AvatarId, id) && timestamp - enemy.Timestamp <= 60 * 15)
-                    return true;
-            }
+		public void AddServerCommand(LogicServerCommand serverCommand)
+		{
+			int id = -1;
 
-            return false;
-        }
+			for (int i = 0; i < ServerCommands.Size(); i++)
+			{
+				if (ServerCommands[i].GetId() > id)
+				{
+					id = ServerCommands[i].GetId();
+				}
+			}
 
-        public void AddServerCommand(LogicServerCommand serverCommand)
-        {
-            int id = -1;
+			serverCommand.SetId(id + 1);
+			ServerCommands.Add(serverCommand);
 
-            for (int i = 0; i < this.ServerCommands.Size(); i++)
-            {
-                if (this.ServerCommands[i].GetId() > id)
-                {
-                    id = this.ServerCommands[i].GetId();
-                }
-            }
+			if (CurrentSession != null && CurrentSession.GameState != null)
+			{
+				CurrentSession.SendMessage(new HomeServerCommandAllowedMessage
+				{
+					ServerCommand = serverCommand
+				}, 10);
+			}
+			else
+			{
+				GameAvatarManager.ExecuteServerCommandsInOfflineMode(this);
+				GameAvatarManager.Save(this);
+			}
+		}
 
-            serverCommand.SetId(id + 1);
-            this.ServerCommands.Add(serverCommand);
+		public void AddAllianceBookmark(LogicLong allianceId)
+		{
+			int index = AllianceBookmarksList.IndexOf(allianceId);
 
-            if (this.CurrentSession != null && this.CurrentSession.GameState != null)
-            {
-                this.CurrentSession.SendMessage(new HomeServerCommandAllowedMessage
-                {
-                    ServerCommand = serverCommand
-                }, 10);
-            }
-            else
-            {
-                GameAvatarManager.ExecuteServerCommandsInOfflineMode(this);
-                GameAvatarManager.Save(this);
-            }
-        }
+			if (index == -1)
+			{
+				AllianceBookmarksList.Add(allianceId);
+			}
+		}
 
-        public void AddAllianceBookmark(LogicLong allianceId)
-        {
-            int index = this.AllianceBookmarksList.IndexOf(allianceId);
+		public void RemoveAllianceBookmark(LogicLong allianceId)
+		{
+			int index = AllianceBookmarksList.IndexOf(allianceId);
 
-            if (index == -1)
-            {
-                this.AllianceBookmarksList.Add(allianceId);
-            }
-        }
+			if (index != -1)
+			{
+				AllianceBookmarksList.Remove(index);
+			}
+		}
 
-        public void RemoveAllianceBookmark(LogicLong allianceId)
-        {
-            int index = this.AllianceBookmarksList.IndexOf(allianceId);
+		private void AddAvatarStreamEntry(AvatarStreamEntry entry)
+		{
+			if (AvatarStreamList.Size() > 50)
+				RemoveAvatarStreamEntry(AvatarStreamList[0]);
+			AvatarStreamList.Add(entry.GetId());
 
-            if (index != -1)
-            {
-                this.AllianceBookmarksList.Remove(index);
-            }
-        }
+			if (CurrentSession != null)
+			{
+				AvatarStreamEntryMessage avatarStreamEntryMessage = new AvatarStreamEntryMessage();
+				avatarStreamEntryMessage.SetAvatarStreamEntry(entry);
+				CurrentSession.SendPiranhaMessage(avatarStreamEntryMessage, 1);
 
-        private void AddAvatarStreamEntry(AvatarStreamEntry entry)
-        {
-            if (this.AvatarStreamList.Size() > 50)
-                this.RemoveAvatarStreamEntry(this.AvatarStreamList[0]);
-            this.AvatarStreamList.Add(entry.GetId());
+				if (entry.IsNew())
+				{
+					ServerMessageManager.SendMessage(new AvatarStreamSeenMessage
+					{
+						AccountId = entry.GetId()
+					}, 11);
+				}
+			}
+			else
+			{
+				GameAvatar.Save(this);
+			}
+		}
 
-            if (this.CurrentSession != null)
-            {
-                AvatarStreamEntryMessage avatarStreamEntryMessage = new AvatarStreamEntryMessage();
-                avatarStreamEntryMessage.SetAvatarStreamEntry(entry);
-                this.CurrentSession.SendPiranhaMessage(avatarStreamEntryMessage, 1);
+		public void RemoveAvatarStreamEntry(LogicLong streamId)
+		{
+			int index = AvatarStreamList.IndexOf(streamId);
 
-                if (entry.IsNew())
-                {
-                    ServerMessageManager.SendMessage(new AvatarStreamSeenMessage
-                    {
-                        AccountId = entry.GetId()
-                    }, 11);
-                }
-            }
-            else
-            {
-                GameAvatar.Save(this);
-            }
-        }
+			if (index != -1)
+			{
+				AvatarStreamList.Remove(index);
 
-        public void RemoveAvatarStreamEntry(LogicLong streamId)
-        {
-            int index = this.AvatarStreamList.IndexOf(streamId);
+				ServerMessageManager.SendMessage(new RemoveAvatarStreamMessage
+				{
+					AccountId = streamId
+				}, ServerManager.GetDocumentSocket(11, Id));
 
-            if (index != -1)
-            {
-                this.AvatarStreamList.Remove(index);
+				if (CurrentSession != null)
+				{
+					AvatarStreamEntryRemovedMessage avatarStreamEntryRemovedMessage = new AvatarStreamEntryRemovedMessage();
+					avatarStreamEntryRemovedMessage.SetStreamEntryId(streamId);
+					CurrentSession.SendPiranhaMessage(avatarStreamEntryRemovedMessage, 1);
+				}
+				else
+				{
+					GameAvatar.Save(this);
+				}
+			}
+		}
 
-                ServerMessageManager.SendMessage(new RemoveAvatarStreamMessage
-                {
-                    AccountId = streamId
-                }, ServerManager.GetDocumentSocket(11, this.Id));
+		public void OnAvatarStreamCreated(ServerRequestArgs args)
+		{
+			if (args.ErrorCode == ServerRequestError.Success && args.ResponseMessage.Success)
+				AddAvatarStreamEntry(((CreateAvatarStreamResponseMessage)args.ResponseMessage).Entry);
+			else
+				Logging.Warning("GameAvatar.onAvatarStreamCreated: The stream server " + args.ResponseMessage.Sender + " could not create a stream.");
+		}
+	}
 
-                if (this.CurrentSession != null)
-                {
-                    AvatarStreamEntryRemovedMessage avatarStreamEntryRemovedMessage = new AvatarStreamEntryRemovedMessage();
-                    avatarStreamEntryRemovedMessage.SetStreamEntryId(streamId);
-                    this.CurrentSession.SendPiranhaMessage(avatarStreamEntryRemovedMessage, 1);
-                }
-                else
-                {
-                    GameAvatar.Save(this);
-                }
-            }
-        }
-
-        public void OnAvatarStreamCreated(ServerRequestArgs args)
-        {
-            if (args.ErrorCode == ServerRequestError.Success && args.ResponseMessage.Success)
-                this.AddAvatarStreamEntry(((CreateAvatarStreamResponseMessage) args.ResponseMessage).Entry);
-            else
-                Logging.Warning("GameAvatar.onAvatarStreamCreated: The stream server " + args.ResponseMessage.Sender + " could not create a stream.");
-        }
-    }
-
-    public class GameHomeLock
-    {
-        public LogicLong AttackerId { get; set; }
-    }
+	public class GameHomeLock
+	{
+		public LogicLong AttackerId
+		{
+			get; set;
+		}
+	}
 }

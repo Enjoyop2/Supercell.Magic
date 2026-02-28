@@ -1,112 +1,86 @@
+using Supercell.Magic.Titan.CSV;
+
 namespace Supercell.Magic.Logic.Data
 {
-    using Supercell.Magic.Titan.CSV;
+	public class LogicLocaleData : LogicData
+	{
+		private string m_fileName;
+		private string m_localizedName;
+		private string m_usedSystemFont;
+		private string m_helpshiftSDKLanguage;
+		private string m_helpshiftSDKLanguageAndroid;
+		private string m_boomboxUrl;
+		private string m_boomboxStagingUrl;
+		private string m_helpshiftLanguageTagOverride;
 
-    public class LogicLocaleData : LogicData
-    {
-        private string m_fileName;
-        private string m_localizedName;
-        private string m_usedSystemFont;
-        private string m_helpshiftSDKLanguage;
-        private string m_helpshiftSDKLanguageAndroid;
-        private string m_boomboxUrl;
-        private string m_boomboxStagingUrl;
-        private string m_helpshiftLanguageTagOverride;
+		private int m_sortOrder;
 
-        private int m_sortOrder;
+		private bool m_hasEvenSpaceCharacters;
+		private bool m_isRTL;
+		private bool m_testLanguage;
+		private bool m_boomboxEnabled;
 
-        private bool m_hasEvenSpaceCharacters;
-        private bool m_isRTL;
-        private bool m_testLanguage;
-        private bool m_boomboxEnabled;
+		public LogicLocaleData(CSVRow row, LogicDataTable table) : base(row, table)
+		{
+			// LogicLocaleData.
+		}
 
-        public LogicLocaleData(CSVRow row, LogicDataTable table) : base(row, table)
-        {
-            // LogicLocaleData.
-        }
+		public override void CreateReferences()
+		{
+			base.CreateReferences();
 
-        public override void CreateReferences()
-        {
-            base.CreateReferences();
+			m_fileName = GetValue("FileName", 0);
+			m_localizedName = GetValue("LocalizedName", 0);
+			m_hasEvenSpaceCharacters = GetBooleanValue("HasEvenSpaceCharacters", 0);
+			m_isRTL = GetBooleanValue("isRTL", 0);
+			m_usedSystemFont = GetValue("UsedSystemFont", 0);
+			m_helpshiftSDKLanguage = GetValue("HelpshiftSDKLanguage", 0);
+			m_helpshiftSDKLanguageAndroid = GetValue("HelpshiftSDKLanguageAndroid", 0);
+			m_sortOrder = GetIntegerValue("SortOrder", 0);
+			m_testLanguage = GetBooleanValue("TestLanguage", 0);
+			m_boomboxEnabled = GetBooleanValue("BoomboxEnabled", 0);
+			m_boomboxUrl = GetValue("BoomboxUrl", 0);
+			m_boomboxStagingUrl = GetValue("BoomboxStagingUrl", 0);
+			m_helpshiftLanguageTagOverride = GetValue("HelpshiftLanguageTagOverride", 0);
+		}
 
-            this.m_fileName = this.GetValue("FileName", 0);
-            this.m_localizedName = this.GetValue("LocalizedName", 0);
-            this.m_hasEvenSpaceCharacters = this.GetBooleanValue("HasEvenSpaceCharacters", 0);
-            this.m_isRTL = this.GetBooleanValue("isRTL", 0);
-            this.m_usedSystemFont = this.GetValue("UsedSystemFont", 0);
-            this.m_helpshiftSDKLanguage = this.GetValue("HelpshiftSDKLanguage", 0);
-            this.m_helpshiftSDKLanguageAndroid = this.GetValue("HelpshiftSDKLanguageAndroid", 0);
-            this.m_sortOrder = this.GetIntegerValue("SortOrder", 0);
-            this.m_testLanguage = this.GetBooleanValue("TestLanguage", 0);
-            this.m_boomboxEnabled = this.GetBooleanValue("BoomboxEnabled", 0);
-            this.m_boomboxUrl = this.GetValue("BoomboxUrl", 0);
-            this.m_boomboxStagingUrl = this.GetValue("BoomboxStagingUrl", 0);
-            this.m_helpshiftLanguageTagOverride = this.GetValue("HelpshiftLanguageTagOverride", 0);
-        }
+		public string GetFileName()
+			=> m_fileName;
 
-        public string GetFileName()
-        {
-            return this.m_fileName;
-        }
+		public string GetLocalizedName()
+			=> m_localizedName;
 
-        public string GetLocalizedName()
-        {
-            return this.m_localizedName;
-        }
+		public bool IsHasEvenSpaceCharacters()
+			=> m_hasEvenSpaceCharacters;
 
-        public bool IsHasEvenSpaceCharacters()
-        {
-            return this.m_hasEvenSpaceCharacters;
-        }
+		public bool IsRTL()
+			=> m_isRTL;
 
-        public bool IsRTL()
-        {
-            return this.m_isRTL;
-        }
+		public string GetUsedSystemFont()
+			=> m_usedSystemFont;
 
-        public string GetUsedSystemFont()
-        {
-            return this.m_usedSystemFont;
-        }
+		public string GetHelpshiftSDKLanguage()
+			=> m_helpshiftSDKLanguage;
 
-        public string GetHelpshiftSDKLanguage()
-        {
-            return this.m_helpshiftSDKLanguage;
-        }
+		public string GetHelpshiftSDKLanguageAndroid()
+			=> m_helpshiftSDKLanguageAndroid;
 
-        public string GetHelpshiftSDKLanguageAndroid()
-        {
-            return this.m_helpshiftSDKLanguageAndroid;
-        }
+		public int GetSortOrder()
+			=> m_sortOrder;
 
-        public int GetSortOrder()
-        {
-            return this.m_sortOrder;
-        }
+		public bool IsTestLanguage()
+			=> m_testLanguage;
 
-        public bool IsTestLanguage()
-        {
-            return this.m_testLanguage;
-        }
+		public bool IsBoomboxEnabled()
+			=> m_boomboxEnabled;
 
-        public bool IsBoomboxEnabled()
-        {
-            return this.m_boomboxEnabled;
-        }
+		public string GetBoomboxUrl()
+			=> m_boomboxUrl;
 
-        public string GetBoomboxUrl()
-        {
-            return this.m_boomboxUrl;
-        }
+		public string GetBoomboxStagingUrl()
+			=> m_boomboxStagingUrl;
 
-        public string GetBoomboxStagingUrl()
-        {
-            return this.m_boomboxStagingUrl;
-        }
-
-        public string GetHelpshiftLanguageTagOverride()
-        {
-            return this.m_helpshiftLanguageTagOverride;
-        }
-    }
+		public string GetHelpshiftLanguageTagOverride()
+			=> m_helpshiftLanguageTagOverride;
+	}
 }

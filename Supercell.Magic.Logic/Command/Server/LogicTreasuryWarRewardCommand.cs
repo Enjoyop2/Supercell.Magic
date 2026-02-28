@@ -1,78 +1,76 @@
+using Supercell.Magic.Logic.Avatar;
+using Supercell.Magic.Logic.Level;
+using Supercell.Magic.Titan.DataStream;
+using Supercell.Magic.Titan.Math;
+
 namespace Supercell.Magic.Logic.Command.Server
 {
-    using Supercell.Magic.Logic.Avatar;
-    using Supercell.Magic.Logic.Level;
-    using Supercell.Magic.Titan.DataStream;
-    using Supercell.Magic.Titan.Math;
+	public class LogicTreasuryWarRewardCommand : LogicServerCommand
+	{
+		private LogicLong m_warInstanceId;
 
-    public class LogicTreasuryWarRewardCommand : LogicServerCommand
-    {
-        private LogicLong m_warInstanceId;
+		private int m_goldCount;
+		private int m_elixirCount;
+		private int m_darkElixirCount;
 
-        private int m_goldCount;
-        private int m_elixirCount;
-        private int m_darkElixirCount;
+		public void SetDatas(int diamondCount)
+		{
+		}
 
-        public void SetDatas(int diamondCount)
-        {
-        }
+		public override void Destruct()
+		{
+			base.Destruct();
+		}
 
-        public override void Destruct()
-        {
-            base.Destruct();
-        }
+		public override void Decode(ByteStream stream)
+		{
+			m_goldCount = stream.ReadInt();
+			m_elixirCount = stream.ReadInt();
+			m_darkElixirCount = stream.ReadInt();
+			stream.ReadInt();
 
-        public override void Decode(ByteStream stream)
-        {
-            this.m_goldCount = stream.ReadInt();
-            this.m_elixirCount = stream.ReadInt();
-            this.m_darkElixirCount = stream.ReadInt();
-            stream.ReadInt();
+			if (stream.ReadBoolean())
+			{
+				m_warInstanceId = stream.ReadLong();
+			}
 
-            if (stream.ReadBoolean())
-            {
-                this.m_warInstanceId = stream.ReadLong();
-            }
+			base.Decode(stream);
+		}
 
-            base.Decode(stream);
-        }
+		public override void Encode(ChecksumEncoder encoder)
+		{
+			encoder.WriteInt(m_goldCount);
+			encoder.WriteInt(m_elixirCount);
+			encoder.WriteInt(m_darkElixirCount);
+			encoder.WriteInt(0);
 
-        public override void Encode(ChecksumEncoder encoder)
-        {
-            encoder.WriteInt(this.m_goldCount);
-            encoder.WriteInt(this.m_elixirCount);
-            encoder.WriteInt(this.m_darkElixirCount);
-            encoder.WriteInt(0);
+			if (m_warInstanceId != null)
+			{
+				encoder.WriteBoolean(true);
+				encoder.WriteLong(m_warInstanceId);
+			}
+			else
+			{
+				encoder.WriteBoolean(false);
+			}
 
-            if (this.m_warInstanceId != null)
-            {
-                encoder.WriteBoolean(true);
-                encoder.WriteLong(this.m_warInstanceId);
-            }
-            else
-            {
-                encoder.WriteBoolean(false);
-            }
+			base.Encode(encoder);
+		}
 
-            base.Encode(encoder);
-        }
+		public override int Execute(LogicLevel level)
+		{
+			LogicClientAvatar playerAvatar = level.GetPlayerAvatar();
 
-        public override int Execute(LogicLevel level)
-        {
-            LogicClientAvatar playerAvatar = level.GetPlayerAvatar();
+			if (playerAvatar != null)
+			{
+				playerAvatar.AddWarReward(m_goldCount, m_elixirCount, m_darkElixirCount, 0, m_warInstanceId);
+				return 0;
+			}
 
-            if (playerAvatar != null)
-            {
-                playerAvatar.AddWarReward(this.m_goldCount, this.m_elixirCount, this.m_darkElixirCount, 0, this.m_warInstanceId);
-                return 0;
-            }
+			return -1;
+		}
 
-            return -1;
-        }
-
-        public override LogicCommandType GetCommandType()
-        {
-            return LogicCommandType.TREASURY_WAR_REWARD;
-        }
-    }
+		public override LogicCommandType GetCommandType()
+			=> LogicCommandType.TREASURY_WAR_REWARD;
+	}
 }

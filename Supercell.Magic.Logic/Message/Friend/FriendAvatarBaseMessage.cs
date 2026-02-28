@@ -1,64 +1,60 @@
+using Supercell.Magic.Titan.Math;
+using Supercell.Magic.Titan.Message;
+
 namespace Supercell.Magic.Logic.Message.Friend
 {
-    using Supercell.Magic.Titan.Math;
-    using Supercell.Magic.Titan.Message;
+	public class FriendAvatarBaseMessage : PiranhaMessage
+	{
+		private int m_avatarIdHigh;
+		private int m_avatarIdLow;
 
-    public class FriendAvatarBaseMessage : PiranhaMessage
-    {
-        private int m_avatarIdHigh;
-        private int m_avatarIdLow;
+		public FriendAvatarBaseMessage() : this(0)
+		{
+			// FriendAvatarBaseMessage.
+		}
 
-        public FriendAvatarBaseMessage() : this(0)
-        {
-            // FriendAvatarBaseMessage.
-        }
+		public FriendAvatarBaseMessage(short messageVersion) : base(messageVersion)
+		{
+			// FriendAvatarBaseMessage.
+		}
 
-        public FriendAvatarBaseMessage(short messageVersion) : base(messageVersion)
-        {
-            // FriendAvatarBaseMessage.
-        }
+		public override void Decode()
+		{
+			base.Decode();
 
-        public override void Decode()
-        {
-            base.Decode();
+			m_avatarIdHigh = m_stream.ReadInt();
+			m_avatarIdLow = m_stream.ReadInt();
+		}
 
-            this.m_avatarIdHigh = this.m_stream.ReadInt();
-            this.m_avatarIdLow = this.m_stream.ReadInt();
-        }
+		public override void Encode()
+		{
+			base.Encode();
 
-        public override void Encode()
-        {
-            base.Encode();
+			m_stream.WriteInt(m_avatarIdHigh);
+			m_stream.WriteInt(m_avatarIdLow);
+		}
 
-            this.m_stream.WriteInt(this.m_avatarIdHigh);
-            this.m_stream.WriteInt(this.m_avatarIdLow);
-        }
+		public override int GetServiceNodeType()
+			=> 3;
 
-        public override int GetServiceNodeType()
-        {
-            return 3;
-        }
+		public override void Destruct()
+		{
+			base.Destruct();
+		}
 
-        public override void Destruct()
-        {
-            base.Destruct();
-        }
+		public LogicLong GetAvatarId()
+			=> new LogicLong(m_avatarIdHigh, m_avatarIdLow);
 
-        public LogicLong GetAvatarId()
-        {
-            return new LogicLong(this.m_avatarIdHigh, this.m_avatarIdLow);
-        }
+		public void SetAvatarId(LogicLong avatarId)
+		{
+			m_avatarIdHigh = avatarId.GetHigherInt();
+			m_avatarIdLow = avatarId.GetLowerInt();
+		}
 
-        public void SetAvatarId(LogicLong avatarId)
-        {
-            this.m_avatarIdHigh = avatarId.GetHigherInt();
-            this.m_avatarIdLow = avatarId.GetLowerInt();
-        }
-
-        public void SetAvatarId(int high, int low)
-        {
-            this.m_avatarIdHigh = high;
-            this.m_avatarIdLow = low;
-        }
-    }
+		public void SetAvatarId(int high, int low)
+		{
+			m_avatarIdHigh = high;
+			m_avatarIdLow = low;
+		}
+	}
 }

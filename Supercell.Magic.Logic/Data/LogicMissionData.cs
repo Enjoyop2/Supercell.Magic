@@ -1,415 +1,381 @@
+using Supercell.Magic.Logic.Avatar;
+using Supercell.Magic.Titan.CSV;
+using Supercell.Magic.Titan.Debug;
+using Supercell.Magic.Titan.Util;
+
 namespace Supercell.Magic.Logic.Data
 {
-    using Supercell.Magic.Logic.Avatar;
-    using Supercell.Magic.Titan.CSV;
-    using Supercell.Magic.Titan.Debug;
-    using Supercell.Magic.Titan.Util;
+	public class LogicMissionData : LogicData
+	{
+		private int m_missionType;
+		private int m_missionCategory;
+		private int m_buildBuildingCount;
+		private int m_buildBuildingLevel;
+		private int m_trainTroopCount;
+		private int m_villagers;
+		private int m_rewardResourceCount;
+		private int m_customData;
+		private int m_rewardXp;
+		private int m_rewardCharacterCount;
+		private int m_delay;
+		private int m_villageType;
 
-    public class LogicMissionData : LogicData
-    {
-        private int m_missionType;
-        private int m_missionCategory;
-        private int m_buildBuildingCount;
-        private int m_buildBuildingLevel;
-        private int m_trainTroopCount;
-        private int m_villagers;
-        private int m_rewardResourceCount;
-        private int m_customData;
-        private int m_rewardXp;
-        private int m_rewardCharacterCount;
-        private int m_delay;
-        private int m_villageType;
+		private bool m_openAchievements;
+		private bool m_showMap;
+		private bool m_changeName;
+		private bool m_switchSides;
+		private bool m_showWarBase;
+		private bool m_showStates;
+		private bool m_openInfo;
+		private bool m_showDonate;
+		private bool m_warStates;
+		private bool m_forceCamera;
+		private bool m_deprecated;
+		private bool m_firstStep;
 
-        private bool m_openAchievements;
-        private bool m_showMap;
-        private bool m_changeName;
-        private bool m_switchSides;
-        private bool m_showWarBase;
-        private bool m_showStates;
-        private bool m_openInfo;
-        private bool m_showDonate;
-        private bool m_warStates;
-        private bool m_forceCamera;
-        private bool m_deprecated;
-        private bool m_firstStep;
+		private string m_action;
+		private string m_tutorialText;
 
-        private string m_action;
-        private string m_tutorialText;
+		private LogicNpcData m_defendNpcData;
+		private LogicNpcData m_attackNpcData;
+		private LogicCharacterData m_characterData;
+		private LogicBuildingData m_buildBuildingData;
+		private LogicVillageObjectData m_fixVillageObjectData;
+		private LogicCharacterData m_rewardCharacterData;
+		private LogicResourceData m_rewardResourceData;
+		private readonly LogicArrayList<LogicMissionData> m_missionDependencies;
 
-        private LogicNpcData m_defendNpcData;
-        private LogicNpcData m_attackNpcData;
-        private LogicCharacterData m_characterData;
-        private LogicBuildingData m_buildBuildingData;
-        private LogicVillageObjectData m_fixVillageObjectData;
-        private LogicCharacterData m_rewardCharacterData;
-        private LogicResourceData m_rewardResourceData;
-        private readonly LogicArrayList<LogicMissionData> m_missionDependencies;
+		public LogicMissionData(CSVRow row, LogicDataTable table) : base(row, table)
+		{
+			m_missionType = -1;
+			m_missionDependencies = new LogicArrayList<LogicMissionData>();
+		}
 
-        public LogicMissionData(CSVRow row, LogicDataTable table) : base(row, table)
-        {
-            this.m_missionType = -1;
-            this.m_missionDependencies = new LogicArrayList<LogicMissionData>();
-        }
+		public override void CreateReferences()
+		{
+			base.CreateReferences();
 
-        public override void CreateReferences()
-        {
-            base.CreateReferences();
+			for (int i = 0; i < GetArraySize("Dependencies"); i++)
+			{
+				LogicMissionData dependency = LogicDataTables.GetMissionByName(GetValue("Dependencies", i), this);
 
-            for (int i = 0; i < this.GetArraySize("Dependencies"); i++)
-            {
-                LogicMissionData dependency = LogicDataTables.GetMissionByName(this.GetValue("Dependencies", i), this);
+				if (dependency != null)
+				{
+					m_missionDependencies.Add(dependency);
+				}
+			}
 
-                if (dependency != null)
-                {
-                    this.m_missionDependencies.Add(dependency);
-                }
-            }
+			m_action = GetValue("Action", 0);
+			m_deprecated = GetBooleanValue("Deprecated", 0);
+			m_missionCategory = GetIntegerValue("MissionCategory", 0);
+			m_fixVillageObjectData = LogicDataTables.GetVillageObjectByName(GetValue("FixVillageObject", 0), this);
 
-            this.m_action = this.GetValue("Action", 0);
-            this.m_deprecated = this.GetBooleanValue("Deprecated", 0);
-            this.m_missionCategory = this.GetIntegerValue("MissionCategory", 0);
-            this.m_fixVillageObjectData = LogicDataTables.GetVillageObjectByName(this.GetValue("FixVillageObject", 0), this);
+			if (m_fixVillageObjectData != null)
+			{
+				m_buildBuildingLevel = GetIntegerValue("BuildBuildingLevel", 0);
+				m_missionType = 13;
+			}
 
-            if (this.m_fixVillageObjectData != null)
-            {
-                this.m_buildBuildingLevel = this.GetIntegerValue("BuildBuildingLevel", 0);
-                this.m_missionType = 13;
-            }
+			if (string.Equals(m_action, "travel"))
+			{
+				m_missionType = 14;
+			}
+			else if (string.Equals(m_action, "upgrade2"))
+			{
+				m_characterData = LogicDataTables.GetCharacterByName(GetValue("Character", 0), this);
+				m_missionType = 17;
+			}
+			else if (string.Equals(m_action, "duel"))
+			{
+				m_attackNpcData = LogicDataTables.GetNpcByName(GetValue("AttackNPC", 0), this);
+				m_missionType = 18;
+			}
+			else if (string.Equals(m_action, "duel_end"))
+			{
+				m_attackNpcData = LogicDataTables.GetNpcByName(GetValue("AttackNPC", 0), this);
+				m_missionType = 19;
+			}
+			else if (string.Equals(m_action, "duel_end2"))
+			{
+				m_missionType = 20;
+			}
+			else if (string.Equals(m_action, "show_builder_menu"))
+			{
+				m_missionType = 21;
+			}
 
-            if (string.Equals(this.m_action, "travel"))
-            {
-                this.m_missionType = 14;
-            }
-            else if (string.Equals(this.m_action, "upgrade2"))
-            {
-                this.m_characterData = LogicDataTables.GetCharacterByName(this.GetValue("Character", 0), this);
-                this.m_missionType = 17;
-            }
-            else if (string.Equals(this.m_action, "duel"))
-            {
-                this.m_attackNpcData = LogicDataTables.GetNpcByName(this.GetValue("AttackNPC", 0), this);
-                this.m_missionType = 18;
-            }
-            else if (string.Equals(this.m_action, "duel_end"))
-            {
-                this.m_attackNpcData = LogicDataTables.GetNpcByName(this.GetValue("AttackNPC", 0), this);
-                this.m_missionType = 19;
-            }
-            else if (string.Equals(this.m_action, "duel_end2"))
-            {
-                this.m_missionType = 20;
-            }
-            else if (string.Equals(this.m_action, "show_builder_menu"))
-            {
-                this.m_missionType = 21;
-            }
+			m_buildBuildingData = LogicDataTables.GetBuildingByName(GetValue("BuildBuilding", 0), this);
 
-            this.m_buildBuildingData = LogicDataTables.GetBuildingByName(this.GetValue("BuildBuilding", 0), this);
+			if (m_buildBuildingData != null)
+			{
+				m_buildBuildingCount = GetIntegerValue("BuildBuildingCount", 0);
+				m_buildBuildingLevel = GetIntegerValue("BuildBuildingLevel", 0) - 1;
+				m_missionType = string.Equals(m_action, "unlock") ? 15 : 5;
 
-            if (this.m_buildBuildingData != null)
-            {
-                this.m_buildBuildingCount = this.GetIntegerValue("BuildBuildingCount", 0);
-                this.m_buildBuildingLevel = this.GetIntegerValue("BuildBuildingLevel", 0) - 1;
-                this.m_missionType = string.Equals(this.m_action, "unlock") ? 15 : 5;
+				if (m_buildBuildingCount < 0)
+				{
+					Debugger.Error("missions.csv: BuildBuildingCount is invalid!");
+				}
+			}
+			else
+			{
+				if (m_missionType == -1)
+				{
+					m_openAchievements = GetBooleanValue("OpenAchievements", 0);
 
-                if (this.m_buildBuildingCount < 0)
-                {
-                    Debugger.Error("missions.csv: BuildBuildingCount is invalid!");
-                }
-            }
-            else
-            {
-                if (this.m_missionType == -1)
-                {
-                    this.m_openAchievements = this.GetBooleanValue("OpenAchievements", 0);
+					if (m_openAchievements)
+					{
+						m_missionType = 7;
+					}
+					else
+					{
+						m_defendNpcData = LogicDataTables.GetNpcByName(GetValue("DefendNPC", 0), this);
 
-                    if (this.m_openAchievements)
-                    {
-                        this.m_missionType = 7;
-                    }
-                    else
-                    {
-                        this.m_defendNpcData = LogicDataTables.GetNpcByName(this.GetValue("DefendNPC", 0), this);
+						if (m_defendNpcData != null)
+						{
+							m_missionType = 1;
+						}
+						else
+						{
+							m_attackNpcData = LogicDataTables.GetNpcByName(GetValue("AttackNPC", 0), this);
 
-                        if (this.m_defendNpcData != null)
-                        {
-                            this.m_missionType = 1;
-                        }
-                        else
-                        {
-                            this.m_attackNpcData = LogicDataTables.GetNpcByName(this.GetValue("AttackNPC", 0), this);
+							if (m_attackNpcData != null)
+							{
+								m_missionType = 2;
+								m_showMap = GetBooleanValue("ShowMap", 0);
+							}
+							else
+							{
+								m_changeName = GetBooleanValue("ChangeName", 0);
 
-                            if (this.m_attackNpcData != null)
-                            {
-                                this.m_missionType = 2;
-                                this.m_showMap = this.GetBooleanValue("ShowMap", 0);
-                            }
-                            else
-                            {
-                                this.m_changeName = this.GetBooleanValue("ChangeName", 0);
+								if (m_changeName)
+								{
+									m_missionType = 6;
+								}
+								else
+								{
+									m_trainTroopCount = GetIntegerValue("TrainTroops", 0);
 
-                                if (this.m_changeName)
-                                {
-                                    this.m_missionType = 6;
-                                }
-                                else
-                                {
-                                    this.m_trainTroopCount = this.GetIntegerValue("TrainTroops", 0);
+									if (m_trainTroopCount > 0)
+									{
+										m_missionType = 4;
+									}
+									else
+									{
+										m_switchSides = GetBooleanValue("SwitchSides", 0);
 
-                                    if (this.m_trainTroopCount > 0)
-                                    {
-                                        this.m_missionType = 4;
-                                    }
-                                    else
-                                    {
-                                        this.m_switchSides = this.GetBooleanValue("SwitchSides", 0);
+										if (m_switchSides)
+										{
+											m_missionType = 8;
+										}
+										else
+										{
+											m_showWarBase = GetBooleanValue("ShowWarBase", 0);
 
-                                        if (this.m_switchSides)
-                                        {
-                                            this.m_missionType = 8;
-                                        }
-                                        else
-                                        {
-                                            this.m_showWarBase = this.GetBooleanValue("ShowWarBase", 0);
+											if (m_showWarBase)
+											{
+												m_missionType = 9;
+											}
+											else
+											{
+												m_openInfo = GetBooleanValue("OpenInfo", 0);
 
-                                            if (this.m_showWarBase)
-                                            {
-                                                this.m_missionType = 9;
-                                            }
-                                            else
-                                            {
-                                                this.m_openInfo = this.GetBooleanValue("OpenInfo", 0);
+												if (m_openInfo)
+												{
+													m_missionType = 11;
+												}
+												else
+												{
+													m_showDonate = GetBooleanValue("ShowDonate", 0);
 
-                                                if (this.m_openInfo)
-                                                {
-                                                    this.m_missionType = 11;
-                                                }
-                                                else
-                                                {
-                                                    this.m_showDonate = this.GetBooleanValue("ShowDonate", 0);
+													if (m_showDonate)
+													{
+														m_missionType = 10;
+													}
+													else
+													{
+														m_showStates = GetBooleanValue("WarStates", 0);
 
-                                                    if (this.m_showDonate)
-                                                    {
-                                                        this.m_missionType = 10;
-                                                    }
-                                                    else
-                                                    {
-                                                        this.m_showStates = this.GetBooleanValue("WarStates", 0);
+														if (m_showStates)
+														{
+															m_missionType = 12;
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
 
-                                                        if (this.m_showStates)
-                                                        {
-                                                            this.m_missionType = 12;
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+			m_villagers = GetIntegerValue("Villagers", 0);
 
-            this.m_villagers = this.GetIntegerValue("Villagers", 0);
+			if (m_villagers > 0)
+			{
+				m_missionType = 16;
+			}
 
-            if (this.m_villagers > 0)
-            {
-                this.m_missionType = 16;
-            }
+			m_forceCamera = GetBooleanValue("ForceCamera", 0);
 
-            this.m_forceCamera = this.GetBooleanValue("ForceCamera", 0);
+			if (m_missionType == -1)
+			{
+				Debugger.Error(string.Format("missions.csv: invalid mission ({0})", GetName()));
+			}
 
-            if (this.m_missionType == -1)
-            {
-                Debugger.Error(string.Format("missions.csv: invalid mission ({0})", this.GetName()));
-            }
+			m_rewardResourceData = LogicDataTables.GetResourceByName(GetValue("RewardResource", 0), this);
+			m_rewardResourceCount = GetIntegerValue("RewardResourceCount", 0);
 
-            this.m_rewardResourceData = LogicDataTables.GetResourceByName(this.GetValue("RewardResource", 0), this);
-            this.m_rewardResourceCount = this.GetIntegerValue("RewardResourceCount", 0);
+			if (m_rewardResourceData != null)
+			{
+				if (m_rewardResourceCount != 0)
+				{
+					if (m_rewardResourceCount < 0)
+					{
+						Debugger.Error("missions.csv: RewardResourceCount is negative!");
 
-            if (this.m_rewardResourceData != null)
-            {
-                if (this.m_rewardResourceCount != 0)
-                {
-                    if (this.m_rewardResourceCount < 0)
-                    {
-                        Debugger.Error("missions.csv: RewardResourceCount is negative!");
+						m_rewardResourceData = null;
+						m_rewardResourceCount = 0;
+					}
+				}
+				else
+				{
+					m_rewardResourceData = null;
+				}
+			}
+			else if (m_rewardResourceCount != 0)
+			{
+				Debugger.Warning("missions.csv: RewardResourceCount defined but RewardResource is not!");
+				m_rewardResourceCount = 0;
+			}
 
-                        this.m_rewardResourceData = null;
-                        this.m_rewardResourceCount = 0;
-                    }
-                }
-                else
-                {
-                    this.m_rewardResourceData = null;
-                }
-            }
-            else if (this.m_rewardResourceCount != 0)
-            {
-                Debugger.Warning("missions.csv: RewardResourceCount defined but RewardResource is not!");
-                this.m_rewardResourceCount = 0;
-            }
+			m_customData = GetIntegerValue("CustomData", 0);
+			m_rewardXp = GetIntegerValue("RewardXP", 0);
 
-            this.m_customData = this.GetIntegerValue("CustomData", 0);
-            this.m_rewardXp = this.GetIntegerValue("RewardXP", 0);
+			if (m_rewardXp < 0)
+			{
+				Debugger.Warning("missions.csv: RewardXP is negative!");
+				m_rewardXp = 0;
+			}
 
-            if (this.m_rewardXp < 0)
-            {
-                Debugger.Warning("missions.csv: RewardXP is negative!");
-                this.m_rewardXp = 0;
-            }
+			m_rewardCharacterData = LogicDataTables.GetCharacterByName(GetValue("RewardTroop", 0), this);
+			m_rewardCharacterCount = GetIntegerValue("RewardTroopCount", 0);
 
-            this.m_rewardCharacterData = LogicDataTables.GetCharacterByName(this.GetValue("RewardTroop", 0), this);
-            this.m_rewardCharacterCount = this.GetIntegerValue("RewardTroopCount", 0);
+			if (m_rewardCharacterData != null)
+			{
+				if (m_rewardCharacterCount != 0)
+				{
+					if (m_rewardCharacterCount < 0)
+					{
+						Debugger.Error("missions.csv: RewardTroopCount is negative!");
 
-            if (this.m_rewardCharacterData != null)
-            {
-                if (this.m_rewardCharacterCount != 0)
-                {
-                    if (this.m_rewardCharacterCount < 0)
-                    {
-                        Debugger.Error("missions.csv: RewardTroopCount is negative!");
+						m_rewardCharacterData = null;
+						m_rewardCharacterCount = 0;
+					}
+				}
+				else
+				{
+					m_rewardCharacterData = null;
+				}
+			}
+			else if (m_rewardCharacterCount != 0)
+			{
+				Debugger.Warning("missions.csv: RewardTroopCount defined but RewardTroop is not!");
+				m_rewardCharacterCount = 0;
+			}
 
-                        this.m_rewardCharacterData = null;
-                        this.m_rewardCharacterCount = 0;
-                    }
-                }
-                else
-                {
-                    this.m_rewardCharacterData = null;
-                }
-            }
-            else if (this.m_rewardCharacterCount != 0)
-            {
-                Debugger.Warning("missions.csv: RewardTroopCount defined but RewardTroop is not!");
-                this.m_rewardCharacterCount = 0;
-            }
+			m_delay = GetIntegerValue("Delay", 0);
+			m_villageType = GetIntegerValue("VillageType", 0);
+			m_firstStep = GetBooleanValue("FirstStep", 0);
+			m_tutorialText = GetValue("TutorialText", 0);
 
-            this.m_delay = this.GetIntegerValue("Delay", 0);
-            this.m_villageType = this.GetIntegerValue("VillageType", 0);
-            this.m_firstStep = this.GetBooleanValue("FirstStep", 0);
-            this.m_tutorialText = this.GetValue("TutorialText", 0);
+			if (m_tutorialText.Length > 0)
+			{
+				// BLABLABLA
+			}
+		}
 
-            if (this.m_tutorialText.Length > 0)
-            {
-                // BLABLABLA
-            }
-        }
+		public bool IsOpenForAvatar(LogicClientAvatar avatar)
+		{
+			if (!avatar.IsMissionCompleted(this))
+			{
+				if (avatar.GetExpLevel() >= 10)
+				{
+					if ((uint)(m_missionCategory - 1) > 1)
+					{
+						return false;
+					}
+				}
 
-        public bool IsOpenForAvatar(LogicClientAvatar avatar)
-        {
-            if (!avatar.IsMissionCompleted(this))
-            {
-                if (avatar.GetExpLevel() >= 10)
-                {
-                    if ((uint) (this.m_missionCategory - 1) > 1)
-                    {
-                        return false;
-                    }
-                }
+				if (!m_deprecated)
+				{
+					for (int i = 0; i < m_missionDependencies.Size(); i++)
+					{
+						if (!avatar.IsMissionCompleted(m_missionDependencies[i]))
+						{
+							return false;
+						}
+					}
 
-                if (!this.m_deprecated)
-                {
-                    for (int i = 0; i < this.m_missionDependencies.Size(); i++)
-                    {
-                        if (!avatar.IsMissionCompleted(this.m_missionDependencies[i]))
-                        {
-                            return false;
-                        }
-                    }
+					return true;
+				}
+			}
 
-                    return true;
-                }
-            }
+			return false;
+		}
 
-            return false;
-        }
+		public int GetMissionType()
+			=> m_missionType;
 
-        public int GetMissionType()
-        {
-            return this.m_missionType;
-        }
+		public int GetCustomData()
+			=> m_customData;
 
-        public int GetCustomData()
-        {
-            return this.m_customData;
-        }
+		public LogicCharacterData GetCharacterData()
+			=> m_characterData;
 
-        public LogicCharacterData GetCharacterData()
-        {
-            return this.m_characterData;
-        }
+		public LogicCharacterData GetRewardCharacterData()
+			=> m_rewardCharacterData;
 
-        public LogicCharacterData GetRewardCharacterData()
-        {
-            return this.m_rewardCharacterData;
-        }
+		public LogicVillageObjectData GetFixVillageObjectData()
+			=> m_fixVillageObjectData;
 
-        public LogicVillageObjectData GetFixVillageObjectData()
-        {
-            return this.m_fixVillageObjectData;
-        }
+		public LogicBuildingData GetBuildBuildingData()
+			=> m_buildBuildingData;
 
-        public LogicBuildingData GetBuildBuildingData()
-        {
-            return this.m_buildBuildingData;
-        }
+		public LogicResourceData GetRewardResourceData()
+			=> m_rewardResourceData;
 
-        public LogicResourceData GetRewardResourceData()
-        {
-            return this.m_rewardResourceData;
-        }
+		public LogicNpcData GetAttackNpcData()
+			=> m_attackNpcData;
 
-        public LogicNpcData GetAttackNpcData()
-        {
-            return this.m_attackNpcData;
-        }
+		public LogicNpcData GetDefendNpcData()
+			=> m_defendNpcData;
 
-        public LogicNpcData GetDefendNpcData()
-        {
-            return this.m_defendNpcData;
-        }
+		public int GetRewardResourceCount()
+			=> m_rewardResourceCount;
 
-        public int GetRewardResourceCount()
-        {
-            return this.m_rewardResourceCount;
-        }
+		public int GetRewardCharacterCount()
+			=> m_rewardCharacterCount;
 
-        public int GetRewardCharacterCount()
-        {
-            return this.m_rewardCharacterCount;
-        }
+		public int GetRewardXp()
+			=> m_rewardXp;
 
-        public int GetRewardXp()
-        {
-            return this.m_rewardXp;
-        }
+		public int GetBuildBuildingLevel()
+			=> m_buildBuildingLevel;
 
-        public int GetBuildBuildingLevel()
-        {
-            return this.m_buildBuildingLevel;
-        }
+		public int GetBuildBuildingCount()
+			=> m_buildBuildingCount;
 
-        public int GetBuildBuildingCount()
-        {
-            return this.m_buildBuildingCount;
-        }
+		public int GetTrainTroopCount()
+			=> m_trainTroopCount;
 
-        public int GetTrainTroopCount()
-        {
-            return this.m_trainTroopCount;
-        }
+		public int GetMissionCategory()
+			=> m_missionCategory;
 
-        public int GetMissionCategory()
-        {
-            return this.m_missionCategory;
-        }
-
-        public int GetVillageType()
-        {
-            return this.m_villageType;
-        }
-    }
+		public int GetVillageType()
+			=> m_villageType;
+	}
 }

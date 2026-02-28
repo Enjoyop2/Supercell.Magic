@@ -1,15 +1,15 @@
-﻿namespace Supercell.Magic.Logic.GameObject.Listener
+namespace Supercell.Magic.Logic.GameObject.Listener
 {
-    public class LogicGameObjectManagerListener
-    {
-        public virtual void AddGameObject(LogicGameObject gameObject)
-        {
-            // AddGameObject.
-        }
+	public class LogicGameObjectManagerListener
+	{
+		public virtual void AddGameObject(LogicGameObject gameObject)
+		{
+			// AddGameObject.
+		}
 
-        public virtual void RemoveGameObject(LogicGameObject gameObject)
-        {
-            // RemoveGameObject.
-        }
-    }
+		public virtual void RemoveGameObject(LogicGameObject gameObject)
+		{
+			// RemoveGameObject.
+		}
+	}
 }

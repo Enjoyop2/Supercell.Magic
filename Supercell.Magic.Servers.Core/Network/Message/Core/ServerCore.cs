@@ -1,10 +1,8 @@
-﻿namespace Supercell.Magic.Servers.Core.Network.Message.Core
+namespace Supercell.Magic.Servers.Core.Network.Message.Core
 {
-    public abstract class ServerCoreMessage : ServerMessage
-    {
-        public sealed override ServerMessageCategory GetMessageCategory()
-        {
-            return ServerMessageCategory.CORE;
-        }
-    }
+	public abstract class ServerCoreMessage : ServerMessage
+	{
+		public sealed override ServerMessageCategory GetMessageCategory()
+			=> ServerMessageCategory.CORE;
+	}
 }

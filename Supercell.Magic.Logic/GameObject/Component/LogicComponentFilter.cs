@@ -1,37 +1,31 @@
-﻿namespace Supercell.Magic.Logic.GameObject.Component
+namespace Supercell.Magic.Logic.GameObject.Component
 {
-    public sealed class LogicComponentFilter : LogicGameObjectFilter
-    {
-        private LogicComponentType m_componentType;
-        
-        public void SetComponentType(LogicComponentType type)
-        {
-            this.m_componentType = type;
-        }
+	public sealed class LogicComponentFilter : LogicGameObjectFilter
+	{
+		private LogicComponentType m_componentType;
 
-        public LogicComponentType GetComponentType()
-        {
-            return this.m_componentType;
-        }
+		public void SetComponentType(LogicComponentType type)
+		{
+			m_componentType = type;
+		}
 
-        public override bool IsComponentFilter()
-        {
-            return true;
-        }
+		public LogicComponentType GetComponentType()
+			=> m_componentType;
 
-        public override bool TestGameObject(LogicGameObject gameObject)
-        {
-            if (gameObject.GetComponent(this.m_componentType) != null)
-            {
-                return base.TestGameObject(gameObject);
-            }
+		public override bool IsComponentFilter()
+			=> true;
 
-            return false;
-        }
+		public override bool TestGameObject(LogicGameObject gameObject)
+		{
+			if (gameObject.GetComponent(m_componentType) != null)
+			{
+				return base.TestGameObject(gameObject);
+			}
 
-        public bool TestComponent(LogicComponent component)
-        {
-            return this.TestGameObject(component.GetParent());
-        }
-    }
+			return false;
+		}
+
+		public bool TestComponent(LogicComponent component)
+			=> TestGameObject(component.GetParent());
+	}
 }

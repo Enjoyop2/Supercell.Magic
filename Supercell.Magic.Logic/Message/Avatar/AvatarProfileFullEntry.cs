@@ -1,98 +1,88 @@
-﻿namespace Supercell.Magic.Logic.Message.Avatar
+using Supercell.Magic.Logic.Avatar;
+using Supercell.Magic.Titan.DataStream;
+
+namespace Supercell.Magic.Logic.Message.Avatar
 {
-    using Supercell.Magic.Logic.Avatar;
-    using Supercell.Magic.Titan.DataStream;
+	public class AvatarProfileFullEntry
+	{
+		private LogicClientAvatar m_clientAvatar;
 
-    public class AvatarProfileFullEntry
-    {
-        private LogicClientAvatar m_clientAvatar;
+		private byte[] m_compressedHomeJSON;
 
-        private byte[] m_compressedHomeJSON;
+		private int m_donations;
+		private int m_donationsReceived;
+		private int m_remainingSecsForWar;
 
-        private int m_donations;
-        private int m_donationsReceived;
-        private int m_remainingSecsForWar;
+		public void Destruct()
+		{
+			m_clientAvatar = null;
+			m_compressedHomeJSON = null;
+		}
 
-        public void Destruct()
-        {
-            this.m_clientAvatar = null;
-            this.m_compressedHomeJSON = null;
-        }
+		public void Encode(ChecksumEncoder encoder)
+		{
+			m_clientAvatar.Encode(encoder);
 
-        public void Encode(ChecksumEncoder encoder)
-        {
-            this.m_clientAvatar.Encode(encoder);
+			encoder.WriteBytes(m_compressedHomeJSON, m_compressedHomeJSON.Length);
+			encoder.WriteInt(m_donations);
+			encoder.WriteInt(m_donationsReceived);
+			encoder.WriteInt(m_remainingSecsForWar);
+			encoder.WriteBoolean(true);
+			encoder.WriteInt(0);
+		}
 
-            encoder.WriteBytes(this.m_compressedHomeJSON, this.m_compressedHomeJSON.Length);
-            encoder.WriteInt(this.m_donations);
-            encoder.WriteInt(this.m_donationsReceived);
-            encoder.WriteInt(this.m_remainingSecsForWar);
-            encoder.WriteBoolean(true);
-            encoder.WriteInt(0);
-        }
+		public void Decode(ByteStream stream)
+		{
+			m_clientAvatar = new LogicClientAvatar();
+			m_clientAvatar.Decode(stream);
 
-        public void Decode(ByteStream stream)
-        {
-            this.m_clientAvatar = new LogicClientAvatar();
-            this.m_clientAvatar.Decode(stream);
+			m_compressedHomeJSON = stream.ReadBytes(stream.ReadBytesLength(), 900000);
+			m_donations = stream.ReadInt();
+			m_donationsReceived = stream.ReadInt();
+			m_remainingSecsForWar = stream.ReadInt();
 
-            this.m_compressedHomeJSON = stream.ReadBytes(stream.ReadBytesLength(), 900000);
-            this.m_donations = stream.ReadInt();
-            this.m_donationsReceived = stream.ReadInt();
-            this.m_remainingSecsForWar = stream.ReadInt();
+			stream.ReadBoolean();
+			stream.ReadInt();
+		}
 
-            stream.ReadBoolean();
-            stream.ReadInt();
-        }
+		public LogicClientAvatar GetLogicClientAvatar()
+			=> m_clientAvatar;
 
-        public LogicClientAvatar GetLogicClientAvatar()
-        {
-            return this.m_clientAvatar;
-        }
+		public void SetLogicClientAvatar(LogicClientAvatar avatar)
+		{
+			m_clientAvatar = avatar;
+		}
 
-        public void SetLogicClientAvatar(LogicClientAvatar avatar)
-        {
-            this.m_clientAvatar = avatar;
-        }
+		public byte[] GetCompressdHomeJSON()
+			=> m_compressedHomeJSON;
 
-        public byte[] GetCompressdHomeJSON()
-        {
-            return this.m_compressedHomeJSON;
-        }
+		public void SetCompressedHomeJSON(byte[] compressibleString)
+		{
+			m_compressedHomeJSON = compressibleString;
+		}
 
-        public void SetCompressedHomeJSON(byte[] compressibleString)
-        {
-            this.m_compressedHomeJSON = compressibleString;
-        }
+		public int GetDonations()
+			=> m_donations;
 
-        public int GetDonations()
-        {
-            return this.m_donations;
-        }
+		public void SetDonations(int value)
+		{
+			m_donations = value;
+		}
 
-        public void SetDonations(int value)
-        {
-            this.m_donations = value;
-        }
+		public int GetDonationsReceived()
+			=> m_donationsReceived;
 
-        public int GetDonationsReceived()
-        {
-            return this.m_donationsReceived;
-        }
+		public void SetDonationsReceived(int value)
+		{
+			m_donationsReceived = value;
+		}
 
-        public void SetDonationsReceived(int value)
-        {
-            this.m_donationsReceived = value;
-        }
+		public int GetRemainingSecondsForWar()
+			=> m_remainingSecsForWar;
 
-        public int GetRemainingSecondsForWar()
-        {
-            return this.m_remainingSecsForWar;
-        }
-
-        public void SetRemainingSecondsForWar(int value)
-        {
-            this.m_remainingSecsForWar = value;
-        }
-    }
+		public void SetRemainingSecondsForWar(int value)
+		{
+			m_remainingSecsForWar = value;
+		}
+	}
 }

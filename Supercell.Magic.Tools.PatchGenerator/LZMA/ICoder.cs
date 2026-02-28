@@ -1,36 +1,36 @@
 // ICoder.h
 
+using System;
+using System.IO;
+
 namespace SevenZip
 {
-    using System;
-    using System.IO;
+	internal class DataErrorException : ApplicationException
+	{
+		public DataErrorException() : base("Data Error")
+		{
+		}
+	}
 
-    internal class DataErrorException : ApplicationException
-    {
-        public DataErrorException() : base("Data Error")
-        {
-        }
-    }
+	internal class InvalidParamException : ApplicationException
+	{
+		public InvalidParamException() : base("Invalid Parameter")
+		{
+		}
+	}
 
-    internal class InvalidParamException : ApplicationException
-    {
-        public InvalidParamException() : base("Invalid Parameter")
-        {
-        }
-    }
+	public interface ICodeProgress
+	{
+		void SetProgress(long inSize, long outSize);
+	}
 
-    public interface ICodeProgress
-    {
-        void SetProgress(long inSize, long outSize);
-    }
+	public interface ICoder
+	{
+		void Code(Stream inStream, Stream outStream,
+				  long inSize, long outSize, ICodeProgress progress);
+	}
 
-    public interface ICoder
-    {
-        void Code(Stream inStream, Stream outStream,
-                  long inSize, long outSize, ICodeProgress progress);
-    }
-
-    /*
+	/*
     public interface ICoder2
     {
          void Code(ISequentialInStream []inStreams,
@@ -41,52 +41,52 @@ namespace SevenZip
     };
   */
 
-    public enum CoderPropID
-    {
-        DefaultProp = 0,
+	public enum CoderPropID
+	{
+		DefaultProp = 0,
 
-        DictionarySize,
+		DictionarySize,
 
-        UsedMemorySize,
+		UsedMemorySize,
 
-        Order,
+		Order,
 
-        BlockSize,
+		BlockSize,
 
-        PosStateBits,
+		PosStateBits,
 
-        LitContextBits,
+		LitContextBits,
 
-        LitPosBits,
+		LitPosBits,
 
-        NumFastBytes,
+		NumFastBytes,
 
-        MatchFinder,
+		MatchFinder,
 
-        MatchFinderCycles,
+		MatchFinderCycles,
 
-        NumPasses,
+		NumPasses,
 
-        Algorithm,
+		Algorithm,
 
-        NumThreads,
+		NumThreads,
 
-        EndMarker
-    }
+		EndMarker
+	}
 
 
-    public interface ISetCoderProperties
-    {
-        void SetCoderProperties(CoderPropID[] propIDs, object[] properties);
-    }
+	public interface ISetCoderProperties
+	{
+		void SetCoderProperties(CoderPropID[] propIDs, object[] properties);
+	}
 
-    public interface IWriteCoderProperties
-    {
-        void WriteCoderProperties(Stream outStream);
-    }
+	public interface IWriteCoderProperties
+	{
+		void WriteCoderProperties(Stream outStream);
+	}
 
-    public interface ISetDecoderProperties
-    {
-        void SetDecoderProperties(byte[] properties);
-    }
+	public interface ISetDecoderProperties
+	{
+		void SetDecoderProperties(byte[] properties);
+	}
 }

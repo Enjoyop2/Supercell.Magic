@@ -1,82 +1,74 @@
+using Supercell.Magic.Titan.Math;
+using Supercell.Magic.Titan.Message;
+
 namespace Supercell.Magic.Logic.Message.Avatar
 {
-    using Supercell.Magic.Titan.Math;
-    using Supercell.Magic.Titan.Message;
+	public class AvatarProfileFailedMessage : PiranhaMessage
+	{
+		public const int MESSAGE_TYPE = 24339;
 
-    public class AvatarProfileFailedMessage : PiranhaMessage
-    {
-        public const int MESSAGE_TYPE = 24339;
-        
-        private ErrorType m_errorType;
-        private LogicLong m_avatarId;
+		private ErrorType m_errorType;
+		private LogicLong m_avatarId;
 
-        public AvatarProfileFailedMessage() : this(0)
-        {
-            // AvatarProfileFailedMessage.
-        }
+		public AvatarProfileFailedMessage() : this(0)
+		{
+			// AvatarProfileFailedMessage.
+		}
 
-        public AvatarProfileFailedMessage(short messageVersion) : base(messageVersion)
-        {
-            // AvatarProfileFailedMessage.
-        }
+		public AvatarProfileFailedMessage(short messageVersion) : base(messageVersion)
+		{
+			// AvatarProfileFailedMessage.
+		}
 
-        public override void Decode()
-        {
-            base.Decode();
+		public override void Decode()
+		{
+			base.Decode();
 
-            this.m_errorType = (ErrorType) this.m_stream.ReadInt();
-            this.m_avatarId = this.m_stream.ReadLong();
-        }
+			m_errorType = (ErrorType)m_stream.ReadInt();
+			m_avatarId = m_stream.ReadLong();
+		}
 
-        public override void Encode()
-        {
-            base.Encode();
+		public override void Encode()
+		{
+			base.Encode();
 
-            this.m_stream.WriteInt((int) this.m_errorType);
-            this.m_stream.WriteLong(this.m_avatarId);
-        }
+			m_stream.WriteInt((int)m_errorType);
+			m_stream.WriteLong(m_avatarId);
+		}
 
-        public override short GetMessageType()
-        {
-            return AvatarProfileFailedMessage.MESSAGE_TYPE;
-        }
+		public override short GetMessageType()
+			=> AvatarProfileFailedMessage.MESSAGE_TYPE;
 
-        public override int GetServiceNodeType()
-        {
-            return 9;
-        }
+		public override int GetServiceNodeType()
+			=> 9;
 
-        public override void Destruct()
-        {
-            base.Destruct();
-            this.m_avatarId = null;
-        }
+		public override void Destruct()
+		{
+			base.Destruct();
+			m_avatarId = null;
+		}
 
-        public ErrorType GetErrorType()
-        {
-            return this.m_errorType;
-        }
+		public ErrorType GetErrorType()
+			=> m_errorType;
 
-        public void SetErrorType(ErrorType value)
-        {
-            this.m_errorType = value;
-        }
+		public void SetErrorType(ErrorType value)
+		{
+			m_errorType = value;
+		}
 
-        public LogicLong GetAvatarId()
-        {
-            return this.m_avatarId;
-        }
+		public LogicLong GetAvatarId()
+			=> m_avatarId;
 
-        public void SetAvatarId(LogicLong value)
-        {
-            this.m_avatarId = value;
-        }
+		public void SetAvatarId(LogicLong value)
+		{
+			m_avatarId = value;
+		}
 
-        public enum ErrorType
-        {
-            GENERIC,
-            INTERNAL_ERROR,
-            NOT_FOUND
-        }
-    }
+		public enum ErrorType
+		{
+			GENERIC,
+			INTERNAL_ERROR,
+			NOT_FOUND
+		}
+	}
 }

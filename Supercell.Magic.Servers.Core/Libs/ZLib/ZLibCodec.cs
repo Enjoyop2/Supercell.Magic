@@ -64,318 +64,312 @@
 // -----------------------------------------------------------------------
 
 
+using System;
+
 using Interop = System.Runtime.InteropServices;
 
 namespace Supercell.Magic.Servers.Core.Libs.ZLib
 {
-    using System;
-
-    [Interop.GuidAttribute("ebc25cf6-9120-4283-b972-0e5520d0000D"), Interop.ComVisibleAttribute(true), Interop.ClassInterfaceAttribute(Interop.ClassInterfaceType.AutoDispatch)]
+	[Interop.GuidAttribute("ebc25cf6-9120-4283-b972-0e5520d0000D"), Interop.ComVisibleAttribute(true), Interop.ClassInterfaceAttribute(Interop.ClassInterfaceType.AutoDispatch)]
 #if !NETCF
 #endif
-    public sealed class ZLibCodec
-    {
-        public byte[] InputBuffer;
-
-        public int NextIn;
-
-        public int AvailableBytesIn;
-
-        public long TotalBytesIn;
-
-        public byte[] OutputBuffer;
-
-        public int NextOut;
-
-        public int AvailableBytesOut;
-
-        public long TotalBytesOut;
-
-        public string Message;
-
-        internal DeflateManager dstate;
-        internal InflateManager istate;
-
-        internal uint m_Adler32;
-
-        public CompressionLevel CompressLevel = CompressionLevel.Default;
-
-        public int WindowBits = ZLibConstants.WindowBitsDefault;
-
-        public CompressionStrategy Strategy = CompressionStrategy.Default;
-
-
-        public int Adler32
-        {
-            get
-            {
-                return (int) this.m_Adler32;
-            }
-        }
-
-
-        public ZLibCodec()
-        {
-        }
-
-        public ZLibCodec(CompressionMode mode)
-        {
-            if (mode == CompressionMode.Compress)
-            {
-                int rc = this.InitializeDeflate();
-                if (rc != ZLibConstants.Z_OK)
-                {
-                    throw new ZLibException("Cannot initialize for deflate.");
-                }
-            }
-            else if (mode == CompressionMode.Decompress)
-            {
-                int rc = this.InitializeInflate();
-                if (rc != ZLibConstants.Z_OK)
-                {
-                    throw new ZLibException("Cannot initialize for inflate.");
-                }
-            }
-            else
-            {
-                throw new ZLibException("Invalid ZlibStreamFlavor.");
-            }
-        }
-
-        public int InitializeInflate()
-        {
-            return this.InitializeInflate(this.WindowBits);
-        }
-
-        public int InitializeInflate(bool expectRfc1950Header)
-        {
-            return this.InitializeInflate(this.WindowBits, expectRfc1950Header);
-        }
-
-        public int InitializeInflate(int windowBits)
-        {
-            this.WindowBits = windowBits;
-            return this.InitializeInflate(windowBits, true);
-        }
-
-        public int InitializeInflate(int windowBits, bool expectRfc1950Header)
-        {
-            this.WindowBits = windowBits;
-            if (this.dstate != null)
-            {
-                throw new ZLibException("You may not call InitializeInflate() after calling InitializeDeflate().");
-            }
-
-            this.istate = new InflateManager(expectRfc1950Header);
-            return this.istate.Initialize(this, windowBits);
-        }
-
-        public int Inflate(FlushType flush)
-        {
-            if (this.istate == null)
-            {
-                throw new ZLibException("No Inflate State!");
-            }
-
-            return this.istate.Inflate(flush);
-        }
-
-
-        public int EndInflate()
-        {
-            if (this.istate == null)
-            {
-                throw new ZLibException("No Inflate State!");
-            }
-
-            int ret = this.istate.End();
-            this.istate = null;
-            return ret;
-        }
-
-        public int SyncInflate()
-        {
-            if (this.istate == null)
-            {
-                throw new ZLibException("No Inflate State!");
-            }
-
-            return this.istate.Sync();
-        }
-
-        public int InitializeDeflate()
-        {
-            return this.m_InternalInitializeDeflate(true);
-        }
-
-        public int InitializeDeflate(CompressionLevel level)
-        {
-            this.CompressLevel = level;
-            return this.m_InternalInitializeDeflate(true);
-        }
-
-
-        public int InitializeDeflate(CompressionLevel level, bool wantRfc1950Header)
-        {
-            this.CompressLevel = level;
-            return this.m_InternalInitializeDeflate(wantRfc1950Header);
-        }
-
-
-        public int InitializeDeflate(CompressionLevel level, int bits)
-        {
-            this.CompressLevel = level;
-            this.WindowBits = bits;
-            return this.m_InternalInitializeDeflate(true);
-        }
-
-        public int InitializeDeflate(CompressionLevel level, int bits, bool wantRfc1950Header)
-        {
-            this.CompressLevel = level;
-            this.WindowBits = bits;
-            return this.m_InternalInitializeDeflate(wantRfc1950Header);
-        }
-
-        private int m_InternalInitializeDeflate(bool wantRfc1950Header)
-        {
-            if (this.istate != null)
-            {
-                throw new ZLibException("You may not call InitializeDeflate() after calling InitializeInflate().");
-            }
-
-            this.dstate = new DeflateManager();
-            this.dstate.WantRfc1950HeaderBytes = wantRfc1950Header;
-
-            return this.dstate.Initialize(this, this.CompressLevel, this.WindowBits, this.Strategy);
-        }
-
-        public int Deflate(FlushType flush)
-        {
-            if (this.dstate == null)
-            {
-                throw new ZLibException("No Deflate State!");
-            }
-
-            return this.dstate.Deflate(flush);
-        }
-
-        public int EndDeflate()
-        {
-            if (this.dstate == null)
-            {
-                throw new ZLibException("No Deflate State!");
-            }
-
-            // TODO: dinoch Tue, 03 Nov 2009  15:39 (test this)
-            //int ret = dstate.End();
-            this.dstate = null;
-            return ZLibConstants.Z_OK; //ret;
-        }
-
-        public void ResetDeflate()
-        {
-            if (this.dstate == null)
-            {
-                throw new ZLibException("No Deflate State!");
-            }
-
-            this.dstate.Reset();
-        }
-
-
-        public int SetDeflateParams(CompressionLevel level, CompressionStrategy strategy)
-        {
-            if (this.dstate == null)
-            {
-                throw new ZLibException("No Deflate State!");
-            }
-
-            return this.dstate.SetParams(level, strategy);
-        }
-
-
-        public int SetDictionary(byte[] dictionary)
-        {
-            if (this.istate != null)
-            {
-                return this.istate.SetDictionary(dictionary);
-            }
-
-            if (this.dstate != null)
-            {
-                return this.dstate.SetDictionary(dictionary);
-            }
-
-            throw new ZLibException("No Inflate or Deflate state!");
-        }
-
-        // Flush as much pending output as possible. All deflate() output goes
-        // through this function so some applications may wish to modify it
-        // to avoid allocating a large strm->next_out buffer and copying into it.
-        // (See also read_buf()).
-        internal void flush_pending()
-        {
-            int len = this.dstate.pendingCount;
-
-            if (len > this.AvailableBytesOut)
-            {
-                len = this.AvailableBytesOut;
-            }
-
-            if (len == 0)
-            {
-                return;
-            }
-
-            if (this.dstate.pending.Length <= this.dstate.nextPending || this.OutputBuffer.Length <= this.NextOut || this.dstate.pending.Length < this.dstate.nextPending + len ||
-                this.OutputBuffer.Length < this.NextOut + len)
-            {
-                throw new ZLibException(string.Format("Invalid State. (pending.Length={0}, pendingCount={1})", this.dstate.pending.Length, this.dstate.pendingCount));
-            }
-
-            Array.Copy(this.dstate.pending, this.dstate.nextPending, this.OutputBuffer, this.NextOut, len);
-
-            this.NextOut += len;
-            this.dstate.nextPending += len;
-            this.TotalBytesOut += len;
-            this.AvailableBytesOut -= len;
-            this.dstate.pendingCount -= len;
-            if (this.dstate.pendingCount == 0)
-            {
-                this.dstate.nextPending = 0;
-            }
-        }
-
-        // Read a new buffer from the current input stream, update the adler32
-        // and total number of bytes read.  All deflate() input goes through
-        // this function so some applications may wish to modify it to avoid
-        // allocating a large strm->next_in buffer and copying from it.
-        // (See also flush_pending()).
-        internal int read_buf(byte[] buf, int start, int size)
-        {
-            int len = this.AvailableBytesIn;
-
-            if (len > size)
-            {
-                len = size;
-            }
-
-            if (len == 0)
-            {
-                return 0;
-            }
-
-            this.AvailableBytesIn -= len;
-
-            if (this.dstate.WantRfc1950HeaderBytes)
-            {
-                this.m_Adler32 = Adler.Adler32(this.m_Adler32, this.InputBuffer, this.NextIn, len);
-            }
-
-            Array.Copy(this.InputBuffer, this.NextIn, buf, start, len);
-            this.NextIn += len;
-            this.TotalBytesIn += len;
-            return len;
-        }
-    }
+	public sealed class ZLibCodec
+	{
+		public byte[] InputBuffer;
+
+		public int NextIn;
+
+		public int AvailableBytesIn;
+
+		public long TotalBytesIn;
+
+		public byte[] OutputBuffer;
+
+		public int NextOut;
+
+		public int AvailableBytesOut;
+
+		public long TotalBytesOut;
+
+		public string Message;
+
+		internal DeflateManager dstate;
+		internal InflateManager istate;
+
+		internal uint m_Adler32;
+
+		public CompressionLevel CompressLevel = CompressionLevel.Default;
+
+		public int WindowBits = ZLibConstants.WindowBitsDefault;
+
+		public CompressionStrategy Strategy = CompressionStrategy.Default;
+
+
+		public int Adler32
+		{
+			get
+			{
+				return (int)m_Adler32;
+			}
+		}
+
+
+		public ZLibCodec()
+		{
+		}
+
+		public ZLibCodec(CompressionMode mode)
+		{
+			if (mode == CompressionMode.Compress)
+			{
+				int rc = InitializeDeflate();
+				if (rc != ZLibConstants.Z_OK)
+				{
+					throw new ZLibException("Cannot initialize for deflate.");
+				}
+			}
+			else if (mode == CompressionMode.Decompress)
+			{
+				int rc = InitializeInflate();
+				if (rc != ZLibConstants.Z_OK)
+				{
+					throw new ZLibException("Cannot initialize for inflate.");
+				}
+			}
+			else
+			{
+				throw new ZLibException("Invalid ZlibStreamFlavor.");
+			}
+		}
+
+		public int InitializeInflate()
+			=> InitializeInflate(WindowBits);
+
+		public int InitializeInflate(bool expectRfc1950Header)
+			=> InitializeInflate(WindowBits, expectRfc1950Header);
+
+		public int InitializeInflate(int windowBits)
+		{
+			WindowBits = windowBits;
+			return InitializeInflate(windowBits, true);
+		}
+
+		public int InitializeInflate(int windowBits, bool expectRfc1950Header)
+		{
+			WindowBits = windowBits;
+			if (dstate != null)
+			{
+				throw new ZLibException("You may not call InitializeInflate() after calling InitializeDeflate().");
+			}
+
+			istate = new InflateManager(expectRfc1950Header);
+			return istate.Initialize(this, windowBits);
+		}
+
+		public int Inflate(FlushType flush)
+		{
+			if (istate == null)
+			{
+				throw new ZLibException("No Inflate State!");
+			}
+
+			return istate.Inflate(flush);
+		}
+
+
+		public int EndInflate()
+		{
+			if (istate == null)
+			{
+				throw new ZLibException("No Inflate State!");
+			}
+
+			int ret = istate.End();
+			istate = null;
+			return ret;
+		}
+
+		public int SyncInflate()
+		{
+			if (istate == null)
+			{
+				throw new ZLibException("No Inflate State!");
+			}
+
+			return istate.Sync();
+		}
+
+		public int InitializeDeflate()
+			=> m_InternalInitializeDeflate(true);
+
+		public int InitializeDeflate(CompressionLevel level)
+		{
+			CompressLevel = level;
+			return m_InternalInitializeDeflate(true);
+		}
+
+
+		public int InitializeDeflate(CompressionLevel level, bool wantRfc1950Header)
+		{
+			CompressLevel = level;
+			return m_InternalInitializeDeflate(wantRfc1950Header);
+		}
+
+
+		public int InitializeDeflate(CompressionLevel level, int bits)
+		{
+			CompressLevel = level;
+			WindowBits = bits;
+			return m_InternalInitializeDeflate(true);
+		}
+
+		public int InitializeDeflate(CompressionLevel level, int bits, bool wantRfc1950Header)
+		{
+			CompressLevel = level;
+			WindowBits = bits;
+			return m_InternalInitializeDeflate(wantRfc1950Header);
+		}
+
+		private int m_InternalInitializeDeflate(bool wantRfc1950Header)
+		{
+			if (istate != null)
+			{
+				throw new ZLibException("You may not call InitializeDeflate() after calling InitializeInflate().");
+			}
+
+			dstate = new DeflateManager();
+			dstate.WantRfc1950HeaderBytes = wantRfc1950Header;
+
+			return dstate.Initialize(this, CompressLevel, WindowBits, Strategy);
+		}
+
+		public int Deflate(FlushType flush)
+		{
+			if (dstate == null)
+			{
+				throw new ZLibException("No Deflate State!");
+			}
+
+			return dstate.Deflate(flush);
+		}
+
+		public int EndDeflate()
+		{
+			if (dstate == null)
+			{
+				throw new ZLibException("No Deflate State!");
+			}
+
+			// TODO: dinoch Tue, 03 Nov 2009  15:39 (test this)
+			//int ret = dstate.End();
+			dstate = null;
+			return ZLibConstants.Z_OK; //ret;
+		}
+
+		public void ResetDeflate()
+		{
+			if (dstate == null)
+			{
+				throw new ZLibException("No Deflate State!");
+			}
+
+			dstate.Reset();
+		}
+
+
+		public int SetDeflateParams(CompressionLevel level, CompressionStrategy strategy)
+		{
+			if (dstate == null)
+			{
+				throw new ZLibException("No Deflate State!");
+			}
+
+			return dstate.SetParams(level, strategy);
+		}
+
+
+		public int SetDictionary(byte[] dictionary)
+		{
+			if (istate != null)
+			{
+				return istate.SetDictionary(dictionary);
+			}
+
+			if (dstate != null)
+			{
+				return dstate.SetDictionary(dictionary);
+			}
+
+			throw new ZLibException("No Inflate or Deflate state!");
+		}
+
+		// Flush as much pending output as possible. All deflate() output goes
+		// through this function so some applications may wish to modify it
+		// to avoid allocating a large strm->next_out buffer and copying into it.
+		// (See also read_buf()).
+		internal void flush_pending()
+		{
+			int len = dstate.pendingCount;
+
+			if (len > AvailableBytesOut)
+			{
+				len = AvailableBytesOut;
+			}
+
+			if (len == 0)
+			{
+				return;
+			}
+
+			if (dstate.pending.Length <= dstate.nextPending || OutputBuffer.Length <= NextOut || dstate.pending.Length < dstate.nextPending + len ||
+				OutputBuffer.Length < NextOut + len)
+			{
+				throw new ZLibException(string.Format("Invalid State. (pending.Length={0}, pendingCount={1})", dstate.pending.Length, dstate.pendingCount));
+			}
+
+			Array.Copy(dstate.pending, dstate.nextPending, OutputBuffer, NextOut, len);
+
+			NextOut += len;
+			dstate.nextPending += len;
+			TotalBytesOut += len;
+			AvailableBytesOut -= len;
+			dstate.pendingCount -= len;
+			if (dstate.pendingCount == 0)
+			{
+				dstate.nextPending = 0;
+			}
+		}
+
+		// Read a new buffer from the current input stream, update the adler32
+		// and total number of bytes read.  All deflate() input goes through
+		// this function so some applications may wish to modify it to avoid
+		// allocating a large strm->next_in buffer and copying from it.
+		// (See also flush_pending()).
+		internal int read_buf(byte[] buf, int start, int size)
+		{
+			int len = AvailableBytesIn;
+
+			if (len > size)
+			{
+				len = size;
+			}
+
+			if (len == 0)
+			{
+				return 0;
+			}
+
+			AvailableBytesIn -= len;
+
+			if (dstate.WantRfc1950HeaderBytes)
+			{
+				m_Adler32 = Adler.Adler32(m_Adler32, InputBuffer, NextIn, len);
+			}
+
+			Array.Copy(InputBuffer, NextIn, buf, start, len);
+			NextIn += len;
+			TotalBytesIn += len;
+			return len;
+		}
+	}
 }

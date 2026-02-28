@@ -1,58 +1,52 @@
+using Supercell.Magic.Titan.Message;
+
 namespace Supercell.Magic.Logic.Message.Google
 {
-    using Supercell.Magic.Titan.Message;
+	public class GoogleServiceAccountBoundMessage : PiranhaMessage
+	{
+		public const int MESSAGE_TYPE = 20261;
 
-    public class GoogleServiceAccountBoundMessage : PiranhaMessage
-    {
-        public const int MESSAGE_TYPE = 20261;
+		private int m_resultCode;
 
-        private int m_resultCode;
+		public GoogleServiceAccountBoundMessage() : this(0)
+		{
+			// GoogleServiceAccountBoundMessage.
+		}
 
-        public GoogleServiceAccountBoundMessage() : this(0)
-        {
-            // GoogleServiceAccountBoundMessage.
-        }
+		public GoogleServiceAccountBoundMessage(short messageVersion) : base(messageVersion)
+		{
+			// GoogleServiceAccountBoundMessage.
+		}
 
-        public GoogleServiceAccountBoundMessage(short messageVersion) : base(messageVersion)
-        {
-            // GoogleServiceAccountBoundMessage.
-        }
+		public override void Decode()
+		{
+			base.Decode();
+			m_resultCode = m_stream.ReadInt();
+		}
 
-        public override void Decode()
-        {
-            base.Decode();
-            this.m_resultCode = this.m_stream.ReadInt();
-        }
+		public override void Encode()
+		{
+			base.Encode();
+			m_stream.WriteInt(m_resultCode);
+		}
 
-        public override void Encode()
-        {
-            base.Encode();
-            this.m_stream.WriteInt(this.m_resultCode);
-        }
+		public override short GetMessageType()
+			=> 24261;
 
-        public override short GetMessageType()
-        {
-            return 24261;
-        }
+		public override int GetServiceNodeType()
+			=> 1;
 
-        public override int GetServiceNodeType()
-        {
-            return 1;
-        }
+		public override void Destruct()
+		{
+			base.Destruct();
+		}
 
-        public override void Destruct()
-        {
-            base.Destruct();
-        }
+		public int GetResultCode()
+			=> m_resultCode;
 
-        public int GetResultCode()
-        {
-            return this.m_resultCode;
-        }
-
-        public void SetResultCode(int value)
-        {
-            this.m_resultCode = value;
-        }
-    }
+		public void SetResultCode(int value)
+		{
+			m_resultCode = value;
+		}
+	}
 }

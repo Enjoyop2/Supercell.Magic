@@ -1,73 +1,61 @@
+using Supercell.Magic.Titan.CSV;
+
 namespace Supercell.Magic.Logic.Data
 {
-    using Supercell.Magic.Titan.CSV;
+	public class LogicGlobalData : LogicData
+	{
+		private int m_numberValue;
+		private bool m_booleanValue;
+		private string m_textValue;
 
-    public class LogicGlobalData : LogicData
-    {
-        private int m_numberValue;
-        private bool m_booleanValue;
-        private string m_textValue;
+		private int[] m_numberArray;
+		private int[] m_altNumberArray;
 
-        private int[] m_numberArray;
-        private int[] m_altNumberArray;
+		private string[] m_stringArray;
 
-        private string[] m_stringArray;
+		public LogicGlobalData(CSVRow row, LogicDataTable table) : base(row, table)
+		{
+			// LogicGlobalData.
+		}
 
-        public LogicGlobalData(CSVRow row, LogicDataTable table) : base(row, table)
-        {
-            // LogicGlobalData.
-        }
+		public override void CreateReferences()
+		{
+			base.CreateReferences();
 
-        public override void CreateReferences()
-        {
-            base.CreateReferences();
+			int size = m_row.GetBiggestArraySize();
 
-            int size = this.m_row.GetBiggestArraySize();
+			m_numberArray = new int[size];
+			m_altNumberArray = new int[size];
+			m_stringArray = new string[size];
 
-            this.m_numberArray = new int[size];
-            this.m_altNumberArray = new int[size];
-            this.m_stringArray = new string[size];
+			m_numberValue = GetIntegerValue("NumberValue", 0);
+			m_booleanValue = GetBooleanValue("BooleanValue", 0);
+			m_textValue = GetValue("TextValue", 0);
 
-            this.m_numberValue = this.GetIntegerValue("NumberValue", 0);
-            this.m_booleanValue = this.GetBooleanValue("BooleanValue", 0);
-            this.m_textValue = this.GetValue("TextValue", 0);
+			for (int i = 0; i < size; i++)
+			{
+				m_numberArray[i] = GetIntegerValue("NumberArray", i);
+				m_altNumberArray[i] = GetIntegerValue("AltNumberArray", i);
+				m_stringArray[i] = GetValue("StringArray", i);
+			}
+		}
 
-            for (int i = 0; i < size; i++)
-            {
-                this.m_numberArray[i] = this.GetIntegerValue("NumberArray", i);
-                this.m_altNumberArray[i] = this.GetIntegerValue("AltNumberArray", i);
-                this.m_stringArray[i] = this.GetValue("StringArray", i);
-            }
-        }
+		public int GetNumberValue()
+			=> m_numberValue;
 
-        public int GetNumberValue()
-        {
-            return this.m_numberValue;
-        }
+		public bool GetBooleanValue()
+			=> m_booleanValue;
 
-        public bool GetBooleanValue()
-        {
-            return this.m_booleanValue;
-        }
+		public string GetTextValue()
+			=> m_textValue;
 
-        public string GetTextValue()
-        {
-            return this.m_textValue;
-        }
+		public int GetNumberArraySize()
+			=> m_numberArray.Length;
 
-        public int GetNumberArraySize()
-        {
-            return this.m_numberArray.Length;
-        }
+		public int GetNumberArray(int index)
+			=> m_numberArray[index];
 
-        public int GetNumberArray(int index)
-        {
-            return this.m_numberArray[index];
-        }
-
-        public int GetAltNumberArray(int index)
-        {
-            return this.m_altNumberArray[index];
-        }
-    }
+		public int GetAltNumberArray(int index)
+			=> m_altNumberArray[index];
+	}
 }

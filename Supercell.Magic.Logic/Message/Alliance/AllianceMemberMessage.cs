@@ -1,61 +1,57 @@
-﻿namespace Supercell.Magic.Logic.Message.Alliance
+using Supercell.Magic.Titan.Message;
+
+namespace Supercell.Magic.Logic.Message.Alliance
 {
-    using Supercell.Magic.Titan.Message;
+	public class AllianceMemberMessage : PiranhaMessage
+	{
+		private AllianceMemberEntry m_allianceMemberEntry;
 
-    public class AllianceMemberMessage : PiranhaMessage
-    {
-        private AllianceMemberEntry m_allianceMemberEntry;
+		public AllianceMemberMessage() : this(0)
+		{
+			// AllianceMemberMessage.
+		}
 
-        public AllianceMemberMessage() : this(0)
-        {
-            // AllianceMemberMessage.
-        }
+		public AllianceMemberMessage(short messageVersion) : base(messageVersion)
+		{
+			// AllianceMemberMessage.
+		}
 
-        public AllianceMemberMessage(short messageVersion) : base(messageVersion)
-        {
-            // AllianceMemberMessage.
-        }
+		public override void Decode()
+		{
+			base.Decode();
 
-        public override void Decode()
-        {
-            base.Decode();
+			m_allianceMemberEntry = new AllianceMemberEntry();
+			m_allianceMemberEntry.Decode(m_stream);
+		}
 
-            this.m_allianceMemberEntry = new AllianceMemberEntry();
-            this.m_allianceMemberEntry.Decode(this.m_stream);
-        }
+		public override void Encode()
+		{
+			base.Encode();
+			m_allianceMemberEntry.Encode(m_stream);
+		}
 
-        public override void Encode()
-        {
-            base.Encode();
-            this.m_allianceMemberEntry.Encode(this.m_stream);
-        }
+		public override short GetMessageType()
+			=> 24308;
 
-        public override short GetMessageType()
-        {
-            return 24308;
-        }
+		public override int GetServiceNodeType()
+			=> 11;
 
-        public override int GetServiceNodeType()
-        {
-            return 11;
-        }
+		public override void Destruct()
+		{
+			base.Destruct();
+			m_allianceMemberEntry = null;
+		}
 
-        public override void Destruct()
-        {
-            base.Destruct();
-            this.m_allianceMemberEntry = null;
-        }
+		public AllianceMemberEntry RemoveAllianceMemberEntry()
+		{
+			AllianceMemberEntry tmp = m_allianceMemberEntry;
+			m_allianceMemberEntry = null;
+			return tmp;
+		}
 
-        public AllianceMemberEntry RemoveAllianceMemberEntry()
-        {
-            AllianceMemberEntry tmp = this.m_allianceMemberEntry;
-            this.m_allianceMemberEntry = null;
-            return tmp;
-        }
-
-        public void SetAllianceMemberEntry(AllianceMemberEntry value)
-        {
-            this.m_allianceMemberEntry = value;
-        }
-    }
+		public void SetAllianceMemberEntry(AllianceMemberEntry value)
+		{
+			m_allianceMemberEntry = value;
+		}
+	}
 }

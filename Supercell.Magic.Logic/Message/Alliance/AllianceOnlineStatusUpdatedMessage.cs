@@ -1,73 +1,65 @@
+using Supercell.Magic.Titan.Message;
+
 namespace Supercell.Magic.Logic.Message.Alliance
 {
-    using Supercell.Magic.Titan.Message;
+	public class AllianceOnlineStatusUpdatedMessage : PiranhaMessage
+	{
+		public const int MESSAGE_TYPE = 20207;
 
-    public class AllianceOnlineStatusUpdatedMessage : PiranhaMessage
-    {
-        public const int MESSAGE_TYPE = 20207;
+		private int m_memberCount;
+		private int m_onlineMemberCount;
 
-        private int m_memberCount;
-        private int m_onlineMemberCount;
+		public AllianceOnlineStatusUpdatedMessage() : this(0)
+		{
+			// AllianceOnlineStatusUpdatedMessage.
+		}
 
-        public AllianceOnlineStatusUpdatedMessage() : this(0)
-        {
-            // AllianceOnlineStatusUpdatedMessage.
-        }
+		public AllianceOnlineStatusUpdatedMessage(short messageVersion) : base(messageVersion)
+		{
+			// AllianceOnlineStatusUpdatedMessage.
+		}
 
-        public AllianceOnlineStatusUpdatedMessage(short messageVersion) : base(messageVersion)
-        {
-            // AllianceOnlineStatusUpdatedMessage.
-        }
+		public override void Decode()
+		{
+			base.Decode();
 
-        public override void Decode()
-        {
-            base.Decode();
+			m_onlineMemberCount = m_stream.ReadVInt();
+			m_memberCount = m_stream.ReadVInt();
+		}
 
-            this.m_onlineMemberCount = this.m_stream.ReadVInt();
-            this.m_memberCount = this.m_stream.ReadVInt();
-        }
+		public override void Encode()
+		{
+			base.Encode();
 
-        public override void Encode()
-        {
-            base.Encode();
+			m_stream.WriteVInt(m_onlineMemberCount);
+			m_stream.WriteVInt(m_memberCount);
+		}
 
-            this.m_stream.WriteVInt(this.m_onlineMemberCount);
-            this.m_stream.WriteVInt(this.m_memberCount);
-        }
+		public override short GetMessageType()
+			=> AllianceOnlineStatusUpdatedMessage.MESSAGE_TYPE;
 
-        public override short GetMessageType()
-        {
-            return AllianceOnlineStatusUpdatedMessage.MESSAGE_TYPE;
-        }
+		public override int GetServiceNodeType()
+			=> 9;
 
-        public override int GetServiceNodeType()
-        {
-            return 9;
-        }
+		public override void Destruct()
+		{
+			base.Destruct();
+		}
 
-        public override void Destruct()
-        {
-            base.Destruct();
-        }
+		public int GetMembersOnline()
+			=> m_onlineMemberCount;
 
-        public int GetMembersOnline()
-        {
-            return this.m_onlineMemberCount;
-        }
+		public void SetMembersOnline(int value)
+		{
+			m_onlineMemberCount = value;
+		}
 
-        public void SetMembersOnline(int value)
-        {
-            this.m_onlineMemberCount = value;
-        }
+		public int GetMembersCount()
+			=> m_memberCount;
 
-        public int GetMembersCount()
-        {
-            return this.m_memberCount;
-        }
-
-        public void SetMembersCount(int value)
-        {
-            this.m_memberCount = value;
-        }
-    }
+		public void SetMembersCount(int value)
+		{
+			m_memberCount = value;
+		}
+	}
 }

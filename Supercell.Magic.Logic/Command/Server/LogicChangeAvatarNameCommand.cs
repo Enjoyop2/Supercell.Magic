@@ -1,67 +1,65 @@
+using Supercell.Magic.Logic.Avatar;
+using Supercell.Magic.Logic.Level;
+using Supercell.Magic.Titan.DataStream;
+
 namespace Supercell.Magic.Logic.Command.Server
 {
-    using Supercell.Magic.Logic.Avatar;
-    using Supercell.Magic.Logic.Level;
-    using Supercell.Magic.Titan.DataStream;
+	public class LogicChangeAvatarNameCommand : LogicServerCommand
+	{
+		private string m_avatarName;
+		private int m_nameChangeState;
 
-    public class LogicChangeAvatarNameCommand : LogicServerCommand
-    {
-        private string m_avatarName;
-        private int m_nameChangeState;
+		public override void Destruct()
+		{
+			base.Destruct();
+			m_avatarName = null;
+		}
 
-        public override void Destruct()
-        {
-            base.Destruct();
-            this.m_avatarName = null;
-        }
+		public override void Decode(ByteStream stream)
+		{
+			m_avatarName = stream.ReadString(900000);
+			m_nameChangeState = stream.ReadInt();
 
-        public override void Decode(ByteStream stream)
-        {
-            this.m_avatarName = stream.ReadString(900000);
-            this.m_nameChangeState = stream.ReadInt();
+			base.Decode(stream);
+		}
 
-            base.Decode(stream);
-        }
+		public override void Encode(ChecksumEncoder encoder)
+		{
+			encoder.WriteString(m_avatarName);
+			encoder.WriteInt(m_nameChangeState);
 
-        public override void Encode(ChecksumEncoder encoder)
-        {
-            encoder.WriteString(this.m_avatarName);
-            encoder.WriteInt(this.m_nameChangeState);
+			base.Encode(encoder);
+		}
 
-            base.Encode(encoder);
-        }
+		public override int Execute(LogicLevel level)
+		{
+			LogicClientAvatar playerAvatar = level.GetPlayerAvatar();
 
-        public override int Execute(LogicLevel level)
-        {
-            LogicClientAvatar playerAvatar = level.GetPlayerAvatar();
+			if (playerAvatar != null)
+			{
+				playerAvatar.SetName(m_avatarName);
+				playerAvatar.SetNameSetByUser(true);
+				playerAvatar.SetNameChangeState(m_nameChangeState);
 
-            if (playerAvatar != null)
-            {
-                playerAvatar.SetName(this.m_avatarName);
-                playerAvatar.SetNameSetByUser(true);
-                playerAvatar.SetNameChangeState(this.m_nameChangeState);
+				level.GetGameListener().NameChanged(m_avatarName);
 
-                level.GetGameListener().NameChanged(this.m_avatarName);
+				return 0;
+			}
 
-                return 0;
-            }
+			return -1;
+		}
 
-            return -1;
-        }
+		public override LogicCommandType GetCommandType()
+			=> LogicCommandType.CHANGE_AVATAR_NAME;
 
-        public override LogicCommandType GetCommandType()
-        {
-            return LogicCommandType.CHANGE_AVATAR_NAME;
-        }
+		public void SetAvatarName(string avatarName)
+		{
+			m_avatarName = avatarName;
+		}
 
-        public void SetAvatarName(string avatarName)
-        {
-            this.m_avatarName = avatarName;
-        }
-
-        public void SetAvatarNameChangeState(int state)
-        {
-            this.m_nameChangeState = state;
-        }
-    }
+		public void SetAvatarNameChangeState(int state)
+		{
+			m_nameChangeState = state;
+		}
+	}
 }

@@ -1,126 +1,124 @@
-﻿namespace Supercell.Magic.Logic.GameObject
+using Supercell.Magic.Logic.GameObject.Component;
+using Supercell.Magic.Titan.Util;
+
+namespace Supercell.Magic.Logic.GameObject
 {
-    using Supercell.Magic.Logic.GameObject.Component;
-    using Supercell.Magic.Titan.Util;
+	public class LogicGameObjectFilter
+	{
+		private int m_team;
+		private bool m_enemyOnly;
+		private bool[] m_gameObjectTypes;
 
-    public class LogicGameObjectFilter
-    {
-        private int m_team;
-        private bool m_enemyOnly;
-        private bool[] m_gameObjectTypes;
+		private LogicArrayList<LogicGameObject> m_ignoreGameObjects;
 
-        private LogicArrayList<LogicGameObject> m_ignoreGameObjects;
+		public LogicGameObjectFilter()
+		{
+			m_team = -1;
+		}
 
-        public LogicGameObjectFilter()
-        {
-            this.m_team = -1;
-        }
+		public virtual void Destruct()
+		{
+			m_gameObjectTypes = null;
 
-        public virtual void Destruct()
-        {
-            this.m_gameObjectTypes = null;
+			if (m_ignoreGameObjects != null)
+			{
+				m_ignoreGameObjects.Destruct();
+				m_ignoreGameObjects = null;
+			}
+		}
 
-            if (this.m_ignoreGameObjects != null)
-            {
-                this.m_ignoreGameObjects.Destruct();
-                this.m_ignoreGameObjects = null;
-            }
-        }
+		public bool ContainsGameObjectType(int type)
+		{
+			if (m_gameObjectTypes != null)
+				return m_gameObjectTypes[type];
+			return true;
+		}
 
-        public bool ContainsGameObjectType(int type)
-        {
-            if (this.m_gameObjectTypes != null)
-                return this.m_gameObjectTypes[type];
-            return true;
-        }
-
-        public void AddGameObjectType(LogicGameObjectType type)
-        {
-            if (this.m_gameObjectTypes == null)
-                this.m_gameObjectTypes = new bool[LogicGameObject.GAMEOBJECT_TYPE_COUNT];
-            this.m_gameObjectTypes[(int) type] = true;
-        }
+		public void AddGameObjectType(LogicGameObjectType type)
+		{
+			if (m_gameObjectTypes == null)
+				m_gameObjectTypes = new bool[LogicGameObject.GAMEOBJECT_TYPE_COUNT];
+			m_gameObjectTypes[(int)type] = true;
+		}
 
 
-        public virtual bool TestGameObject(LogicGameObject gameObject)
-        {
-            if (this.m_gameObjectTypes != null && !this.m_gameObjectTypes[(int) gameObject.GetGameObjectType()])
-                return false;
-            if (this.m_ignoreGameObjects != null && this.m_ignoreGameObjects.IndexOf(gameObject) != -1)
-                return false;
+		public virtual bool TestGameObject(LogicGameObject gameObject)
+		{
+			if (m_gameObjectTypes != null && !m_gameObjectTypes[(int)gameObject.GetGameObjectType()])
+				return false;
+			if (m_ignoreGameObjects != null && m_ignoreGameObjects.IndexOf(gameObject) != -1)
+				return false;
 
-            if (this.m_team != -1)
-            {
-                LogicHitpointComponent hitpointComponent = gameObject.GetHitpointComponent();
+			if (m_team != -1)
+			{
+				LogicHitpointComponent hitpointComponent = gameObject.GetHitpointComponent();
 
-                if (hitpointComponent != null)
-                {
-                    if (hitpointComponent.GetHitpoints() > 0)
-                    {
-                        bool isEnemy = hitpointComponent.IsEnemyForTeam(this.m_team);
+				if (hitpointComponent != null)
+				{
+					if (hitpointComponent.GetHitpoints() > 0)
+					{
+						bool isEnemy = hitpointComponent.IsEnemyForTeam(m_team);
 
-                        if (isEnemy || !this.m_enemyOnly)
-                        {
-                            return this.m_enemyOnly || !isEnemy;
-                        }
-                    }
+						if (isEnemy || !m_enemyOnly)
+						{
+							return m_enemyOnly || !isEnemy;
+						}
+					}
 
-                    return false;
-                }
-            }
+					return false;
+				}
+			}
 
-            return true;
-        }
+			return true;
+		}
 
-        public virtual bool IsComponentFilter()
-        {
-            return false;
-        }
+		public virtual bool IsComponentFilter()
+			=> false;
 
-        public void PassEnemyOnly(LogicGameObject gameObject)
-        {
-            LogicHitpointComponent hitpointComponent = gameObject.GetHitpointComponent();
+		public void PassEnemyOnly(LogicGameObject gameObject)
+		{
+			LogicHitpointComponent hitpointComponent = gameObject.GetHitpointComponent();
 
-            if (hitpointComponent != null)
-            {
-                this.m_team = hitpointComponent.GetTeam();
-                this.m_enemyOnly = true;
-            }
-            else
-            {
-                this.m_team = -1;
-            }
-        }
+			if (hitpointComponent != null)
+			{
+				m_team = hitpointComponent.GetTeam();
+				m_enemyOnly = true;
+			}
+			else
+			{
+				m_team = -1;
+			}
+		}
 
-        public void PassFriendlyOnly(LogicGameObject gameObject)
-        {
-            LogicHitpointComponent hitpointComponent = gameObject.GetHitpointComponent();
+		public void PassFriendlyOnly(LogicGameObject gameObject)
+		{
+			LogicHitpointComponent hitpointComponent = gameObject.GetHitpointComponent();
 
-            if (hitpointComponent != null)
-            {
-                this.m_team = hitpointComponent.GetTeam();
-                this.m_enemyOnly = false;
-            }
-            else
-            {
-                this.m_team = -1;
-            }
-        }
+			if (hitpointComponent != null)
+			{
+				m_team = hitpointComponent.GetTeam();
+				m_enemyOnly = false;
+			}
+			else
+			{
+				m_team = -1;
+			}
+		}
 
-        public void RemoveAllIgnoreObjects()
-        {
-            if (this.m_ignoreGameObjects != null)
-            {
-                this.m_ignoreGameObjects.Destruct();
-                this.m_ignoreGameObjects = null;
-            }
-        }
+		public void RemoveAllIgnoreObjects()
+		{
+			if (m_ignoreGameObjects != null)
+			{
+				m_ignoreGameObjects.Destruct();
+				m_ignoreGameObjects = null;
+			}
+		}
 
-        public void AddIgnoreObject(LogicGameObject gameObject)
-        {
-            if (this.m_ignoreGameObjects == null)
-                this.m_ignoreGameObjects = new LogicArrayList<LogicGameObject>();
-            this.m_ignoreGameObjects.Add(gameObject);
-        }
-    }
+		public void AddIgnoreObject(LogicGameObject gameObject)
+		{
+			if (m_ignoreGameObjects == null)
+				m_ignoreGameObjects = new LogicArrayList<LogicGameObject>();
+			m_ignoreGameObjects.Add(gameObject);
+		}
+	}
 }

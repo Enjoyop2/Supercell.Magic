@@ -1,63 +1,57 @@
+using Supercell.Magic.Titan.Message;
+
 namespace Supercell.Magic.Logic.Message.Alliance.Stream
 {
-    using Supercell.Magic.Titan.Message;
+	public class AllianceStreamEntryMessage : PiranhaMessage
+	{
+		public const int MESSAGE_TYPE = 24312;
 
-    public class AllianceStreamEntryMessage : PiranhaMessage
-    {
-        public const int MESSAGE_TYPE = 24312;
+		private StreamEntry m_streamEntry;
 
-        private StreamEntry m_streamEntry;
+		public AllianceStreamEntryMessage() : this(0)
+		{
+			// AllianceStreamEntryMessage.
+		}
 
-        public AllianceStreamEntryMessage() : this(0)
-        {
-            // AllianceStreamEntryMessage.
-        }
+		public AllianceStreamEntryMessage(short messageVersion) : base(messageVersion)
+		{
+			// AllianceStreamEntryMessage.
+		}
 
-        public AllianceStreamEntryMessage(short messageVersion) : base(messageVersion)
-        {
-            // AllianceStreamEntryMessage.
-        }
+		public override void Decode()
+		{
+			base.Decode();
 
-        public override void Decode()
-        {
-            base.Decode();
+			m_streamEntry = StreamEntryFactory.CreateStreamEntryByType((StreamEntryType)m_stream.ReadInt());
+			m_streamEntry.Decode(m_stream);
+		}
 
-            this.m_streamEntry = StreamEntryFactory.CreateStreamEntryByType((StreamEntryType) this.m_stream.ReadInt());
-            this.m_streamEntry.Decode(this.m_stream);
-        }
+		public override void Encode()
+		{
+			base.Encode();
 
-        public override void Encode()
-        {
-            base.Encode();
+			m_stream.WriteInt((int)m_streamEntry.GetStreamEntryType());
+			m_streamEntry.Encode(m_stream);
+		}
 
-            this.m_stream.WriteInt((int) this.m_streamEntry.GetStreamEntryType());
-            this.m_streamEntry.Encode(this.m_stream);
-        }
+		public override short GetMessageType()
+			=> AllianceStreamEntryMessage.MESSAGE_TYPE;
 
-        public override short GetMessageType()
-        {
-            return AllianceStreamEntryMessage.MESSAGE_TYPE;
-        }
+		public override int GetServiceNodeType()
+			=> 11;
 
-        public override int GetServiceNodeType()
-        {
-            return 11;
-        }
+		public override void Destruct()
+		{
+			base.Destruct();
+			m_streamEntry = null;
+		}
 
-        public override void Destruct()
-        {
-            base.Destruct();
-            this.m_streamEntry = null;
-        }
+		public StreamEntry GetStreamEntryId()
+			=> m_streamEntry;
 
-        public StreamEntry GetStreamEntryId()
-        {
-            return this.m_streamEntry;
-        }
-
-        public void SetStreamEntry(StreamEntry value)
-        {
-            this.m_streamEntry = value;
-        }
-    }
+		public void SetStreamEntry(StreamEntry value)
+		{
+			m_streamEntry = value;
+		}
+	}
 }

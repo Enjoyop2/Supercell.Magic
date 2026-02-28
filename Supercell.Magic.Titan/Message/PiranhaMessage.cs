@@ -1,69 +1,55 @@
-﻿namespace Supercell.Magic.Titan.Message
+using Supercell.Magic.Titan.DataStream;
+
+namespace Supercell.Magic.Titan.Message
 {
-    using Supercell.Magic.Titan.DataStream;
+	public class PiranhaMessage
+	{
+		protected ByteStream m_stream;
+		protected int m_version;
 
-    public class PiranhaMessage
-    {
-        protected ByteStream m_stream;
-        protected int m_version;
+		public PiranhaMessage(short messageVersion)
+		{
+			m_stream = new ByteStream(10);
+			m_version = messageVersion;
+		}
 
-        public PiranhaMessage(short messageVersion)
-        {
-            this.m_stream = new ByteStream(10);
-            this.m_version = messageVersion;
-        }
+		public virtual void Decode()
+		{
+		}
 
-        public virtual void Decode()
-        {
-        }
+		public virtual void Encode()
+		{
+		}
 
-        public virtual void Encode()
-        {
-        }
+		public virtual short GetMessageType()
+			=> 0;
 
-        public virtual short GetMessageType()
-        {
-            return 0;
-        }
+		public virtual void Destruct()
+		{
+			m_stream.Destruct();
+		}
 
-        public virtual void Destruct()
-        {
-            this.m_stream.Destruct();
-        }
+		public virtual int GetServiceNodeType()
+			=> -1;
 
-        public virtual int GetServiceNodeType()
-        {
-            return -1;
-        }
+		public int GetMessageVersion()
+			=> m_version;
 
-        public int GetMessageVersion()
-        {
-            return this.m_version;
-        }
+		public void SetMessageVersion(int version)
+		{
+			m_version = version;
+		}
 
-        public void SetMessageVersion(int version)
-        {
-            this.m_version = version;
-        }
+		public bool IsServerToClientMessage()
+			=> GetMessageType() >= 20000;
 
-        public bool IsServerToClientMessage()
-        {
-            return this.GetMessageType() >= 20000;
-        }
+		public byte[] GetMessageBytes()
+			=> m_stream.GetByteArray();
 
-        public byte[] GetMessageBytes()
-        {
-            return this.m_stream.GetByteArray();
-        }
+		public int GetEncodingLength()
+			=> m_stream.GetLength();
 
-        public int GetEncodingLength()
-        {
-            return this.m_stream.GetLength();
-        }
-
-        public ByteStream GetByteStream()
-        {
-            return this.m_stream;
-        }
-    }
+		public ByteStream GetByteStream()
+			=> m_stream;
+	}
 }

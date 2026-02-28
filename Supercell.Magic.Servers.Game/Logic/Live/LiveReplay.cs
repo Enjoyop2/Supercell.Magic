@@ -1,249 +1,243 @@
-﻿namespace Supercell.Magic.Servers.Game.Logic.Live
+using System;
+using System.Collections.Generic;
+
+using Supercell.Magic.Logic.Command;
+using Supercell.Magic.Logic.Message.Home;
+using Supercell.Magic.Logic.Time;
+using Supercell.Magic.Servers.Core.Network;
+using Supercell.Magic.Servers.Core.Network.Message;
+using Supercell.Magic.Servers.Core.Network.Message.Account;
+using Supercell.Magic.Servers.Core.Network.Message.Session;
+
+using Supercell.Magic.Servers.Game.Session;
+using Supercell.Magic.Titan.Math;
+using Supercell.Magic.Titan.Message;
+using Supercell.Magic.Titan.Util;
+
+namespace Supercell.Magic.Servers.Game.Logic.Live
 {
-    using System;
-    using System.Collections.Generic;
-    using Supercell.Magic.Logic.Command;
-    using Supercell.Magic.Logic.Message.Home;
-    using Supercell.Magic.Logic.Time;
-    using Supercell.Magic.Servers.Core.Network;
-    using Supercell.Magic.Servers.Core.Network.Message;
-    using Supercell.Magic.Servers.Core.Network.Message.Account;
-    using Supercell.Magic.Servers.Core.Network.Message.Session;
+	public class LiveReplay
+	{
+		public const int SLOT_CAPACITY = 100;
 
-    using Supercell.Magic.Servers.Game.Session;
-    using Supercell.Magic.Titan.Math;
-    using Supercell.Magic.Titan.Message;
-    using Supercell.Magic.Titan.Util;
+		private bool m_initialized;
+		private bool m_ended;
+		private bool m_end;
 
-    public class LiveReplay
-    {
-        public const int SLOT_CAPACITY = 100;
+		private readonly LogicLong m_id;
+		private readonly LogicLong m_allianceId;
+		private readonly LogicLong m_allianceStreamId;
+		private readonly GameSession m_attackerSession;
+		private readonly Dictionary<long, LiveReplaySpectatorEntry>[] m_spectatorList;
+		private readonly LogicArrayList<LogicCommand> m_commands;
 
-        private bool m_initialized;
-        private bool m_ended;
-        private bool m_end;
+		private byte[] m_streamData;
+		private int m_clientSubTick;
+		private int m_serverSubTick;
 
-        private readonly LogicLong m_id;
-        private readonly LogicLong m_allianceId;
-        private readonly LogicLong m_allianceStreamId;
-        private readonly GameSession m_attackerSession;
-        private readonly Dictionary<long, LiveReplaySpectatorEntry>[] m_spectatorList;
-        private readonly LogicArrayList<LogicCommand> m_commands;
+		public LiveReplay(LogicLong id, LogicLong allianceId, LogicLong allianceStreamId, GameSession attackerSession)
+		{
+			m_id = id;
+			m_allianceId = allianceId;
+			m_allianceStreamId = allianceStreamId;
+			m_attackerSession = attackerSession;
+			m_spectatorList = new Dictionary<long, LiveReplaySpectatorEntry>[2];
+			m_spectatorList[0] = new Dictionary<long, LiveReplaySpectatorEntry>();
+			m_spectatorList[1] = new Dictionary<long, LiveReplaySpectatorEntry>();
+			m_commands = new LogicArrayList<LogicCommand>();
+		}
 
-        private byte[] m_streamData;
-        private int m_clientSubTick;
-        private int m_serverSubTick;
+		public LogicLong GetId()
+			=> m_id;
 
-        public LiveReplay(LogicLong id, LogicLong allianceId, LogicLong allianceStreamId, GameSession attackerSession)
-        {
-            this.m_id = id;
-            this.m_allianceId = allianceId;
-            this.m_allianceStreamId = allianceStreamId;
-            this.m_attackerSession = attackerSession;
-            this.m_spectatorList = new Dictionary<long, LiveReplaySpectatorEntry>[2];
-            this.m_spectatorList[0] = new Dictionary<long, LiveReplaySpectatorEntry>();
-            this.m_spectatorList[1] = new Dictionary<long, LiveReplaySpectatorEntry>();
-            this.m_commands = new LogicArrayList<LogicCommand>();
-        }
+		public bool IsInit()
+			=> m_initialized;
 
-        public LogicLong GetId()
-        {
-            return this.m_id;
-        }
+		public bool IsEnded()
+			=> m_ended;
 
-        public bool IsInit()
-        {
-            return this.m_initialized;
-        }
+		public void Init(byte[] streamData)
+		{
+			if (m_initialized)
+				throw new Exception("LiveReplay.init: live already initialized!");
 
-        public bool IsEnded()
-        {
-            return this.m_ended;
-        }
+			m_streamData = streamData;
+			m_initialized = true;
+		}
 
-        public void Init(byte[] streamData)
-        {
-            if(this.m_initialized)
-                throw new Exception("LiveReplay.init: live already initialized!");
+		public void SetClientUpdate(int clientSubTick, LogicArrayList<LogicCommand> commands)
+		{
+			m_clientSubTick = clientSubTick;
 
-            this.m_streamData = streamData;
-            this.m_initialized = true;
-        }
+			if (commands != null)
+			{
+				m_commands.AddAll(commands);
+			}
+		}
 
-        public void SetClientUpdate(int clientSubTick, LogicArrayList<LogicCommand> commands)
-        {
-            this.m_clientSubTick = clientSubTick;
+		public void SetEnd()
+		{
+			m_end = true;
+		}
 
-            if (commands != null)
-            {
-                this.m_commands.AddAll(commands);
-            }
-        }
+		public void Update(int ms)
+		{
+			if (m_initialized && !m_ended)
+			{
+				int totalSubTick = LogicTime.GetMSInTicks(ms);
 
-        public void SetEnd()
-        {
-            this.m_end = true;
-        }
+				if (m_clientSubTick < m_serverSubTick + totalSubTick)
+				{
+					if (!m_end)
+						return;
 
-        public void Update(int ms)
-        {
-            if (this.m_initialized && !this.m_ended)
-            {
-                int totalSubTick = LogicTime.GetMSInTicks(ms);
-                
-                if (this.m_clientSubTick < this.m_serverSubTick + totalSubTick)
-                {
-                    if (!this.m_end)
-                        return;
+					totalSubTick = m_clientSubTick - m_serverSubTick;
+					m_ended = true;
+				}
 
-                    totalSubTick = this.m_clientSubTick - this.m_serverSubTick;
-                    this.m_ended = true;
-                }
-                
-                for (int i = 0; i < 2; i++)
-                {
-                    Dictionary<long, LiveReplaySpectatorEntry> spectators = this.m_spectatorList[i];
+				for (int i = 0; i < 2; i++)
+				{
+					Dictionary<long, LiveReplaySpectatorEntry> spectators = m_spectatorList[i];
 
-                    if (spectators.Count >= 1)
-                    {
-                        LiveReplayDataMessage liveReplayDataMessage = new LiveReplayDataMessage();
+					if (spectators.Count >= 1)
+					{
+						LiveReplayDataMessage liveReplayDataMessage = new LiveReplayDataMessage();
 
-                        liveReplayDataMessage.SetServerSubTick(this.m_serverSubTick + totalSubTick);
-                        liveReplayDataMessage.SetCommands(this.GetCommands(this.m_serverSubTick, this.m_serverSubTick + totalSubTick));
+						liveReplayDataMessage.SetServerSubTick(m_serverSubTick + totalSubTick);
+						liveReplayDataMessage.SetCommands(GetCommands(m_serverSubTick, m_serverSubTick + totalSubTick));
 
-                        if (i == 0)
-                        {
-                            liveReplayDataMessage.SetViewerCount(this.m_spectatorList[0].Count);
-                            liveReplayDataMessage.SetEnemyViewerCount(this.m_spectatorList[1].Count);
-                        }
-                        else
-                        {
-                            liveReplayDataMessage.SetViewerCount(this.m_spectatorList[1].Count);
-                            liveReplayDataMessage.SetEnemyViewerCount(this.m_spectatorList[0].Count);
-                        }
+						if (i == 0)
+						{
+							liveReplayDataMessage.SetViewerCount(m_spectatorList[0].Count);
+							liveReplayDataMessage.SetEnemyViewerCount(m_spectatorList[1].Count);
+						}
+						else
+						{
+							liveReplayDataMessage.SetViewerCount(m_spectatorList[1].Count);
+							liveReplayDataMessage.SetEnemyViewerCount(m_spectatorList[0].Count);
+						}
 
-                        foreach (LiveReplaySpectatorEntry entry in spectators.Values)
-                        {
-                            entry.SendPiranhaMessageToProxy(liveReplayDataMessage);
-                        }
+						foreach (LiveReplaySpectatorEntry entry in spectators.Values)
+						{
+							entry.SendPiranhaMessageToProxy(liveReplayDataMessage);
+						}
 
-                        if (this.m_ended)
-                        {
-                            foreach (LiveReplaySpectatorEntry entry in spectators.Values)
-                            {
-                                entry.SendPiranhaMessageToProxy(new LiveReplayEndMessage());
-                            }
-                        }
-                    }
-                }
+						if (m_ended)
+						{
+							foreach (LiveReplaySpectatorEntry entry in spectators.Values)
+							{
+								entry.SendPiranhaMessageToProxy(new LiveReplayEndMessage());
+							}
+						}
+					}
+				}
 
-                this.m_serverSubTick += totalSubTick;
-            }
-        }
+				m_serverSubTick += totalSubTick;
+			}
+		}
 
-        public bool IsFull()
-        {
-            return this.m_spectatorList[0].Count +
-                   this.m_spectatorList[1].Count >= LiveReplay.SLOT_CAPACITY;
-        }
+		public bool IsFull()
+			=> m_spectatorList[0].Count +
+				   m_spectatorList[1].Count >= LiveReplay.SLOT_CAPACITY;
 
-        public bool ContainsSession(long sessionId, int slot)
-        {
-            return this.m_spectatorList[slot].ContainsKey(sessionId);
-        }
-        
-        public void AddSpectator(long sessionId, int slot)
-        {
-            LiveReplaySpectatorEntry liveReplaySpectatorEntry = new LiveReplaySpectatorEntry(sessionId);
-            LiveReplayHeaderMessage liveReplayHeaderMessage = new LiveReplayHeaderMessage();
+		public bool ContainsSession(long sessionId, int slot)
+			=> m_spectatorList[slot].ContainsKey(sessionId);
 
-            int serverSubTick = this.m_serverSubTick;
+		public void AddSpectator(long sessionId, int slot)
+		{
+			LiveReplaySpectatorEntry liveReplaySpectatorEntry = new LiveReplaySpectatorEntry(sessionId);
+			LiveReplayHeaderMessage liveReplayHeaderMessage = new LiveReplayHeaderMessage();
 
-            liveReplayHeaderMessage.SetCompressedStreamHeaderJson(this.m_streamData);
-            liveReplayHeaderMessage.SetCommands(this.GetCommands(0, serverSubTick));
-            liveReplayHeaderMessage.SetServerSubTick(serverSubTick);
-            liveReplaySpectatorEntry.SendPiranhaMessageToProxy(liveReplayHeaderMessage);
+			int serverSubTick = m_serverSubTick;
 
-            this.m_spectatorList[slot].Add(sessionId, liveReplaySpectatorEntry);
-            this.SendAttackSpectatorCountMessage();
+			liveReplayHeaderMessage.SetCompressedStreamHeaderJson(m_streamData);
+			liveReplayHeaderMessage.SetCommands(GetCommands(0, serverSubTick));
+			liveReplayHeaderMessage.SetServerSubTick(serverSubTick);
+			liveReplaySpectatorEntry.SendPiranhaMessageToProxy(liveReplayHeaderMessage);
 
-            if (this.m_allianceId != null)
-                this.SendSpectatorCountToStreamService();
-        }
+			m_spectatorList[slot].Add(sessionId, liveReplaySpectatorEntry);
+			SendAttackSpectatorCountMessage();
 
-        public void RemoveSpectator(long sessionId, int slot)
-        {
-            if (this.m_spectatorList[slot].Remove(sessionId))
-            {
-                this.SendAttackSpectatorCountMessage();
+			if (m_allianceId != null)
+				SendSpectatorCountToStreamService();
+		}
 
-                if (this.m_allianceId != null)
-                    this.SendSpectatorCountToStreamService();
-            }
-        }
+		public void RemoveSpectator(long sessionId, int slot)
+		{
+			if (m_spectatorList[slot].Remove(sessionId))
+			{
+				SendAttackSpectatorCountMessage();
 
-        private void SendAttackSpectatorCountMessage()
-        {
-            if (!this.m_attackerSession.IsDestructed())
-            {
-                AttackSpectatorCountMessage attackSpectatorCountMessage = new AttackSpectatorCountMessage();
+				if (m_allianceId != null)
+					SendSpectatorCountToStreamService();
+			}
+		}
 
-                attackSpectatorCountMessage.SetViewerCount(this.m_spectatorList[0].Count);
-                attackSpectatorCountMessage.SetEnemyViewerCount(this.m_spectatorList[1].Count);
+		private void SendAttackSpectatorCountMessage()
+		{
+			if (!m_attackerSession.IsDestructed())
+			{
+				AttackSpectatorCountMessage attackSpectatorCountMessage = new AttackSpectatorCountMessage();
 
-                this.m_attackerSession.SendPiranhaMessage(attackSpectatorCountMessage, 1);
-            }
-        }
+				attackSpectatorCountMessage.SetViewerCount(m_spectatorList[0].Count);
+				attackSpectatorCountMessage.SetEnemyViewerCount(m_spectatorList[1].Count);
 
-        private void SendSpectatorCountToStreamService()
-        {
-            ServerMessageManager.SendMessage(new AllianceChallengeSpectatorCountMessage
-            {
-                AccountId = this.m_allianceId,
-                StreamId = this.m_allianceStreamId,
-                Count = this.m_spectatorList[0].Count +
-                        this.m_spectatorList[1].Count
-            }, 11);
-        }
+				m_attackerSession.SendPiranhaMessage(attackSpectatorCountMessage, 1);
+			}
+		}
 
-        private LogicArrayList<LogicCommand> GetCommands(int minSubTick, int maxSubTick)
-        {
-            LogicArrayList<LogicCommand> commands = new LogicArrayList<LogicCommand>();
+		private void SendSpectatorCountToStreamService()
+		{
+			ServerMessageManager.SendMessage(new AllianceChallengeSpectatorCountMessage
+			{
+				AccountId = m_allianceId,
+				StreamId = m_allianceStreamId,
+				Count = m_spectatorList[0].Count +
+						m_spectatorList[1].Count
+			}, 11);
+		}
 
-            for (int i = 0; i < this.m_commands.Size(); i++)
-            {
-                LogicCommand command = this.m_commands[i];
+		private LogicArrayList<LogicCommand> GetCommands(int minSubTick, int maxSubTick)
+		{
+			LogicArrayList<LogicCommand> commands = new LogicArrayList<LogicCommand>();
 
-                if(command.GetExecuteSubTick() >= minSubTick && command.GetExecuteSubTick() < maxSubTick)
-                    commands.Add(command);
-            }
+			for (int i = 0; i < m_commands.Size(); i++)
+			{
+				LogicCommand command = m_commands[i];
 
-            return commands;
-        }
-    }
+				if (command.GetExecuteSubTick() >= minSubTick && command.GetExecuteSubTick() < maxSubTick)
+					commands.Add(command);
+			}
 
-    public class LiveReplaySpectatorEntry
-    {
-        public long SessionId { get; }
+			return commands;
+		}
+	}
 
-        public LiveReplaySpectatorEntry(long sessionId)
-        {
-            this.SessionId = sessionId;
-        }
+	public class LiveReplaySpectatorEntry
+	{
+		public long SessionId
+		{
+			get;
+		}
 
-        public void SendPiranhaMessageToProxy(PiranhaMessage piranhaMessage)
-        {
-            if (piranhaMessage.GetEncodingLength() == 0)
-                piranhaMessage.Encode();
+		public LiveReplaySpectatorEntry(long sessionId)
+		{
+			SessionId = sessionId;
+		}
 
-            ServerMessageManager.SendMessage(new ForwardLogicMessage
-            {
-                SessionId = this.SessionId,
-                MessageType = piranhaMessage.GetMessageType(),
-                MessageVersion = (short) piranhaMessage.GetMessageVersion(),
-                MessageLength = piranhaMessage.GetEncodingLength(),
-                MessageBytes = piranhaMessage.GetMessageBytes()
-            }, ServerManager.GetProxySocket(this.SessionId));
-        }
-    }
+		public void SendPiranhaMessageToProxy(PiranhaMessage piranhaMessage)
+		{
+			if (piranhaMessage.GetEncodingLength() == 0)
+				piranhaMessage.Encode();
+
+			ServerMessageManager.SendMessage(new ForwardLogicMessage
+			{
+				SessionId = SessionId,
+				MessageType = piranhaMessage.GetMessageType(),
+				MessageVersion = (short)piranhaMessage.GetMessageVersion(),
+				MessageLength = piranhaMessage.GetEncodingLength(),
+				MessageBytes = piranhaMessage.GetMessageBytes()
+			}, ServerManager.GetProxySocket(SessionId));
+		}
+	}
 }

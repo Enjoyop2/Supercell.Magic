@@ -1,103 +1,95 @@
+using Supercell.Magic.Titan.Math;
+using Supercell.Magic.Titan.Message;
+
 namespace Supercell.Magic.Logic.Message.Scoring
 {
-    using Supercell.Magic.Titan.Math;
-    using Supercell.Magic.Titan.Message;
+	public class AskForAllianceRankingListMessage : PiranhaMessage
+	{
+		public const int MESSAGE_TYPE = 14401;
 
-    public class AskForAllianceRankingListMessage : PiranhaMessage
-    {
-        public const int MESSAGE_TYPE = 14401;
+		private LogicLong m_allianceId;
 
-        private LogicLong m_allianceId;
+		private int m_villageType;
+		private bool m_localRanking;
 
-        private int m_villageType;
-        private bool m_localRanking;
+		public AskForAllianceRankingListMessage() : this(0)
+		{
+			// AskForAllianceRankingListMessage.
+		}
 
-        public AskForAllianceRankingListMessage() : this(0)
-        {
-            // AskForAllianceRankingListMessage.
-        }
+		public AskForAllianceRankingListMessage(short messageVersion) : base(messageVersion)
+		{
+			// AskForAllianceRankingListMessage.
+		}
 
-        public AskForAllianceRankingListMessage(short messageVersion) : base(messageVersion)
-        {
-            // AskForAllianceRankingListMessage.
-        }
+		public override void Decode()
+		{
+			base.Decode();
 
-        public override void Decode()
-        {
-            base.Decode();
+			if (m_stream.ReadBoolean())
+			{
+				m_allianceId = m_stream.ReadLong();
+			}
 
-            if (this.m_stream.ReadBoolean())
-            {
-                this.m_allianceId = this.m_stream.ReadLong();
-            }
+			m_localRanking = m_stream.ReadBoolean();
+			m_villageType = m_stream.ReadInt();
+		}
 
-            this.m_localRanking = this.m_stream.ReadBoolean();
-            this.m_villageType = this.m_stream.ReadInt();
-        }
+		public override void Encode()
+		{
+			base.Encode();
 
-        public override void Encode()
-        {
-            base.Encode();
+			if (m_allianceId != null)
+			{
+				m_stream.WriteBoolean(true);
+				m_stream.WriteLong(m_allianceId);
+			}
+			else
+			{
+				m_stream.WriteBoolean(false);
+			}
 
-            if (this.m_allianceId != null)
-            {
-                this.m_stream.WriteBoolean(true);
-                this.m_stream.WriteLong(this.m_allianceId);
-            }
-            else
-            {
-                this.m_stream.WriteBoolean(false);
-            }
+			m_localRanking = m_stream.ReadBoolean();
+			m_villageType = m_stream.ReadInt();
+		}
 
-            this.m_localRanking = this.m_stream.ReadBoolean();
-            this.m_villageType = this.m_stream.ReadInt();
-        }
+		public override short GetMessageType()
+			=> AskForAllianceRankingListMessage.MESSAGE_TYPE;
 
-        public override short GetMessageType()
-        {
-            return AskForAllianceRankingListMessage.MESSAGE_TYPE;
-        }
+		public override int GetServiceNodeType()
+			=> 28;
 
-        public override int GetServiceNodeType()
-        {
-            return 28;
-        }
+		public override void Destruct()
+		{
+			base.Destruct();
+		}
 
-        public override void Destruct()
-        {
-            base.Destruct();
-        }
+		public LogicLong RemoveAllianceId()
+		{
+			LogicLong tmp = m_allianceId;
+			m_allianceId = null;
+			return tmp;
+		}
 
-        public LogicLong RemoveAllianceId()
-        {
-            LogicLong tmp = this.m_allianceId;
-            this.m_allianceId = null;
-            return tmp;
-        }
+		public void SetAllianceId(LogicLong id)
+		{
+			m_allianceId = id;
+		}
 
-        public void SetAllianceId(LogicLong id)
-        {
-            this.m_allianceId = id;
-        }
+		public bool LocalRanking()
+			=> m_localRanking;
 
-        public bool LocalRanking()
-        {
-            return this.m_localRanking;
-        }
+		public void SetLocalRanking(bool value)
+		{
+			m_localRanking = value;
+		}
 
-        public void SetLocalRanking(bool value)
-        {
-            this.m_localRanking = value;
-        }
+		public int GetVillageType()
+			=> m_villageType;
 
-        public int GetVillageType()
-        {
-            return this.m_villageType;
-        }
-
-        public void SetVillageType(int value)
-        {
-            this.m_villageType = value;
-        }
-    }
+		public void SetVillageType(int value)
+		{
+			m_villageType = value;
+		}
+	}
 }

@@ -1,51 +1,61 @@
-﻿namespace Supercell.Magic.Servers.Core.Network.Request
+using System;
+
+using Supercell.Magic.Servers.Core.Network.Message.Request;
+
+namespace Supercell.Magic.Servers.Core.Network.Request
 {
-    using System;
-    using Supercell.Magic.Servers.Core.Network.Message.Request;
+	public class ServerRequestArgs
+	{
+		public delegate void CompleteHandler(ServerRequestArgs args);
 
-    public class ServerRequestArgs
-    {
-        public delegate void CompleteHandler(ServerRequestArgs args);
+		public CompleteHandler OnComplete { get; set; } = args => { };
+		public ServerResponseMessage ResponseMessage
+		{
+			get; private set;
+		}
 
-        public CompleteHandler OnComplete { get; set; } = args => { };
-        public ServerResponseMessage ResponseMessage { get; private set; }
+		public ServerRequestError ErrorCode
+		{
+			get; private set;
+		}
 
-        public ServerRequestError ErrorCode { get; private set; }
+		internal DateTime ExpireTime
+		{
+			get; set;
+		}
 
-        internal DateTime ExpireTime { get; set; }
+		private bool m_completed;
 
-        private bool m_completed;
+		public ServerRequestArgs(int timeout)
+		{
+			ExpireTime = DateTime.UtcNow.AddSeconds(timeout);
+		}
 
-        public ServerRequestArgs(int timeout)
-        {
-            this.ExpireTime = DateTime.UtcNow.AddSeconds(timeout);
-        }
+		internal void Abort()
+		{
+			if (!m_completed)
+			{
+				m_completed = true;
+				ErrorCode = ServerRequestError.Aborted;
+				OnComplete(this);
+			}
+		}
 
-        internal void Abort()
-        {
-            if (!this.m_completed)
-            {
-                this.m_completed = true;
-                this.ErrorCode = ServerRequestError.Aborted;
-                this.OnComplete(this);
-            }
-        }
+		internal void SetResponseMessage(ServerResponseMessage message)
+		{
+			if (!m_completed)
+			{
+				m_completed = true;
+				ResponseMessage = message;
+				ErrorCode = ServerRequestError.Success;
+				OnComplete(this);
+			}
+		}
+	}
 
-        internal void SetResponseMessage(ServerResponseMessage message)
-        {
-            if (!this.m_completed)
-            {
-                this.m_completed = true;
-                this.ResponseMessage = message;
-                this.ErrorCode = ServerRequestError.Success;
-                this.OnComplete(this);
-            }
-        }
-    }
-
-    public enum ServerRequestError
-    {
-        Success,
-        Aborted
-    }
+	public enum ServerRequestError
+	{
+		Success,
+		Aborted
+	}
 }

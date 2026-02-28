@@ -1,20 +1,18 @@
-﻿namespace Supercell.Magic.Servers.Core.Network.Message.Core
+using Supercell.Magic.Titan.DataStream;
+
+namespace Supercell.Magic.Servers.Core.Network.Message.Core
 {
-    using Supercell.Magic.Titan.DataStream;
+	public class PongMessage : ServerCoreMessage
+	{
+		public override void Encode(ByteStream stream)
+		{
+		}
 
-    public class PongMessage : ServerCoreMessage
-    {
-        public override void Encode(ByteStream stream)
-        {
-        }
+		public override void Decode(ByteStream stream)
+		{
+		}
 
-        public override void Decode(ByteStream stream)
-        {
-        }
-
-        public override ServerMessageType GetMessageType()
-        {
-            return ServerMessageType.PONG;
-        }
-    }
+		public override ServerMessageType GetMessageType()
+			=> ServerMessageType.PONG;
+	}
 }

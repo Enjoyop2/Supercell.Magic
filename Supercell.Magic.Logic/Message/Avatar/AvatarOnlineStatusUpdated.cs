@@ -1,75 +1,67 @@
+using Supercell.Magic.Titan.Math;
+using Supercell.Magic.Titan.Message;
+
 namespace Supercell.Magic.Logic.Message.Avatar
 {
-    using Supercell.Magic.Titan.Math;
-    using Supercell.Magic.Titan.Message;
+	public class AvatarOnlineStatusUpdated : PiranhaMessage
+	{
+		public const int MESSAGE_TYPE = 20206;
 
-    public class AvatarOnlineStatusUpdated : PiranhaMessage
-    {
-        public const int MESSAGE_TYPE = 20206;
+		private LogicLong m_avatarId;
+		private int m_state;
 
-        private LogicLong m_avatarId;
-        private int m_state;
+		public AvatarOnlineStatusUpdated() : this(0)
+		{
+			// AvatarOnlineStatusUpdated.
+		}
 
-        public AvatarOnlineStatusUpdated() : this(0)
-        {
-            // AvatarOnlineStatusUpdated.
-        }
+		public AvatarOnlineStatusUpdated(short messageVersion) : base(messageVersion)
+		{
+			// AvatarOnlineStatusUpdated.
+		}
 
-        public AvatarOnlineStatusUpdated(short messageVersion) : base(messageVersion)
-        {
-            // AvatarOnlineStatusUpdated.
-        }
+		public override void Decode()
+		{
+			base.Decode();
 
-        public override void Decode()
-        {
-            base.Decode();
+			m_avatarId = m_stream.ReadLong();
+			m_state = m_stream.ReadVInt();
+		}
 
-            this.m_avatarId = this.m_stream.ReadLong();
-            this.m_state = this.m_stream.ReadVInt();
-        }
+		public override void Encode()
+		{
+			base.Encode();
 
-        public override void Encode()
-        {
-            base.Encode();
+			m_stream.WriteLong(m_avatarId);
+			m_stream.WriteVInt(m_state);
+		}
 
-            this.m_stream.WriteLong(this.m_avatarId);
-            this.m_stream.WriteVInt(this.m_state);
-        }
+		public override short GetMessageType()
+			=> AvatarOnlineStatusUpdated.MESSAGE_TYPE;
 
-        public override short GetMessageType()
-        {
-            return AvatarOnlineStatusUpdated.MESSAGE_TYPE;
-        }
+		public override int GetServiceNodeType()
+			=> 9;
 
-        public override int GetServiceNodeType()
-        {
-            return 9;
-        }
+		public override void Destruct()
+		{
+			base.Destruct();
+			m_avatarId = null;
+		}
 
-        public override void Destruct()
-        {
-            base.Destruct();
-            this.m_avatarId = null;
-        }
+		public LogicLong GetAvatarId()
+			=> m_avatarId;
 
-        public LogicLong GetAvatarId()
-        {
-            return this.m_avatarId;
-        }
+		public void SetAvatarId(LogicLong value)
+		{
+			m_avatarId = value;
+		}
 
-        public void SetAvatarId(LogicLong value)
-        {
-            this.m_avatarId = value;
-        }
+		public int GetState()
+			=> m_state;
 
-        public int GetState()
-        {
-            return this.m_state;
-        }
-
-        public void SetState(int value)
-        {
-            this.m_state = value;
-        }
-    }
+		public void SetState(int value)
+		{
+			m_state = value;
+		}
+	}
 }

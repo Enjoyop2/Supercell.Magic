@@ -1,37 +1,41 @@
-﻿namespace Supercell.Magic.Servers.Core.Network.Message.Account
+using Supercell.Magic.Servers.Core.Network.Message.Session.Change;
+
+using Supercell.Magic.Titan.DataStream;
+using Supercell.Magic.Titan.Math;
+using Supercell.Magic.Titan.Util;
+
+namespace Supercell.Magic.Servers.Core.Network.Message.Account
 {
-    using Supercell.Magic.Servers.Core.Network.Message.Session.Change;
+	public class AllianceAvatarChangesMessage : ServerAccountMessage
+	{
+		public LogicLong MemberId
+		{
+			get; set;
+		}
+		public LogicArrayList<AvatarChange> AvatarChanges
+		{
+			get; set;
+		}
 
-    using Supercell.Magic.Titan.DataStream;
-    using Supercell.Magic.Titan.Math;
-    using Supercell.Magic.Titan.Util;
+		public override void Encode(ByteStream stream)
+		{
+			stream.WriteLong(MemberId);
+			stream.WriteVInt(AvatarChanges.Size());
 
-    public class AllianceAvatarChangesMessage : ServerAccountMessage
-    {
-        public LogicLong MemberId { get; set; }
-        public LogicArrayList<AvatarChange> AvatarChanges { get; set; }
+			for (int i = 0; i < AvatarChanges.Size(); i++)
+				AvatarChangeFactory.Encode(stream, AvatarChanges[i]);
+		}
 
-        public override void Encode(ByteStream stream)
-        {
-            stream.WriteLong(this.MemberId);
-            stream.WriteVInt(this.AvatarChanges.Size());
+		public override void Decode(ByteStream stream)
+		{
+			MemberId = stream.ReadLong();
+			AvatarChanges = new LogicArrayList<AvatarChange>();
 
-            for (int i = 0; i < this.AvatarChanges.Size(); i++)
-                AvatarChangeFactory.Encode(stream, this.AvatarChanges[i]);
-        }
+			for (int i = stream.ReadVInt(); i > 0; i--)
+				AvatarChanges.Add(AvatarChangeFactory.Decode(stream));
+		}
 
-        public override void Decode(ByteStream stream)
-        {
-            this.MemberId = stream.ReadLong();
-            this.AvatarChanges = new LogicArrayList<AvatarChange>();
-
-            for (int i = stream.ReadVInt(); i > 0; i--)
-                this.AvatarChanges.Add(AvatarChangeFactory.Decode(stream));
-        }
-
-        public override ServerMessageType GetMessageType()
-        {
-            return ServerMessageType.ALLIANCE_AVATAR_CHANGES;
-        }
-    }
+		public override ServerMessageType GetMessageType()
+			=> ServerMessageType.ALLIANCE_AVATAR_CHANGES;
+	}
 }

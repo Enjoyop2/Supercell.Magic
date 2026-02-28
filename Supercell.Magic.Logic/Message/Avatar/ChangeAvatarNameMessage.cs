@@ -1,76 +1,70 @@
+using Supercell.Magic.Titan.Message;
+
 namespace Supercell.Magic.Logic.Message.Avatar
 {
-    using Supercell.Magic.Titan.Message;
+	public class ChangeAvatarNameMessage : PiranhaMessage
+	{
+		public const int MESSAGE_TYPE = 10212;
 
-    public class ChangeAvatarNameMessage : PiranhaMessage
-    {
-        public const int MESSAGE_TYPE = 10212;
+		private string m_avatarName;
+		private bool m_nameSetByUser;
 
-        private string m_avatarName;
-        private bool m_nameSetByUser;
+		public ChangeAvatarNameMessage() : this(0)
+		{
+			// ChangeAvatarNameMessage.
+		}
 
-        public ChangeAvatarNameMessage() : this(0)
-        {
-            // ChangeAvatarNameMessage.
-        }
+		public ChangeAvatarNameMessage(short messageVersion) : base(messageVersion)
+		{
+			// ChangeAvatarNameMessage.
+		}
 
-        public ChangeAvatarNameMessage(short messageVersion) : base(messageVersion)
-        {
-            // ChangeAvatarNameMessage.
-        }
+		public override void Decode()
+		{
+			base.Decode();
 
-        public override void Decode()
-        {
-            base.Decode();
+			m_avatarName = m_stream.ReadString(900000);
+			m_nameSetByUser = m_stream.ReadBoolean();
+		}
 
-            this.m_avatarName = this.m_stream.ReadString(900000);
-            this.m_nameSetByUser = this.m_stream.ReadBoolean();
-        }
+		public override void Encode()
+		{
+			base.Encode();
 
-        public override void Encode()
-        {
-            base.Encode();
+			m_stream.WriteString(m_avatarName);
+			m_stream.WriteBoolean(m_nameSetByUser);
+		}
 
-            this.m_stream.WriteString(this.m_avatarName);
-            this.m_stream.WriteBoolean(this.m_nameSetByUser);
-        }
+		public override short GetMessageType()
+			=> ChangeAvatarNameMessage.MESSAGE_TYPE;
 
-        public override short GetMessageType()
-        {
-            return ChangeAvatarNameMessage.MESSAGE_TYPE;
-        }
+		public override int GetServiceNodeType()
+			=> 9;
 
-        public override int GetServiceNodeType()
-        {
-            return 9;
-        }
+		public override void Destruct()
+		{
+			base.Destruct();
+			m_avatarName = null;
+		}
 
-        public override void Destruct()
-        {
-            base.Destruct();
-            this.m_avatarName = null;
-        }
+		public string RemoveAvatarName()
+		{
+			string tmp = m_avatarName;
+			m_avatarName = null;
+			return tmp;
+		}
 
-        public string RemoveAvatarName()
-        {
-            string tmp = this.m_avatarName;
-            this.m_avatarName = null;
-            return tmp;
-        }
+		public void SetAvatarName(string name)
+		{
+			m_avatarName = name;
+		}
 
-        public void SetAvatarName(string name)
-        {
-            this.m_avatarName = name;
-        }
+		public bool GetNameSetByUser()
+			=> m_nameSetByUser;
 
-        public bool GetNameSetByUser()
-        {
-            return this.m_nameSetByUser;
-        }
-
-        public void SetNameSetByUser(bool set)
-        {
-            this.m_nameSetByUser = set;
-        }
-    }
+		public void SetNameSetByUser(bool set)
+		{
+			m_nameSetByUser = set;
+		}
+	}
 }

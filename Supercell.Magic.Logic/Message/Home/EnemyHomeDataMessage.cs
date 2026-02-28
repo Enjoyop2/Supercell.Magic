@@ -1,198 +1,182 @@
+using Supercell.Magic.Logic.Avatar;
+using Supercell.Magic.Logic.Home;
+using Supercell.Magic.Titan.Math;
+using Supercell.Magic.Titan.Message;
+
 namespace Supercell.Magic.Logic.Message.Home
 {
-    using Supercell.Magic.Logic.Avatar;
-    using Supercell.Magic.Logic.Home;
-    using Supercell.Magic.Titan.Math;
-    using Supercell.Magic.Titan.Message;
+	public class EnemyHomeDataMessage : PiranhaMessage
+	{
+		public const int MESSAGE_TYPE = 24107;
 
-    public class EnemyHomeDataMessage : PiranhaMessage
-    {
-        public const int MESSAGE_TYPE = 24107;
+		private int m_secondsSinceLastMaintenance;
+		private int m_currentTimestamp;
+		private int m_secondsSinceLastSave;
+		private int m_attackSource;
+		private int m_mapId;
 
-        private int m_secondsSinceLastMaintenance;
-        private int m_currentTimestamp;
-        private int m_secondsSinceLastSave;
-        private int m_attackSource;
-        private int m_mapId;
+		private LogicClientAvatar m_attackerLogicClientAvatar;
+		private LogicClientAvatar m_logicClientAvatar;
+		private LogicClientHome m_logicClientHome;
+		private LogicLong m_AvatarStreamEntryId;
 
-        private LogicClientAvatar m_attackerLogicClientAvatar;
-        private LogicClientAvatar m_logicClientAvatar;
-        private LogicClientHome m_logicClientHome;
-        private LogicLong m_AvatarStreamEntryId;
+		public EnemyHomeDataMessage() : this(0)
+		{
+			// EnemyHomeDataMessage.
+		}
 
-        public EnemyHomeDataMessage() : this(0)
-        {
-            // EnemyHomeDataMessage.
-        }
+		public EnemyHomeDataMessage(short messageVersion) : base(messageVersion)
+		{
+			// EnemyHomeDataMessage.
+		}
 
-        public EnemyHomeDataMessage(short messageVersion) : base(messageVersion)
-        {
-            // EnemyHomeDataMessage.
-        }
+		public override void Decode()
+		{
+			base.Decode();
 
-        public override void Decode()
-        {
-            base.Decode();
+			m_secondsSinceLastSave = m_stream.ReadInt();
+			m_secondsSinceLastMaintenance = m_stream.ReadInt();
+			m_currentTimestamp = m_stream.ReadInt();
 
-            this.m_secondsSinceLastSave = this.m_stream.ReadInt();
-            this.m_secondsSinceLastMaintenance = this.m_stream.ReadInt();
-            this.m_currentTimestamp = this.m_stream.ReadInt();
+			m_logicClientHome = new LogicClientHome();
+			m_logicClientHome.Decode(m_stream);
+			m_logicClientAvatar = new LogicClientAvatar();
+			m_logicClientAvatar.Decode(m_stream);
+			m_attackerLogicClientAvatar = new LogicClientAvatar();
+			m_attackerLogicClientAvatar.Decode(m_stream);
 
-            this.m_logicClientHome = new LogicClientHome();
-            this.m_logicClientHome.Decode(this.m_stream);
-            this.m_logicClientAvatar = new LogicClientAvatar();
-            this.m_logicClientAvatar.Decode(this.m_stream);
-            this.m_attackerLogicClientAvatar = new LogicClientAvatar();
-            this.m_attackerLogicClientAvatar.Decode(this.m_stream);
+			m_attackSource = m_stream.ReadInt();
+			m_mapId = m_stream.ReadInt();
 
-            this.m_attackSource = this.m_stream.ReadInt();
-            this.m_mapId = this.m_stream.ReadInt();
+			if (m_stream.ReadBoolean())
+			{
+				m_AvatarStreamEntryId = m_stream.ReadLong();
+			}
+		}
 
-            if (this.m_stream.ReadBoolean())
-            {
-                this.m_AvatarStreamEntryId = this.m_stream.ReadLong();
-            }
-        }
+		public override void Encode()
+		{
+			base.Encode();
 
-        public override void Encode()
-        {
-            base.Encode();
+			m_stream.WriteInt(m_secondsSinceLastSave);
+			m_stream.WriteInt(m_secondsSinceLastMaintenance);
+			m_stream.WriteInt(m_currentTimestamp);
 
-            this.m_stream.WriteInt(this.m_secondsSinceLastSave);
-            this.m_stream.WriteInt(this.m_secondsSinceLastMaintenance);
-            this.m_stream.WriteInt(this.m_currentTimestamp);
+			m_logicClientHome.Encode(m_stream);
+			m_logicClientAvatar.Encode(m_stream);
+			m_attackerLogicClientAvatar.Encode(m_stream);
+			m_stream.WriteInt(m_attackSource);
+			m_stream.WriteInt(m_mapId);
 
-            this.m_logicClientHome.Encode(this.m_stream);
-            this.m_logicClientAvatar.Encode(this.m_stream);
-            this.m_attackerLogicClientAvatar.Encode(this.m_stream);
-            this.m_stream.WriteInt(this.m_attackSource);
-            this.m_stream.WriteInt(this.m_mapId);
+			if (m_AvatarStreamEntryId != null)
+			{
+				m_stream.WriteBoolean(true);
+				m_stream.WriteLong(m_AvatarStreamEntryId);
+			}
+			else
+			{
+				m_stream.WriteBoolean(false);
+			}
+		}
 
-            if (this.m_AvatarStreamEntryId != null)
-            {
-                this.m_stream.WriteBoolean(true);
-                this.m_stream.WriteLong(this.m_AvatarStreamEntryId);
-            }
-            else
-            {
-                this.m_stream.WriteBoolean(false);
-            }
-        }
+		public override short GetMessageType()
+			=> EnemyHomeDataMessage.MESSAGE_TYPE;
 
-        public override short GetMessageType()
-        {
-            return EnemyHomeDataMessage.MESSAGE_TYPE;
-        }
+		public override int GetServiceNodeType()
+			=> 10;
 
-        public override int GetServiceNodeType()
-        {
-            return 10;
-        }
+		public override void Destruct()
+		{
+			base.Destruct();
 
-        public override void Destruct()
-        {
-            base.Destruct();
+			m_logicClientHome = null;
+			m_logicClientAvatar = null;
+			m_attackerLogicClientAvatar = null;
+			m_AvatarStreamEntryId = null;
+		}
 
-            this.m_logicClientHome = null;
-            this.m_logicClientAvatar = null;
-            this.m_attackerLogicClientAvatar = null;
-            this.m_AvatarStreamEntryId = null;
-        }
+		public int GetCurrentTimestamp()
+			=> m_currentTimestamp;
 
-        public int GetCurrentTimestamp()
-        {
-            return this.m_currentTimestamp;
-        }
+		public void SetCurrentTimestamp(int value)
+		{
+			m_currentTimestamp = value;
+		}
 
-        public void SetCurrentTimestamp(int value)
-        {
-            this.m_currentTimestamp = value;
-        }
+		public int GetSecondsSinceLastSave()
+			=> m_secondsSinceLastSave;
 
-        public int GetSecondsSinceLastSave()
-        {
-            return this.m_secondsSinceLastSave;
-        }
+		public void SetSecondsSinceLastSave(int value)
+		{
+			m_secondsSinceLastSave = value;
+		}
 
-        public void SetSecondsSinceLastSave(int value)
-        {
-            this.m_secondsSinceLastSave = value;
-        }
+		public int GetSecondsSinceLastMaintenance()
+			=> m_secondsSinceLastMaintenance;
 
-        public int GetSecondsSinceLastMaintenance()
-        {
-            return this.m_secondsSinceLastMaintenance;
-        }
+		public void SetAttackSource(int value)
+		{
+			m_attackSource = value;
+		}
 
-        public void SetAttackSource(int value)
-        {
-            this.m_attackSource = value;
-        }
+		public int GetAttackSource()
+			=> m_attackSource;
 
-        public int GetAttackSource()
-        {
-            return this.m_attackSource;
-        }
+		public void SetMapId(int value)
+		{
+			m_mapId = value;
+		}
 
-        public void SetMapId(int value)
-        {
-            this.m_mapId = value;
-        }
+		public int GetMapId()
+			=> m_mapId;
 
-        public int GetMapId()
-        {
-            return this.m_mapId;
-        }
+		public void SetSecondsSinceLastMaintenance(int value)
+		{
+			m_secondsSinceLastMaintenance = value;
+		}
 
-        public void SetSecondsSinceLastMaintenance(int value)
-        {
-            this.m_secondsSinceLastMaintenance = value;
-        }
+		public LogicClientHome RemoveLogicClientHome()
+		{
+			LogicClientHome tmp = m_logicClientHome;
+			m_logicClientHome = null;
+			return tmp;
+		}
 
-        public LogicClientHome RemoveLogicClientHome()
-        {
-            LogicClientHome tmp = this.m_logicClientHome;
-            this.m_logicClientHome = null;
-            return tmp;
-        }
+		public void SetLogicClientHome(LogicClientHome logicClientHome)
+		{
+			m_logicClientHome = logicClientHome;
+		}
 
-        public void SetLogicClientHome(LogicClientHome logicClientHome)
-        {
-            this.m_logicClientHome = logicClientHome;
-        }
+		public LogicClientAvatar RemoveLogicClientAvatar()
+		{
+			LogicClientAvatar tmp = m_logicClientAvatar;
+			m_logicClientAvatar = null;
+			return tmp;
+		}
 
-        public LogicClientAvatar RemoveLogicClientAvatar()
-        {
-            LogicClientAvatar tmp = this.m_logicClientAvatar;
-            this.m_logicClientAvatar = null;
-            return tmp;
-        }
+		public void SetLogicClientAvatar(LogicClientAvatar logicClientAvatar)
+		{
+			m_logicClientAvatar = logicClientAvatar;
+		}
 
-        public void SetLogicClientAvatar(LogicClientAvatar logicClientAvatar)
-        {
-            this.m_logicClientAvatar = logicClientAvatar;
-        }
+		public LogicClientAvatar RemoveAttackerLogicClientAvatar()
+		{
+			LogicClientAvatar tmp = m_attackerLogicClientAvatar;
+			m_attackerLogicClientAvatar = null;
+			return tmp;
+		}
 
-        public LogicClientAvatar RemoveAttackerLogicClientAvatar()
-        {
-            LogicClientAvatar tmp = this.m_attackerLogicClientAvatar;
-            this.m_attackerLogicClientAvatar = null;
-            return tmp;
-        }
+		public void SetAttackerLogicClientAvatar(LogicClientAvatar logicClientAvatar)
+		{
+			m_attackerLogicClientAvatar = logicClientAvatar;
+		}
 
-        public void SetAttackerLogicClientAvatar(LogicClientAvatar logicClientAvatar)
-        {
-            this.m_attackerLogicClientAvatar = logicClientAvatar;
-        }
+		public LogicLong GetAvatarStreamEntryId()
+			=> m_AvatarStreamEntryId;
 
-        public LogicLong GetAvatarStreamEntryId()
-        {
-            return this.m_AvatarStreamEntryId;
-        }
-
-        public void SetAvatarStreamEntryId(LogicLong id)
-        {
-            this.m_AvatarStreamEntryId = id;
-        }
-    }
+		public void SetAvatarStreamEntryId(LogicLong id)
+		{
+			m_AvatarStreamEntryId = id;
+		}
+	}
 }

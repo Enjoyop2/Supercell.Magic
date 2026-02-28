@@ -1,179 +1,179 @@
-﻿namespace Supercell.Magic.Servers.Home.Cluster
+using System;
+using System.Diagnostics;
+
+using Supercell.Magic.Logic.Message;
+
+using Supercell.Magic.Servers.Core;
+using Supercell.Magic.Servers.Core.Cluster;
+using Supercell.Magic.Servers.Core.Network;
+using Supercell.Magic.Servers.Core.Network.Message;
+using Supercell.Magic.Servers.Core.Network.Message.Core;
+using Supercell.Magic.Servers.Core.Network.Message.Session;
+
+using Supercell.Magic.Servers.Home.Logic.Mode;
+using Supercell.Magic.Servers.Home.Session;
+
+using Supercell.Magic.Titan.Message;
+
+namespace Supercell.Magic.Servers.Home.Cluster
 {
-    using System;
-    using System.Diagnostics;
+	public class GameModeCluster : ClusterInstance
+	{
+		private readonly HomeSessionManager m_sessionManager;
+		private readonly Stopwatch m_watch;
 
-    using Supercell.Magic.Logic.Message;
+		private long m_messageProcessSpeed;
+		private int m_messageProcessCount;
 
-    using Supercell.Magic.Servers.Core;
-    using Supercell.Magic.Servers.Core.Cluster;
-    using Supercell.Magic.Servers.Core.Network;
-    using Supercell.Magic.Servers.Core.Network.Message;
-    using Supercell.Magic.Servers.Core.Network.Message.Core;
-    using Supercell.Magic.Servers.Core.Network.Message.Session;
+		public GameModeCluster(int id, int logicUpdateFrequency = -1) : base(id, logicUpdateFrequency)
+		{
+			m_sessionManager = new HomeSessionManager();
+			m_watch = new Stopwatch();
+		}
 
-    using Supercell.Magic.Servers.Home.Logic.Mode;
-    using Supercell.Magic.Servers.Home.Session;
+		protected override void ReceiveMessage(ServerMessage message)
+		{
+			m_watch.Restart();
 
-    using Supercell.Magic.Titan.Message;
+			switch (message.GetMessageType())
+			{
+				case ServerMessageType.START_SERVER_SESSION:
+					OnStartServerSessionMessageReceived((StartServerSessionMessage)message);
+					break;
+				case ServerMessageType.STOP_SERVER_SESSION:
+					OnStopServerSessionMessageReceived((StopServerSessionMessage)message);
+					break;
+				case ServerMessageType.UPDATE_SOCKET_SERVER_SESSION:
+					OnUpdateSocketServerSessionMessageReceived((UpdateSocketServerSessionMessage)message);
+					break;
+				case ServerMessageType.FORWARD_LOGIC_MESSAGE:
+					OnForwardLogicMessageReceived((ForwardLogicMessage)message);
+					break;
 
-    public class GameModeCluster : ClusterInstance
-    {
-        private readonly HomeSessionManager m_sessionManager;
-        private readonly Stopwatch m_watch;
+				case ServerMessageType.HOME_SERVER_COMMAND_ALLOWED:
+					OnHomeAllowServerCommandMessageReceived((HomeServerCommandAllowedMessage)message);
+					break;
+				case ServerMessageType.GAME_STATE_DATA:
+					OnLoadGameStateDataMessageReceived((GameStateDataMessage)message);
+					break;
+				case ServerMessageType.GAME_STATE_NULL_DATA:
+					OnGameStateNullDataMessageReceived((GameStateNullDataMessage)message);
+					break;
+			}
 
-        private long m_messageProcessSpeed;
-        private int m_messageProcessCount;
+			m_watch.Stop();
 
-        public GameModeCluster(int id, int logicUpdateFrequency = -1) : base(id, logicUpdateFrequency)
-        {
-            this.m_sessionManager = new HomeSessionManager();
-            this.m_watch = new Stopwatch();
-        }
+			m_messageProcessSpeed += m_watch.ElapsedMilliseconds;
+			m_messageProcessCount += 1;
 
-        protected override void ReceiveMessage(ServerMessage message)
-        {
-            this.m_watch.Restart();
+			if (m_messageProcessSpeed > 1000)
+			{
+				m_messageProcessSpeed = m_messageProcessSpeed / 1000L;
+				m_messageProcessCount = 1;
+			}
+		}
 
-            switch (message.GetMessageType())
-            {
-                case ServerMessageType.START_SERVER_SESSION:
-                    this.OnStartServerSessionMessageReceived((StartServerSessionMessage) message);
-                    break;
-                case ServerMessageType.STOP_SERVER_SESSION:
-                    this.OnStopServerSessionMessageReceived((StopServerSessionMessage) message);
-                    break;
-                case ServerMessageType.UPDATE_SOCKET_SERVER_SESSION:
-                    this.OnUpdateSocketServerSessionMessageReceived((UpdateSocketServerSessionMessage)message);
-                    break;
-                case ServerMessageType.FORWARD_LOGIC_MESSAGE:
-                    this.OnForwardLogicMessageReceived((ForwardLogicMessage)message);
-                    break;
-                    
-                case ServerMessageType.HOME_SERVER_COMMAND_ALLOWED:
-                    this.OnHomeAllowServerCommandMessageReceived((HomeServerCommandAllowedMessage) message);
-                    break;
-                case ServerMessageType.GAME_STATE_DATA:
-                    this.OnLoadGameStateDataMessageReceived((GameStateDataMessage) message);
-                    break;
-                case ServerMessageType.GAME_STATE_NULL_DATA:
-                    this.OnGameStateNullDataMessageReceived((GameStateNullDataMessage) message);
-                    break;
-            }
+		protected override void OnPingTestCompleted()
+		{
+			for (int i = 0; i < ServerManager.GetServerCount(0); i++)
+			{
+				ServerMessageManager.SendMessage(new ClusterPerformanceDataMessage
+				{
+					Id = m_id,
+					SessionCount = m_sessionManager.Count,
+					Ping = m_ping
+				}, 0, i);
+			}
+		}
 
-            this.m_watch.Stop();
+		public long GetAverageMessageProcessSpeed()
+		{
+			if (m_messageProcessCount != 0)
+				return m_messageProcessSpeed / m_messageProcessCount;
+			return 0L;
+		}
 
-            this.m_messageProcessSpeed += this.m_watch.ElapsedMilliseconds;
-            this.m_messageProcessCount += 1;
+		private void OnStartServerSessionMessageReceived(StartServerSessionMessage message)
+		{
+			m_sessionManager.OnStartServerSessionMessageReceived(message);
+		}
 
-            if (this.m_messageProcessSpeed > 1000)
-            {
-                this.m_messageProcessSpeed = this.m_messageProcessSpeed / 1000L;
-                this.m_messageProcessCount = 1;
-            }
-        }
+		private void OnStopServerSessionMessageReceived(StopServerSessionMessage message)
+		{
+			m_sessionManager.OnStopServerSessionMessageReceived(message);
+		}
 
-        protected override void OnPingTestCompleted()
-        {
-            for (int i = 0; i < ServerManager.GetServerCount(0); i++)
-            {
-                ServerMessageManager.SendMessage(new ClusterPerformanceDataMessage
-                {
-                    Id = this.m_id,
-                    SessionCount = this.m_sessionManager.Count,
-                    Ping = this.m_ping
-                }, 0, i);
-            }
-        }
+		private void OnUpdateSocketServerSessionMessageReceived(UpdateSocketServerSessionMessage message)
+		{
+			if (m_sessionManager.TryGet(message.SessionId, out HomeSession session))
+			{
+				session.UpdateSocketServerSessionMessageReceived(message);
+			}
+		}
 
-        public long GetAverageMessageProcessSpeed()
-        {
-            if (this.m_messageProcessCount != 0)
-                return this.m_messageProcessSpeed / this.m_messageProcessCount;
-            return 0L;
-        }
+		private void OnForwardLogicMessageReceived(ForwardLogicMessage message)
+		{
+			if (m_sessionManager.TryGet(message.SessionId, out HomeSession session))
+			{
+				PiranhaMessage logicMessage = LogicMagicMessageFactory.Instance.CreateMessageByType(message.MessageType);
 
-        private void OnStartServerSessionMessageReceived(StartServerSessionMessage message)
-        {
-            this.m_sessionManager.OnStartServerSessionMessageReceived(message);
-        }
+				if (logicMessage == null)
+					throw new Exception("logicMessage should not be NULL!");
 
-        private void OnStopServerSessionMessageReceived(StopServerSessionMessage message)
-        {
-            this.m_sessionManager.OnStopServerSessionMessageReceived(message);
-        }
+				logicMessage.GetByteStream().SetByteArray(message.MessageBytes, message.MessageLength);
+				logicMessage.SetMessageVersion(message.MessageVersion);
+				logicMessage.Decode();
 
-        private void OnUpdateSocketServerSessionMessageReceived(UpdateSocketServerSessionMessage message)
-        {
-            if (this.m_sessionManager.TryGet(message.SessionId, out HomeSession session))
-            {
-                session.UpdateSocketServerSessionMessageReceived(message);
-            }
-        }
+				if (!logicMessage.IsServerToClientMessage())
+				{
+					session.LogicMessageManager.ReceiveMessage(logicMessage);
+				}
+			}
+		}
 
-        private void OnForwardLogicMessageReceived(ForwardLogicMessage message)
-        {
-            if (this.m_sessionManager.TryGet(message.SessionId, out HomeSession session))
-            {
-                PiranhaMessage logicMessage = LogicMagicMessageFactory.Instance.CreateMessageByType(message.MessageType);
+		private void OnHomeAllowServerCommandMessageReceived(HomeServerCommandAllowedMessage message)
+		{
+			if (m_sessionManager.TryGet(message.SessionId, out HomeSession session))
+			{
+				if (session.GameMode != null && session.GameMode.GetLogicGameMode().GetState() == 1)
+					session.GameMode.AddServerCommand(message.ServerCommand);
+			}
+		}
 
-                if (logicMessage == null)
-                    throw new Exception("logicMessage should not be NULL!");
+		private void OnLoadGameStateDataMessageReceived(GameStateDataMessage message)
+		{
+			if (m_sessionManager.TryGet(message.SessionId, out HomeSession session))
+			{
+				switch (message.State.GetGameStateType())
+				{
+					case GameStateType.HOME:
+						session.SetGameMode(GameMode.LoadHomeState(session, (GameHomeState)message.State));
+						break;
+					case GameStateType.NPC_ATTACK:
+						session.SetGameMode(GameMode.LoadNpcAttackState(session, (GameNpcAttackState)message.State));
+						break;
+					case GameStateType.NPC_DUEL:
+						session.SetGameMode(GameMode.LoadNpcDuelState(session, (GameNpcDuelState)message.State));
+						break;
+					case GameStateType.MATCHED_ATTACK:
+						session.SetGameMode(GameMode.LoadMatchedAttackState(session, (GameMatchedAttackState)message.State));
+						break;
+					case GameStateType.VISIT:
+						session.SetGameMode(GameMode.LoadVisitAttackState(session, (GameVisitState)message.State));
+						break;
+					default:
+						Logging.Error("GameModeCluster.onLoadGameStateDataMessageReceived: unknown game state: " + message.State.GetGameStateType());
+						break;
+				}
+			}
+		}
 
-                logicMessage.GetByteStream().SetByteArray(message.MessageBytes, message.MessageLength);
-                logicMessage.SetMessageVersion(message.MessageVersion);
-                logicMessage.Decode();
-
-                if (!logicMessage.IsServerToClientMessage())
-                {
-                    session.LogicMessageManager.ReceiveMessage(logicMessage);
-                }
-            }
-        }
-        
-        private void OnHomeAllowServerCommandMessageReceived(HomeServerCommandAllowedMessage message)
-        {
-            if (this.m_sessionManager.TryGet(message.SessionId, out HomeSession session))
-            {
-                if (session.GameMode != null && session.GameMode.GetLogicGameMode().GetState() == 1)
-                    session.GameMode.AddServerCommand(message.ServerCommand);
-            }
-        }
-
-        private void OnLoadGameStateDataMessageReceived(GameStateDataMessage message)
-        {
-            if (this.m_sessionManager.TryGet(message.SessionId, out HomeSession session))
-            {
-                switch (message.State.GetGameStateType())
-                {
-                    case GameStateType.HOME:
-                        session.SetGameMode(GameMode.LoadHomeState(session, (GameHomeState) message.State));
-                        break;
-                    case GameStateType.NPC_ATTACK:
-                        session.SetGameMode(GameMode.LoadNpcAttackState(session, (GameNpcAttackState) message.State));
-                        break;
-                    case GameStateType.NPC_DUEL:
-                        session.SetGameMode(GameMode.LoadNpcDuelState(session, (GameNpcDuelState) message.State));
-                        break;
-                    case GameStateType.MATCHED_ATTACK:
-                        session.SetGameMode(GameMode.LoadMatchedAttackState(session, (GameMatchedAttackState) message.State));
-                        break;
-                    case GameStateType.VISIT:
-                        session.SetGameMode(GameMode.LoadVisitAttackState(session, (GameVisitState) message.State));
-                        break;
-                    default:
-                        Logging.Error("GameModeCluster.onLoadGameStateDataMessageReceived: unknown game state: " + message.State.GetGameStateType());
-                        break;
-                }
-            }
-        }
-
-        private void OnGameStateNullDataMessageReceived(GameStateNullDataMessage message)
-        {
-            if (this.m_sessionManager.TryGet(message.SessionId, out HomeSession session))
-            {
-                session.DestructGameMode();
-            }
-        }
-    }
+		private void OnGameStateNullDataMessageReceived(GameStateNullDataMessage message)
+		{
+			if (m_sessionManager.TryGet(message.SessionId, out HomeSession session))
+			{
+				session.DestructGameMode();
+			}
+		}
+	}
 }

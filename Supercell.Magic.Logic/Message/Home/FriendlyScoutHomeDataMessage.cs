@@ -1,167 +1,153 @@
+using Supercell.Magic.Logic.Avatar;
+using Supercell.Magic.Logic.Home;
+using Supercell.Magic.Titan.Math;
+using Supercell.Magic.Titan.Message;
+
 namespace Supercell.Magic.Logic.Message.Home
 {
-    using Supercell.Magic.Logic.Avatar;
-    using Supercell.Magic.Logic.Home;
-    using Supercell.Magic.Titan.Math;
-    using Supercell.Magic.Titan.Message;
+	public class FriendlyScoutHomeDataMessage : PiranhaMessage
+	{
+		public const int MESSAGE_TYPE = 25007;
 
-    public class FriendlyScoutHomeDataMessage : PiranhaMessage
-    {
-        public const int MESSAGE_TYPE = 25007;
+		private int m_currentTimestamp;
+		private int m_mapId;
 
-        private int m_currentTimestamp;
-        private int m_mapId;
+		private LogicLong m_avatarId;
+		private LogicLong m_accountId;
+		private LogicLong m_streamId;
 
-        private LogicLong m_avatarId;
-        private LogicLong m_accountId;
-        private LogicLong m_streamId;
+		private LogicClientAvatar m_logicClientAvatar;
+		private LogicClientHome m_logicClientHome;
 
-        private LogicClientAvatar m_logicClientAvatar;
-        private LogicClientHome m_logicClientHome;
+		public FriendlyScoutHomeDataMessage() : this(0)
+		{
+			// FriendlyScoutHomeDataMessage.
+		}
 
-        public FriendlyScoutHomeDataMessage() : this(0)
-        {
-            // FriendlyScoutHomeDataMessage.
-        }
+		public FriendlyScoutHomeDataMessage(short messageVersion) : base(messageVersion)
+		{
+			// FriendlyScoutHomeDataMessage.
+		}
 
-        public FriendlyScoutHomeDataMessage(short messageVersion) : base(messageVersion)
-        {
-            // FriendlyScoutHomeDataMessage.
-        }
+		public override void Decode()
+		{
+			base.Decode();
 
-        public override void Decode()
-        {
-            base.Decode();
+			m_currentTimestamp = m_stream.ReadInt();
+			m_avatarId = m_stream.ReadLong();
+			m_accountId = m_stream.ReadLong();
+			m_logicClientHome = new LogicClientHome();
+			m_logicClientHome.Decode(m_stream);
+			m_mapId = m_stream.ReadInt();
 
-            this.m_currentTimestamp = this.m_stream.ReadInt();
-            this.m_avatarId = this.m_stream.ReadLong();
-            this.m_accountId = this.m_stream.ReadLong();
-            this.m_logicClientHome = new LogicClientHome();
-            this.m_logicClientHome.Decode(this.m_stream);
-            this.m_mapId = this.m_stream.ReadInt();
+			if (m_stream.ReadBoolean())
+			{
+				m_logicClientAvatar = new LogicClientAvatar();
+				m_logicClientAvatar.Decode(m_stream);
+			}
 
-            if (this.m_stream.ReadBoolean())
-            {
-                this.m_logicClientAvatar = new LogicClientAvatar();
-                this.m_logicClientAvatar.Decode(this.m_stream);
-            }
+			m_streamId = m_stream.ReadLong();
+		}
 
-            this.m_streamId = this.m_stream.ReadLong();
-        }
+		public override void Encode()
+		{
+			base.Encode();
 
-        public override void Encode()
-        {
-            base.Encode();
+			m_stream.WriteInt(m_currentTimestamp);
+			m_stream.WriteLong(m_avatarId);
+			m_stream.WriteLong(m_accountId);
+			m_logicClientHome.Encode(m_stream);
+			m_stream.WriteInt(m_mapId);
 
-            this.m_stream.WriteInt(this.m_currentTimestamp);
-            this.m_stream.WriteLong(this.m_avatarId);
-            this.m_stream.WriteLong(this.m_accountId);
-            this.m_logicClientHome.Encode(this.m_stream);
-            this.m_stream.WriteInt(this.m_mapId);
+			if (m_logicClientAvatar != null)
+			{
+				m_stream.WriteBoolean(true);
+				m_logicClientAvatar.Encode(m_stream);
+			}
+			else
+			{
+				m_stream.WriteBoolean(false);
+			}
 
-            if (this.m_logicClientAvatar != null)
-            {
-                this.m_stream.WriteBoolean(true);
-                this.m_logicClientAvatar.Encode(this.m_stream);
-            }
-            else
-            {
-                this.m_stream.WriteBoolean(false);
-            }
+			m_stream.WriteLong(m_streamId);
+		}
 
-            this.m_stream.WriteLong(this.m_streamId);
-        }
+		public override short GetMessageType()
+			=> FriendlyScoutHomeDataMessage.MESSAGE_TYPE;
 
-        public override short GetMessageType()
-        {
-            return FriendlyScoutHomeDataMessage.MESSAGE_TYPE;
-        }
+		public override int GetServiceNodeType()
+			=> 11;
 
-        public override int GetServiceNodeType()
-        {
-            return 11;
-        }
+		public override void Destruct()
+		{
+			base.Destruct();
 
-        public override void Destruct()
-        {
-            base.Destruct();
+			m_logicClientHome = null;
+			m_logicClientAvatar = null;
+		}
 
-            this.m_logicClientHome = null;
-            this.m_logicClientAvatar = null;
-        }
+		public int GetCurrentTimestamp()
+			=> m_currentTimestamp;
 
-        public int GetCurrentTimestamp()
-        {
-            return this.m_currentTimestamp;
-        }
+		public void SetCurrentTimestamp(int value)
+		{
+			m_currentTimestamp = value;
+		}
 
-        public void SetCurrentTimestamp(int value)
-        {
-            this.m_currentTimestamp = value;
-        }
+		public int GetMapId()
+			=> m_mapId;
 
-        public int GetMapId()
-        {
-            return this.m_mapId;
-        }
+		public void SetMapId(int value)
+		{
+			m_mapId = value;
+		}
 
-        public void SetMapId(int value)
-        {
-            this.m_mapId = value;
-        }
+		public LogicLong GetAvatarId()
+			=> m_avatarId;
 
-        public LogicLong GetAvatarId()
-        {
-            return this.m_avatarId;
-        }
+		public void SetAvatarId(LogicLong value)
+		{
+			m_avatarId = value;
+		}
 
-        public void SetAvatarId(LogicLong value)
-        {
-            this.m_avatarId = value;
-        }
+		public LogicLong GetAccountId()
+			=> m_accountId;
 
-        public LogicLong GetAccountId()
-        {
-            return this.m_accountId;
-        }
+		public void SetAccountId(LogicLong value)
+		{
+			m_accountId = value;
+		}
 
-        public void SetAccountId(LogicLong value)
-        {
-            this.m_accountId = value;
-        }
+		public LogicLong GetStreamId()
+			=> m_streamId;
 
-        public LogicLong GetStreamId()
-        {
-            return this.m_streamId;
-        }
+		public void SetStreamId(LogicLong value)
+		{
+			m_streamId = value;
+		}
 
-        public void SetStreamId(LogicLong value)
-        {
-            this.m_streamId = value;
-        }
+		public LogicClientHome RemoveLogicClientHome()
+		{
+			LogicClientHome tmp = m_logicClientHome;
+			m_logicClientHome = null;
+			return tmp;
+		}
 
-        public LogicClientHome RemoveLogicClientHome()
-        {
-            LogicClientHome tmp = this.m_logicClientHome;
-            this.m_logicClientHome = null;
-            return tmp;
-        }
+		public void SetLogicClientHome(LogicClientHome logicClientHome)
+		{
+			m_logicClientHome = logicClientHome;
+		}
 
-        public void SetLogicClientHome(LogicClientHome logicClientHome)
-        {
-            this.m_logicClientHome = logicClientHome;
-        }
+		public LogicClientAvatar RemoveLogicClientAvatar()
+		{
+			LogicClientAvatar tmp = m_logicClientAvatar;
+			m_logicClientAvatar = null;
+			return tmp;
+		}
 
-        public LogicClientAvatar RemoveLogicClientAvatar()
-        {
-            LogicClientAvatar tmp = this.m_logicClientAvatar;
-            this.m_logicClientAvatar = null;
-            return tmp;
-        }
-
-        public void SetLogicClientAvatar(LogicClientAvatar logicClientAvatar)
-        {
-            this.m_logicClientAvatar = logicClientAvatar;
-        }
-    }
+		public void SetLogicClientAvatar(LogicClientAvatar logicClientAvatar)
+		{
+			m_logicClientAvatar = logicClientAvatar;
+		}
+	}
 }

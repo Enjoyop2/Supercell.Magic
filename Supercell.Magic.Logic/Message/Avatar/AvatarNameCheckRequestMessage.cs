@@ -1,59 +1,53 @@
+using Supercell.Magic.Titan.Message;
+
 namespace Supercell.Magic.Logic.Message.Avatar
 {
-    using Supercell.Magic.Titan.Message;
+	public class AvatarNameCheckRequestMessage : PiranhaMessage
+	{
+		public const int MESSAGE_TYPE = 14600;
 
-    public class AvatarNameCheckRequestMessage : PiranhaMessage
-    {
-        public const int MESSAGE_TYPE = 14600;
+		private string m_name;
 
-        private string m_name;
+		public AvatarNameCheckRequestMessage() : this(0)
+		{
+			// AvatarNameCheckRequestMessage.
+		}
 
-        public AvatarNameCheckRequestMessage() : this(0)
-        {
-            // AvatarNameCheckRequestMessage.
-        }
+		public AvatarNameCheckRequestMessage(short messageVersion) : base(messageVersion)
+		{
+			// AvatarNameCheckRequestMessage.
+		}
 
-        public AvatarNameCheckRequestMessage(short messageVersion) : base(messageVersion)
-        {
-            // AvatarNameCheckRequestMessage.
-        }
+		public override void Decode()
+		{
+			base.Decode();
+			m_name = m_stream.ReadString(900000);
+		}
 
-        public override void Decode()
-        {
-            base.Decode();
-            this.m_name = this.m_stream.ReadString(900000);
-        }
+		public override void Encode()
+		{
+			base.Encode();
+			m_stream.WriteString(m_name);
+		}
 
-        public override void Encode()
-        {
-            base.Encode();
-            this.m_stream.WriteString(this.m_name);
-        }
+		public override short GetMessageType()
+			=> AvatarNameCheckRequestMessage.MESSAGE_TYPE;
 
-        public override short GetMessageType()
-        {
-            return AvatarNameCheckRequestMessage.MESSAGE_TYPE;
-        }
+		public override int GetServiceNodeType()
+			=> 9;
 
-        public override int GetServiceNodeType()
-        {
-            return 9;
-        }
+		public override void Destruct()
+		{
+			base.Destruct();
+			m_name = null;
+		}
 
-        public override void Destruct()
-        {
-            base.Destruct();
-            this.m_name = null;
-        }
+		public string GetName()
+			=> m_name;
 
-        public string GetName()
-        {
-            return this.m_name;
-        }
-
-        public void SetName(string name)
-        {
-            this.m_name = name;
-        }
-    }
+		public void SetName(string name)
+		{
+			m_name = name;
+		}
+	}
 }

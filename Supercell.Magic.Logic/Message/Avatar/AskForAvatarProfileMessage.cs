@@ -1,96 +1,92 @@
+using Supercell.Magic.Titan.Math;
+using Supercell.Magic.Titan.Message;
+
 namespace Supercell.Magic.Logic.Message.Avatar
 {
-    using Supercell.Magic.Titan.Math;
-    using Supercell.Magic.Titan.Message;
+	public class AskForAvatarProfileMessage : PiranhaMessage
+	{
+		public const int MESSAGE_TYPE = 14325;
 
-    public class AskForAvatarProfileMessage : PiranhaMessage
-    {
-        public const int MESSAGE_TYPE = 14325;
+		private LogicLong m_avatarId;
+		private LogicLong m_homeId;
 
-        private LogicLong m_avatarId;
-        private LogicLong m_homeId;
+		public AskForAvatarProfileMessage() : this(0)
+		{
+			// AskForAvatarProfileMessage.
+		}
 
-        public AskForAvatarProfileMessage() : this(0)
-        {
-            // AskForAvatarProfileMessage.
-        }
+		public AskForAvatarProfileMessage(short messageVersion) : base(messageVersion)
+		{
+			// AskForAvatarProfileMessage.
+		}
 
-        public AskForAvatarProfileMessage(short messageVersion) : base(messageVersion)
-        {
-            // AskForAvatarProfileMessage.
-        }
+		public override void Decode()
+		{
+			base.Decode();
+			m_avatarId = m_stream.ReadLong();
 
-        public override void Decode()
-        {
-            base.Decode();
-            this.m_avatarId = this.m_stream.ReadLong();
+			if (m_stream.ReadBoolean())
+			{
+				m_homeId = m_stream.ReadLong();
+			}
 
-            if (this.m_stream.ReadBoolean())
-            {
-                this.m_homeId = this.m_stream.ReadLong();
-            }
+			m_stream.ReadBoolean();
+		}
 
-            this.m_stream.ReadBoolean();
-        }
+		public override void Encode()
+		{
+			base.Encode();
+			m_stream.WriteLong(m_avatarId);
 
-        public override void Encode()
-        {
-            base.Encode();
-            this.m_stream.WriteLong(this.m_avatarId);
+			if (m_homeId != null)
+			{
+				m_stream.WriteBoolean(true);
+				m_stream.WriteLong(m_homeId);
+			}
+			else
+			{
+				m_stream.WriteBoolean(false);
+			}
 
-            if (this.m_homeId != null)
-            {
-                this.m_stream.WriteBoolean(true);
-                this.m_stream.WriteLong(this.m_homeId);
-            }
-            else
-            {
-                this.m_stream.WriteBoolean(false);
-            }
+			m_stream.WriteBoolean(false);
+		}
 
-            this.m_stream.WriteBoolean(false);
-        }
+		public override short GetMessageType()
+			=> AskForAvatarProfileMessage.MESSAGE_TYPE;
 
-        public override short GetMessageType()
-        {
-            return AskForAvatarProfileMessage.MESSAGE_TYPE;
-        }
+		public override int GetServiceNodeType()
+			=> 9;
 
-        public override int GetServiceNodeType()
-        {
-            return 9;
-        }
+		public override void Destruct()
+		{
+			base.Destruct();
 
-        public override void Destruct()
-        {
-            base.Destruct();
+			m_avatarId = null;
+			m_homeId = null;
+		}
 
-            this.m_avatarId = null;
-            this.m_homeId = null;
-        }
+		public LogicLong RemoveAvatarId()
+		{
+			LogicLong tmp = m_avatarId;
+			m_avatarId = null;
+			return tmp;
+		}
 
-        public LogicLong RemoveAvatarId()
-        {
-            LogicLong tmp = this.m_avatarId;
-            this.m_avatarId = null;
-            return tmp;
-        }
+		public void SetAvatarId(LogicLong id)
+		{
+			m_avatarId = id;
+		}
 
-        public void SetAvatarId(LogicLong id)
-        {
-            this.m_avatarId = id;
-        }
+		public LogicLong RemoveHomeId()
+		{
+			LogicLong tmp = m_homeId;
+			m_homeId = null;
+			return tmp;
+		}
 
-        public LogicLong RemoveHomeId()
-        {
-            LogicLong tmp = this.m_homeId;
-            this.m_homeId = null;
-            return tmp;
-        }
-
-        public void SetHomeId(LogicLong id)
-        {
-            this.m_homeId = id;
-        }
-    }
+		public void SetHomeId(LogicLong id)
+		{
+			m_homeId = id;
+		}
+	}
 }

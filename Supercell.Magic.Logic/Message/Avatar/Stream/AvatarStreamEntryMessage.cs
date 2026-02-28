@@ -1,65 +1,61 @@
+using Supercell.Magic.Titan.Message;
+
 namespace Supercell.Magic.Logic.Message.Avatar.Stream
 {
-    using Supercell.Magic.Titan.Message;
+	public class AvatarStreamEntryMessage : PiranhaMessage
+	{
+		public const int MESSAGE_TYPE = 24412;
 
-    public class AvatarStreamEntryMessage : PiranhaMessage
-    {
-        public const int MESSAGE_TYPE = 24412;
+		private AvatarStreamEntry m_avatarStreamEntry;
 
-        private AvatarStreamEntry m_avatarStreamEntry;
+		public AvatarStreamEntryMessage() : this(0)
+		{
+			// AvatarStreamEntryMessage.
+		}
 
-        public AvatarStreamEntryMessage() : this(0)
-        {
-            // AvatarStreamEntryMessage.
-        }
+		public AvatarStreamEntryMessage(short messageVersion) : base(messageVersion)
+		{
+			// AvatarStreamEntryMessage.
+		}
 
-        public AvatarStreamEntryMessage(short messageVersion) : base(messageVersion)
-        {
-            // AvatarStreamEntryMessage.
-        }
+		public override void Decode()
+		{
+			base.Decode();
 
-        public override void Decode()
-        {
-            base.Decode();
+			m_avatarStreamEntry = AvatarStreamEntryFactory.CreateStreamEntryByType((AvatarStreamEntryType)m_stream.ReadInt());
+			m_avatarStreamEntry.Decode(m_stream);
+		}
 
-            this.m_avatarStreamEntry = AvatarStreamEntryFactory.CreateStreamEntryByType((AvatarStreamEntryType) this.m_stream.ReadInt());
-            this.m_avatarStreamEntry.Decode(this.m_stream);
-        }
+		public override void Encode()
+		{
+			base.Encode();
 
-        public override void Encode()
-        {
-            base.Encode();
+			m_stream.WriteInt((int)m_avatarStreamEntry.GetAvatarStreamEntryType());
+			m_avatarStreamEntry.Encode(m_stream);
+		}
 
-            this.m_stream.WriteInt((int) this.m_avatarStreamEntry.GetAvatarStreamEntryType());
-            this.m_avatarStreamEntry.Encode(this.m_stream);
-        }
+		public override short GetMessageType()
+			=> AvatarStreamEntryMessage.MESSAGE_TYPE;
 
-        public override short GetMessageType()
-        {
-            return AvatarStreamEntryMessage.MESSAGE_TYPE;
-        }
+		public override int GetServiceNodeType()
+			=> 11;
 
-        public override int GetServiceNodeType()
-        {
-            return 11;
-        }
+		public override void Destruct()
+		{
+			base.Destruct();
+			m_avatarStreamEntry = null;
+		}
 
-        public override void Destruct()
-        {
-            base.Destruct();
-            this.m_avatarStreamEntry = null;
-        }
+		public AvatarStreamEntry RemoveAvatarStreamEntry()
+		{
+			AvatarStreamEntry tmp = m_avatarStreamEntry;
+			m_avatarStreamEntry = null;
+			return tmp;
+		}
 
-        public AvatarStreamEntry RemoveAvatarStreamEntry()
-        {
-            AvatarStreamEntry tmp = this.m_avatarStreamEntry;
-            this.m_avatarStreamEntry = null;
-            return tmp;
-        }
-
-        public void SetAvatarStreamEntry(AvatarStreamEntry entry)
-        {
-            this.m_avatarStreamEntry = entry;
-        }
-    }
+		public void SetAvatarStreamEntry(AvatarStreamEntry entry)
+		{
+			m_avatarStreamEntry = entry;
+		}
+	}
 }

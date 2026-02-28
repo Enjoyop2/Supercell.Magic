@@ -1,122 +1,112 @@
+using Supercell.Magic.Titan.Json;
+using Supercell.Magic.Titan.Message;
+
 namespace Supercell.Magic.Logic.Message.Home
 {
-    using Supercell.Magic.Titan.Json;
-    using Supercell.Magic.Titan.Message;
+	public class OutOfSyncMessage : PiranhaMessage
+	{
+		public const int MESSAGE_TYPE = 24104;
 
-    public class OutOfSyncMessage : PiranhaMessage
-    {
-        public const int MESSAGE_TYPE = 24104;
+		private int m_subtick;
+		private int m_clientChecksum;
+		private int m_serverChecksum;
 
-        private int m_subtick;
-        private int m_clientChecksum;
-        private int m_serverChecksum;
+		private LogicJSONObject m_debugJSON;
 
-        private LogicJSONObject m_debugJSON;
+		public OutOfSyncMessage() : this(0)
+		{
+			// OutOfSyncMessage.
+		}
 
-        public OutOfSyncMessage() : this(0)
-        {
-            // OutOfSyncMessage.
-        }
+		public OutOfSyncMessage(short messageVersion) : base(messageVersion)
+		{
+			// OutOfSyncMessage.
+		}
 
-        public OutOfSyncMessage(short messageVersion) : base(messageVersion)
-        {
-            // OutOfSyncMessage.
-        }
+		public override void Decode()
+		{
+			base.Decode();
 
-        public override void Decode()
-        {
-            base.Decode();
+			m_serverChecksum = m_stream.ReadInt();
+			m_clientChecksum = m_stream.ReadInt();
+			m_subtick = m_stream.ReadInt();
 
-            this.m_serverChecksum = this.m_stream.ReadInt();
-            this.m_clientChecksum = this.m_stream.ReadInt();
-            this.m_subtick = this.m_stream.ReadInt();
+			if (m_stream.ReadBoolean())
+			{
+				string json = m_stream.ReadString(900000);
 
-            if (this.m_stream.ReadBoolean())
-            {
-                string json = this.m_stream.ReadString(900000);
+				if (json != null)
+				{
+					m_debugJSON = LogicJSONParser.ParseObject(json);
+				}
+			}
+		}
 
-                if (json != null)
-                {
-                    this.m_debugJSON = LogicJSONParser.ParseObject(json);
-                }
-            }
-        }
+		public override void Encode()
+		{
+			base.Encode();
 
-        public override void Encode()
-        {
-            base.Encode();
+			m_stream.WriteInt(m_serverChecksum);
+			m_stream.WriteInt(m_clientChecksum);
+			m_stream.WriteInt(m_subtick);
 
-            this.m_stream.WriteInt(this.m_serverChecksum);
-            this.m_stream.WriteInt(this.m_clientChecksum);
-            this.m_stream.WriteInt(this.m_subtick);
+			if (m_debugJSON != null)
+			{
+				m_stream.WriteBoolean(true);
+				m_stream.WriteString(LogicJSONParser.CreateJSONString(m_debugJSON, 1024));
+			}
+			else
+			{
+				m_stream.WriteBoolean(false);
+			}
+		}
 
-            if (this.m_debugJSON != null)
-            {
-                this.m_stream.WriteBoolean(true);
-                this.m_stream.WriteString(LogicJSONParser.CreateJSONString(this.m_debugJSON, 1024));
-            }
-            else
-            {
-                this.m_stream.WriteBoolean(false);
-            }
-        }
+		public override short GetMessageType()
+			=> OutOfSyncMessage.MESSAGE_TYPE;
 
-        public override short GetMessageType()
-        {
-            return OutOfSyncMessage.MESSAGE_TYPE;
-        }
+		public override int GetServiceNodeType()
+			=> 10;
 
-        public override int GetServiceNodeType()
-        {
-            return 10;
-        }
+		public override void Destruct()
+		{
+			base.Destruct();
+			m_debugJSON = null;
+		}
 
-        public override void Destruct()
-        {
-            base.Destruct();
-            this.m_debugJSON = null;
-        }
+		public int GetServerChecksum()
+			=> m_serverChecksum;
 
-        public int GetServerChecksum()
-        {
-            return this.m_serverChecksum;
-        }
+		public void SetServerChecksum(int value)
+		{
+			m_serverChecksum = value;
+		}
 
-        public void SetServerChecksum(int value)
-        {
-            this.m_serverChecksum = value;
-        }
+		public int GetClientChecksum()
+			=> m_clientChecksum;
 
-        public int GetClientChecksum()
-        {
-            return this.m_clientChecksum;
-        }
+		public void SetClientChecksum(int value)
+		{
+			m_clientChecksum = value;
+		}
 
-        public void SetClientChecksum(int value)
-        {
-            this.m_clientChecksum = value;
-        }
+		public int GetSubTick()
+			=> m_subtick;
 
-        public int GetSubTick()
-        {
-            return this.m_subtick;
-        }
+		public void SetSubTick(int value)
+		{
+			m_subtick = value;
+		}
 
-        public void SetSubTick(int value)
-        {
-            this.m_subtick = value;
-        }
+		public LogicJSONObject RemoveDebugJSON()
+		{
+			LogicJSONObject tmp = m_debugJSON;
+			m_debugJSON = null;
+			return tmp;
+		}
 
-        public LogicJSONObject RemoveDebugJSON()
-        {
-            LogicJSONObject tmp = this.m_debugJSON;
-            this.m_debugJSON = null;
-            return tmp;
-        }
-
-        public void SetDebugJSON(LogicJSONObject json)
-        {
-            this.m_debugJSON = json;
-        }
-    }
+		public void SetDebugJSON(LogicJSONObject json)
+		{
+			m_debugJSON = json;
+		}
+	}
 }

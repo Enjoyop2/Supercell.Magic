@@ -1,49 +1,47 @@
+using Supercell.Magic.Logic.Level;
+using Supercell.Magic.Titan.DataStream;
+
 namespace Supercell.Magic.Logic.Command.Home
 {
-    using Supercell.Magic.Logic.Level;
-    using Supercell.Magic.Titan.DataStream;
+	public sealed class LogicSetPersistentBoolCommand : LogicCommand
+	{
+		private int m_index;
+		private bool m_value;
 
-    public sealed class LogicSetPersistentBoolCommand : LogicCommand
-    {
-        private int m_index;
-        private bool m_value;
+		public override void Decode(ByteStream stream)
+		{
+			base.Decode(stream);
 
-        public override void Decode(ByteStream stream)
-        {
-            base.Decode(stream);
+			m_index = stream.ReadInt();
+			m_value = stream.ReadBoolean();
+		}
 
-            this.m_index = stream.ReadInt();
-            this.m_value = stream.ReadBoolean();
-        }
+		public override void Encode(ChecksumEncoder encoder)
+		{
+			base.Encode(encoder);
 
-        public override void Encode(ChecksumEncoder encoder)
-        {
-            base.Encode(encoder);
+			encoder.WriteInt(m_index);
+			encoder.WriteBoolean(m_value);
+		}
 
-            encoder.WriteInt(this.m_index);
-            encoder.WriteBoolean(this.m_value);
-        }
+		public override LogicCommandType GetCommandType()
+			=> LogicCommandType.SET_PERSISTENT_BOOL;
 
-        public override LogicCommandType GetCommandType()
-        {
-            return LogicCommandType.SET_PERSISTENT_BOOL;
-        }
+		public override void Destruct()
+		{
+			base.Destruct();
+		}
 
-        public override void Destruct()
-        {
-            base.Destruct();
-        }
-
-        public override int Execute(LogicLevel level)
-        {
-            switch (this.m_index)
-            {
-                case 0:
-                    level.SetPersistentBool(0, this.m_value);
-                    return 0;
-                default:
-                    return -1;
-            }
-        }
-    }
+		public override int Execute(LogicLevel level)
+		{
+			switch (m_index)
+			{
+				case 0:
+					level.SetPersistentBool(0, m_value);
+					return 0;
+				default:
+					return -1;
+			}
+		}
+	}
 }

@@ -1,58 +1,52 @@
-﻿namespace Supercell.Magic.Logic.Message.Facebook
+using Supercell.Magic.Titan.Message;
+
+namespace Supercell.Magic.Logic.Message.Facebook
 {
-    using Supercell.Magic.Titan.Message;
+	public class FacebookAccountBoundMessage : PiranhaMessage
+	{
+		public const int MESSAGE_TYPE = 24201;
 
-    public class FacebookAccountBoundMessage : PiranhaMessage
-    {
-        public const int MESSAGE_TYPE = 24201;
+		private int m_resultCode;
 
-        private int m_resultCode;
+		public FacebookAccountBoundMessage() : this(0)
+		{
+			// FacebookAccountBoundMessage.
+		}
 
-        public FacebookAccountBoundMessage() : this(0)
-        {
-            // FacebookAccountBoundMessage.
-        }
+		public FacebookAccountBoundMessage(short messageVersion) : base(messageVersion)
+		{
+			// FacebookAccountBoundMessage.
+		}
 
-        public FacebookAccountBoundMessage(short messageVersion) : base(messageVersion)
-        {
-            // FacebookAccountBoundMessage.
-        }
+		public override void Decode()
+		{
+			base.Decode();
+			m_resultCode = m_stream.ReadInt();
+		}
 
-        public override void Decode()
-        {
-            base.Decode();
-            this.m_resultCode = this.m_stream.ReadInt();
-        }
+		public override void Encode()
+		{
+			base.Encode();
+			m_stream.WriteInt(m_resultCode);
+		}
 
-        public override void Encode()
-        {
-            base.Encode();
-            this.m_stream.WriteInt(this.m_resultCode);
-        }
+		public override short GetMessageType()
+			=> FacebookAccountBoundMessage.MESSAGE_TYPE;
 
-        public override short GetMessageType()
-        {
-            return FacebookAccountBoundMessage.MESSAGE_TYPE;
-        }
+		public override int GetServiceNodeType()
+			=> 10;
 
-        public override int GetServiceNodeType()
-        {
-            return 10;
-        }
+		public override void Destruct()
+		{
+			base.Destruct();
+		}
 
-        public override void Destruct()
-        {
-            base.Destruct();
-        }
+		public int GetResultCode()
+			=> m_resultCode;
 
-        public int GetResultCode()
-        {
-            return this.m_resultCode;
-        }
-
-        public void SetResultCode(int value)
-        {
-            this.m_resultCode = value;
-        }
-    }
+		public void SetResultCode(int value)
+		{
+			m_resultCode = value;
+		}
+	}
 }

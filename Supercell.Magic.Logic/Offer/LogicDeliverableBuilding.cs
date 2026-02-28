@@ -1,125 +1,117 @@
-﻿namespace Supercell.Magic.Logic.Offer
+using Supercell.Magic.Logic.Data;
+using Supercell.Magic.Logic.Helper;
+using Supercell.Magic.Logic.Level;
+using Supercell.Magic.Logic.Util;
+using Supercell.Magic.Titan.Json;
+
+namespace Supercell.Magic.Logic.Offer
 {
-    using Supercell.Magic.Logic.Data;
-    using Supercell.Magic.Logic.Helper;
-    using Supercell.Magic.Logic.Level;
-    using Supercell.Magic.Logic.Util;
-    using Supercell.Magic.Titan.Json;
+	public class LogicDeliverableBuilding : LogicDeliverable
+	{
+		private LogicBuildingData m_buildingData;
 
-    public class LogicDeliverableBuilding : LogicDeliverable
-    {
-        private LogicBuildingData m_buildingData;
+		private int m_buildingLevel;
+		private int m_buildingCount;
 
-        private int m_buildingLevel;
-        private int m_buildingCount;
+		public override void Destruct()
+		{
+			base.Destruct();
 
-        public override void Destruct()
-        {
-            base.Destruct();
+			m_buildingData = null;
+			m_buildingCount = 0;
+			m_buildingLevel = 0;
+		}
 
-            this.m_buildingData = null;
-            this.m_buildingCount = 0;
-            this.m_buildingLevel = 0;
-        }
+		public override void WriteToJSON(LogicJSONObject jsonObject)
+		{
+			base.WriteToJSON(jsonObject);
 
-        public override void WriteToJSON(LogicJSONObject jsonObject)
-        {
-            base.WriteToJSON(jsonObject);
+			LogicJSONHelper.SetLogicData(jsonObject, "building", m_buildingData);
 
-            LogicJSONHelper.SetLogicData(jsonObject, "building", this.m_buildingData);
+			jsonObject.Put("buildingNumber", new LogicJSONNumber(m_buildingCount));
+			jsonObject.Put("buildingLevel", new LogicJSONNumber(m_buildingLevel));
+		}
 
-            jsonObject.Put("buildingNumber", new LogicJSONNumber(this.m_buildingCount));
-            jsonObject.Put("buildingLevel", new LogicJSONNumber(this.m_buildingLevel));
-        }
+		public override void ReadFromJSON(LogicJSONObject jsonObject)
+		{
+			base.ReadFromJSON(jsonObject);
 
-        public override void ReadFromJSON(LogicJSONObject jsonObject)
-        {
-            base.ReadFromJSON(jsonObject);
+			m_buildingData = (LogicBuildingData)LogicJSONHelper.GetLogicData(jsonObject, "building");
+			m_buildingCount = LogicJSONHelper.GetInt(jsonObject, "buildingNumber");
+			m_buildingLevel = LogicJSONHelper.GetInt(jsonObject, "buildingLevel");
+		}
 
-            this.m_buildingData = (LogicBuildingData) LogicJSONHelper.GetLogicData(jsonObject, "building");
-            this.m_buildingCount = LogicJSONHelper.GetInt(jsonObject, "buildingNumber");
-            this.m_buildingLevel = LogicJSONHelper.GetInt(jsonObject, "buildingLevel");
-        }
+		public override int GetDeliverableType()
+			=> 2;
 
-        public override int GetDeliverableType()
-        {
-            return 2;
-        }
+		public override bool Deliver(LogicLevel level)
+		{
+			if (CanBeDeliver(level))
+			{
+				level.AddUnplacedObject(new LogicDataSlot(m_buildingData, m_buildingLevel));
+				return true;
+			}
 
-        public override bool Deliver(LogicLevel level)
-        {
-            if (this.CanBeDeliver(level))
-            {
-                level.AddUnplacedObject(new LogicDataSlot(this.m_buildingData, this.m_buildingLevel));
-                return true;
-            }
+			return false;
+		}
 
-            return false;
-        }
+		public override bool CanBeDeliver(LogicLevel level)
+		{
+			int placedBuildingCount = level.GetObjectCount(m_buildingData, m_buildingData.GetVillageType());
+			int townHallLevel = m_buildingData.GetVillageType() == 1
+				? level.GetHomeOwnerAvatar().GetVillage2TownHallLevel()
+				: level.GetHomeOwnerAvatar().GetTownHallLevel();
+			int unlockedBuildingCount = LogicDataTables.GetTownHallLevel(townHallLevel).GetUnlockedBuildingCount(m_buildingData);
 
-        public override bool CanBeDeliver(LogicLevel level)
-        {
-            int placedBuildingCount = level.GetObjectCount(this.m_buildingData, this.m_buildingData.GetVillageType());
-            int townHallLevel = this.m_buildingData.GetVillageType() == 1
-                ? level.GetHomeOwnerAvatar().GetVillage2TownHallLevel()
-                : level.GetHomeOwnerAvatar().GetTownHallLevel();
-            int unlockedBuildingCount = LogicDataTables.GetTownHallLevel(townHallLevel).GetUnlockedBuildingCount(this.m_buildingData);
+			if (placedBuildingCount >= unlockedBuildingCount || m_buildingCount != 0)
+			{
+				return m_buildingCount == placedBuildingCount + 1;
+			}
 
-            if (placedBuildingCount >= unlockedBuildingCount || this.m_buildingCount != 0)
-            {
-                return this.m_buildingCount == placedBuildingCount + 1;
-            }
+			return true;
+		}
 
-            return true;
-        }
+		public override LogicDeliverableBundle Compensate(LogicLevel level)
+		{
+			LogicDeliverableBundle logicDeliverableBundle = new LogicDeliverableBundle();
 
-        public override LogicDeliverableBundle Compensate(LogicLevel level)
-        {
-            LogicDeliverableBundle logicDeliverableBundle = new LogicDeliverableBundle();
+			if (m_buildingData.IsWorkerBuilding())
+			{
+				logicDeliverableBundle.AddResources(m_buildingData.GetBuildResource(0), LogicDataTables.GetGlobals().GetWorkerCost(level));
+			}
+			else
+			{
+				for (int i = 0; i <= m_buildingLevel; i++)
+				{
+					logicDeliverableBundle.AddResources(m_buildingData.GetBuildResource(i), m_buildingData.GetBuildCost(i, level));
+				}
+			}
 
-            if (this.m_buildingData.IsWorkerBuilding())
-            {
-                logicDeliverableBundle.AddResources(this.m_buildingData.GetBuildResource(0), LogicDataTables.GetGlobals().GetWorkerCost(level));
-            }
-            else
-            {
-                for (int i = 0; i <= this.m_buildingLevel; i++)
-                {
-                    logicDeliverableBundle.AddResources(this.m_buildingData.GetBuildResource(i), this.m_buildingData.GetBuildCost(i, level));
-                }
-            }
+			return logicDeliverableBundle;
+		}
 
-            return logicDeliverableBundle;
-        }
+		public LogicBuildingData GetBuildingData()
+			=> m_buildingData;
 
-        public LogicBuildingData GetBuildingData()
-        {
-            return this.m_buildingData;
-        }
+		public void SetBuildingData(LogicBuildingData data)
+		{
+			m_buildingData = data;
+		}
 
-        public void SetBuildingData(LogicBuildingData data)
-        {
-            this.m_buildingData = data;
-        }
+		public int GetBuildingLevel()
+			=> m_buildingLevel;
 
-        public int GetBuildingLevel()
-        {
-            return this.m_buildingLevel;
-        }
+		public void SetBuildingLevel(int value)
+		{
+			m_buildingLevel = value;
+		}
 
-        public void SetBuildingLevel(int value)
-        {
-            this.m_buildingLevel = value;
-        }
+		public int GetBuildingCount()
+			=> m_buildingCount;
 
-        public int GetBuildingCount()
-        {
-            return this.m_buildingCount;
-        }
-
-        public void SetBuildingCount(int value)
-        {
-            this.m_buildingCount = value;
-        }
-    }
+		public void SetBuildingCount(int value)
+		{
+			m_buildingCount = value;
+		}
+	}
 }

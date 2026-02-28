@@ -1,39 +1,35 @@
-﻿namespace Supercell.Magic.Titan.Json
+using System.Text;
+
+namespace Supercell.Magic.Titan.Json
 {
-    using System.Text;
+	public class LogicJSONNumber : LogicJSONNode
+	{
+		private int m_value;
 
-    public class LogicJSONNumber : LogicJSONNode
-    {
-        private int m_value;
+		public LogicJSONNumber()
+		{
+			m_value = 0;
+		}
 
-        public LogicJSONNumber()
-        {
-            this.m_value = 0;
-        }
+		public LogicJSONNumber(int value)
+		{
+			m_value = value;
+		}
 
-        public LogicJSONNumber(int value)
-        {
-            this.m_value = value;
-        }
+		public int GetIntValue()
+			=> m_value;
 
-        public int GetIntValue()
-        {
-            return this.m_value;
-        }
+		public void SetIntValue(int value)
+		{
+			m_value = value;
+		}
 
-        public void SetIntValue(int value)
-        {
-            this.m_value = value;
-        }
+		public override LogicJSONNodeType GetJSONNodeType()
+			=> LogicJSONNodeType.NUMBER;
 
-        public override LogicJSONNodeType GetJSONNodeType()
-        {
-            return LogicJSONNodeType.NUMBER;
-        }
-
-        public override void WriteToString(StringBuilder builder)
-        {
-            builder.Append(this.m_value);
-        }
-    }
+		public override void WriteToString(StringBuilder builder)
+		{
+			builder.Append(m_value);
+		}
+	}
 }

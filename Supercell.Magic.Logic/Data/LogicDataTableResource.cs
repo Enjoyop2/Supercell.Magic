@@ -1,39 +1,33 @@
-﻿namespace Supercell.Magic.Logic.Data
+namespace Supercell.Magic.Logic.Data
 {
-    public class LogicDataTableResource
-    {
-        private string m_fileName;
+	public class LogicDataTableResource
+	{
+		private string m_fileName;
 
-        private LogicDataType m_tableIndex;
-        private int m_type;
+		private LogicDataType m_tableIndex;
+		private int m_type;
 
-        public LogicDataTableResource(string fileName, LogicDataType tableIndex, int type)
-        {
-            this.m_fileName = fileName;
-            this.m_tableIndex = tableIndex;
-            this.m_type = type;
-        }
+		public LogicDataTableResource(string fileName, LogicDataType tableIndex, int type)
+		{
+			m_fileName = fileName;
+			m_tableIndex = tableIndex;
+			m_type = type;
+		}
 
-        public void Destruct()
-        {
-            this.m_fileName = null;
-            this.m_tableIndex = 0;
-            this.m_type = 0;
-        }
+		public void Destruct()
+		{
+			m_fileName = null;
+			m_tableIndex = 0;
+			m_type = 0;
+		}
 
-        public string GetFileName()
-        {
-            return this.m_fileName;
-        }
+		public string GetFileName()
+			=> m_fileName;
 
-        public LogicDataType GetTableIndex()
-        {
-            return this.m_tableIndex;
-        }
+		public LogicDataType GetTableIndex()
+			=> m_tableIndex;
 
-        public int GetTableType()
-        {
-            return this.m_type;
-        }
-    }
+		public int GetTableType()
+			=> m_type;
+	}
 }

@@ -1,205 +1,229 @@
-﻿namespace Supercell.Magic.Servers.Game.Session
+using System;
+
+using Supercell.Magic.Logic.Message.Avatar;
+
+using Supercell.Magic.Servers.Core;
+using Supercell.Magic.Servers.Core.Network;
+using Supercell.Magic.Servers.Core.Network.Message;
+using Supercell.Magic.Servers.Core.Network.Message.Account;
+using Supercell.Magic.Servers.Core.Network.Message.Request;
+using Supercell.Magic.Servers.Core.Network.Message.Session;
+using Supercell.Magic.Servers.Core.Network.Request;
+using Supercell.Magic.Servers.Core.Session;
+
+using Supercell.Magic.Servers.Game.Logic;
+using Supercell.Magic.Servers.Game.Session.Message;
+
+namespace Supercell.Magic.Servers.Game.Session
 {
-    using System;
+	public class GameSession : ServerSession
+	{
+		public LogicMessageManager LogicMessageManager
+		{
+			get;
+		}
+		public GameAvatar GameAvatar
+		{
+			get;
+		}
+		public GameState GameState
+		{
+			get; private set;
+		}
 
-    using Supercell.Magic.Logic.Message.Avatar;
+		public DateTime LastDbSave
+		{
+			get; set;
+		}
 
-    using Supercell.Magic.Servers.Core;
-    using Supercell.Magic.Servers.Core.Network;
-    using Supercell.Magic.Servers.Core.Network.Message;
-    using Supercell.Magic.Servers.Core.Network.Message.Account;
-    using Supercell.Magic.Servers.Core.Network.Message.Request;
-    using Supercell.Magic.Servers.Core.Network.Message.Session;
-    using Supercell.Magic.Servers.Core.Network.Request;
-    using Supercell.Magic.Servers.Core.Session;
+		// State Vars
+		public bool InMatchmaking
+		{
+			get; set;
+		}
+		public bool InDuelMatchmaking
+		{
+			get; set;
+		}
+		public long SpectateLiveReplayId { get; set; } = -1;
+		public int SpectateLiveReplaySlotId
+		{
+			get; set;
+		}
 
-    using Supercell.Magic.Servers.Game.Logic;
-    using Supercell.Magic.Servers.Game.Session.Message;
+		public GameFakeAttackState FakeAttackState
+		{
+			get; set;
+		}
 
-    public class GameSession : ServerSession
-    {
-        public LogicMessageManager LogicMessageManager { get; }
-        public GameAvatar GameAvatar { get; }
-        public GameState GameState { get; private set; }
+		public GameSession(StartServerSessionMessage message) : base(message)
+		{
+			LogicMessageManager = new LogicMessageManager(this);
+			GameAvatar = GameAvatarManager.TryGet(AccountId, out GameAvatar document) ? document : GameAvatarManager.Create(AccountId);
 
-        public DateTime LastDbSave { get; set; }
+			if (GameAvatar.CurrentSession != null)
+				GameSessionManager.Remove(GameAvatar.CurrentSession.Id);
+			GameAvatar.CurrentSession = this;
 
-        // State Vars
-        public bool InMatchmaking { get; set; }
-        public bool InDuelMatchmaking { get; set; }
-        public long SpectateLiveReplayId { get; set; } = -1;
-        public int SpectateLiveReplaySlotId { get; set; }
-        
-        public GameFakeAttackState FakeAttackState { get; set; }
-        
-        public GameSession(StartServerSessionMessage message) : base(message)
-        {
-            this.LogicMessageManager = new LogicMessageManager(this);
-            this.GameAvatar = GameAvatarManager.TryGet(this.AccountId, out GameAvatar document) ? document : GameAvatarManager.Create(this.AccountId);
+			GameMatchmakingManager.Dequeue(GameAvatar);
+			ServerRequestManager.Create(new BindServerSocketRequestMessage
+			{
+				SessionId = Id,
+				ServerType = 10,
+				ServerId = -1
+			}, m_sockets[1], 10).OnComplete = OnHomeServerBound;
+		}
 
-            if (this.GameAvatar.CurrentSession != null)
-                GameSessionManager.Remove(this.GameAvatar.CurrentSession.Id);
-            this.GameAvatar.CurrentSession = this;
+		private void OnHomeServerBound(ServerRequestArgs args)
+		{
+			if (args.ErrorCode == ServerRequestError.Success && args.ResponseMessage.Success)
+			{
+				if (GameAvatar.LogicClientAvatar.IsInAlliance())
+					BindAllianceServer();
+				SendBookmarksListMessageToClient();
+				SendAvatarStreamMessageToClient();
 
-            GameMatchmakingManager.Dequeue(this.GameAvatar);
-            ServerRequestManager.Create(new BindServerSocketRequestMessage
-            {
-                SessionId = this.Id,
-                ServerType = 10,
-                ServerId = -1
-            }, this.m_sockets[1], 10).OnComplete = this.OnHomeServerBound;
-        }
+				LoadGameState(new GameHomeState
+				{
+					Home = GameAvatar.LogicClientHome,
+					PlayerAvatar = GameAvatar.LogicClientAvatar,
+					SaveTime = GameAvatar.SaveTime,
+					MapId = GameAvatar.MaintenanceTime,
+					ServerCommands = GameAvatar.ServerCommands
+				});
+			}
+			else
+			{
+				Logging.Error("GameSession.onHomeServerBound: unable to bind a home server to the session.");
+				SendMessage(new StopSessionMessage(), 1);
+			}
+		}
 
-        private void OnHomeServerBound(ServerRequestArgs args)
-        {
-            if (args.ErrorCode == ServerRequestError.Success && args.ResponseMessage.Success)
-            {
-                if (this.GameAvatar.LogicClientAvatar.IsInAlliance())
-                    this.BindAllianceServer();
-                this.SendBookmarksListMessageToClient();
-                this.SendAvatarStreamMessageToClient();
+		public override void Destruct()
+		{
+			GameAvatarManager.ExecuteServerCommandsInOfflineMode(GameAvatar);
+			GameAvatarManager.Save(GameAvatar);
+			GameMatchmakingManager.Enqueue(GameAvatar);
 
-                this.LoadGameState(new GameHomeState
-                {
-                    Home = this.GameAvatar.LogicClientHome,
-                    PlayerAvatar = this.GameAvatar.LogicClientAvatar,
-                    SaveTime = this.GameAvatar.SaveTime,
-                    MapId = this.GameAvatar.MaintenanceTime,
-                    ServerCommands = this.GameAvatar.ServerCommands
-                });
-            }
-            else
-            {
-                Logging.Error("GameSession.onHomeServerBound: unable to bind a home server to the session.");
-                this.SendMessage(new StopSessionMessage(), 1);
-            }
-        }
+			GameAvatar.CurrentSession = null;
 
-        public override void Destruct()
-        {
-            GameAvatarManager.ExecuteServerCommandsInOfflineMode(this.GameAvatar);
-            GameAvatarManager.Save(this.GameAvatar);
-            GameMatchmakingManager.Enqueue(this.GameAvatar);
+			DestructGameState();
+			base.Destruct();
+		}
 
-            this.GameAvatar.CurrentSession = null;
+		public void BindAllianceServer()
+		{
+			ServerSocket socket = ServerManager.GetDocumentSocket(11, GameAvatar.LogicClientAvatar.GetAllianceId());
 
-            this.DestructGameState();
-            base.Destruct();
-        }
+			if (socket != null)
+			{
+				ServerRequestManager.Create(new BindServerSocketRequestMessage
+				{
+					ServerType = socket.ServerType,
+					ServerId = socket.ServerId,
+					SessionId = Id
+				}, m_sockets[1]);
+			}
+		}
 
-        public void BindAllianceServer()
-        {
-            ServerSocket socket = ServerManager.GetDocumentSocket(11, this.GameAvatar.LogicClientAvatar.GetAllianceId());
+		private void SendBookmarksListMessageToClient()
+		{
+			BookmarksListMessage bookmarksListMessage = new BookmarksListMessage();
+			bookmarksListMessage.SetAllianceIds(GameAvatar.AllianceBookmarksList);
+			SendPiranhaMessage(bookmarksListMessage, 1);
+		}
 
-            if (socket != null)
-            {
-                ServerRequestManager.Create(new BindServerSocketRequestMessage
-                {
-                    ServerType = socket.ServerType,
-                    ServerId = socket.ServerId,
-                    SessionId = this.Id
-                }, this.m_sockets[1]);
-            }
-        }
+		private void SendAvatarStreamMessageToClient()
+		{
+			ServerMessageManager.SendMessage(new SendAvatarStreamsToClientMessage
+			{
+				StreamIds = GameAvatar.AvatarStreamList,
+				SessionId = Id
+			}, ServerManager.GetDocumentSocket(11, GameAvatar.Id));
+		}
 
-        private void SendBookmarksListMessageToClient()
-        {
-            BookmarksListMessage bookmarksListMessage = new BookmarksListMessage();
-            bookmarksListMessage.SetAllianceIds(this.GameAvatar.AllianceBookmarksList);
-            this.SendPiranhaMessage(bookmarksListMessage, 1);
-        }
+		public void DestructGameState()
+		{
+			if (GameState != null)
+			{
+				if (GameState.GetSimulationServiceNodeType() == SimulationServiceNodeType.BATTLE)
+				{
+					SendMessage(new StopSpecifiedServerSessionMessage
+					{
+						ServerType = 27,
+						ServerId = m_sockets[27].ServerId
+					}, 1);
+				}
+				else
+				{
+					SendMessage(new GameStateNullDataMessage(), 10);
+				}
 
-        private void SendAvatarStreamMessageToClient()
-        {
-            ServerMessageManager.SendMessage(new SendAvatarStreamsToClientMessage
-            {
-                StreamIds = this.GameAvatar.AvatarStreamList,
-                SessionId = this.Id
-            }, ServerManager.GetDocumentSocket(11, this.GameAvatar.Id));
-        }
+				GameState = null;
+			}
 
-        public void DestructGameState()
-        {
-            if (this.GameState != null)
-            {
-                if (this.GameState.GetSimulationServiceNodeType() == SimulationServiceNodeType.BATTLE)
-                {
-                    this.SendMessage(new StopSpecifiedServerSessionMessage
-                    {
-                        ServerType = 27,
-                        ServerId = this.m_sockets[27].ServerId
-                    }, 1);
-                }
-                else
-                {
-                    this.SendMessage(new GameStateNullDataMessage(), 10);
-                }
+			if (InMatchmaking)
+				GameMatchmakingManager.Dequeue(this);
+			if (InDuelMatchmaking)
+				GameDuelMatchmakingManager.Dequeue(this);
 
-                this.GameState = null;
-            }
+			if (SpectateLiveReplayId != -1)
+			{
+				ServerMessageManager.SendMessage(new LiveReplayRemoveSpectatorMessage
+				{
+					AccountId = SpectateLiveReplayId,
+					SlotId = SpectateLiveReplaySlotId,
+					SessionId = Id
+				}, 9);
 
-            if (this.InMatchmaking)
-                GameMatchmakingManager.Dequeue(this);
-            if (this.InDuelMatchmaking)
-                GameDuelMatchmakingManager.Dequeue(this);
+				SpectateLiveReplayId = -1;
+				SpectateLiveReplaySlotId = 0;
+			}
+		}
 
-            if (this.SpectateLiveReplayId != -1)
-            {
-                ServerMessageManager.SendMessage(new LiveReplayRemoveSpectatorMessage
-                {
-                    AccountId = this.SpectateLiveReplayId,
-                    SlotId = this.SpectateLiveReplaySlotId,
-                    SessionId = this.Id
-                }, 9);
+		public void LoadGameState(GameState state)
+		{
+			if (GameState != null)
+				throw new Exception("GameSession.loadGameState: current game state should be NULL");
 
-                this.SpectateLiveReplayId = -1;
-                this.SpectateLiveReplaySlotId = 0;
-            }
-        }
+			state.Home.GetCompressibleGlobalJSON().Set(ResourceManager.SERVER_SAVE_FILE_GLOBAL);
+			state.Home.GetCompressibleCalendarJSON().Set(ResourceManager.SERVER_SAVE_FILE_CALENDAR);
 
-        public void LoadGameState(GameState state)
-        {
-            if (this.GameState != null)
-                throw new Exception("GameSession.loadGameState: current game state should be NULL");
+			GameState = state;
 
-            state.Home.GetCompressibleGlobalJSON().Set(ResourceManager.SERVER_SAVE_FILE_GLOBAL);
-            state.Home.GetCompressibleCalendarJSON().Set(ResourceManager.SERVER_SAVE_FILE_CALENDAR);
+			if (state.GetSimulationServiceNodeType() == SimulationServiceNodeType.BATTLE)
+			{
+				ServerRequestManager.Create(new BindServerSocketRequestMessage
+				{
+					SessionId = Id,
+					ServerType = 27,
+					ServerId = -1
+				}, m_sockets[1], 10).OnComplete = args =>
+				{
+					if (args.ErrorCode == ServerRequestError.Success && args.ResponseMessage.Success)
+					{
+						BindServerSocketResponseMessage responseMessage = (BindServerSocketResponseMessage)args.ResponseMessage;
 
-            this.GameState = state;
-
-            if (state.GetSimulationServiceNodeType() == SimulationServiceNodeType.BATTLE)
-            {
-                ServerRequestManager.Create(new BindServerSocketRequestMessage
-                {
-                    SessionId = this.Id,
-                    ServerType = 27,
-                    ServerId = -1
-                }, this.m_sockets[1], 10).OnComplete = args =>
-                {
-                    if (args.ErrorCode == ServerRequestError.Success && args.ResponseMessage.Success)
-                    {
-                        BindServerSocketResponseMessage responseMessage = (BindServerSocketResponseMessage)args.ResponseMessage;
-
-                        this.m_sockets[responseMessage.ServerType] = ServerManager.GetSocket(responseMessage.ServerType, responseMessage.ServerId);
-                        this.SendMessage(new GameStateDataMessage
-                        {
-                            State = state
-                        }, responseMessage.ServerType);
-                    }
-                    else
-                    {
-                        Logging.Error("GameSession.loadGameState: unable to bind a battle server to the session.");
-                        this.SendMessage(new StopSessionMessage(), 1);
-                    }
-                };
-            }
-            else
-            {
-                this.SendMessage(new GameStateDataMessage
-                {
-                    State = state
-                }, 10);
-            }
-        }
-    }
+						m_sockets[responseMessage.ServerType] = ServerManager.GetSocket(responseMessage.ServerType, responseMessage.ServerId);
+						SendMessage(new GameStateDataMessage
+						{
+							State = state
+						}, responseMessage.ServerType);
+					}
+					else
+					{
+						Logging.Error("GameSession.loadGameState: unable to bind a battle server to the session.");
+						SendMessage(new StopSessionMessage(), 1);
+					}
+				};
+			}
+			else
+			{
+				SendMessage(new GameStateDataMessage
+				{
+					State = state
+				}, 10);
+			}
+		}
+	}
 }

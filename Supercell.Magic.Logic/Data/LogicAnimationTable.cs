@@ -1,24 +1,24 @@
-﻿namespace Supercell.Magic.Logic.Data
+using Supercell.Magic.Titan.CSV;
+
+namespace Supercell.Magic.Logic.Data
 {
-    using Supercell.Magic.Titan.CSV;
+	public class LogicAnimationTable : LogicDataTable
+	{
+		public LogicAnimationTable(CSVNode node, LogicDataType index) : base(node.GetTable(), index)
+		{
+		}
 
-    public class LogicAnimationTable : LogicDataTable
-    {
-        public LogicAnimationTable(CSVNode node, LogicDataType index) : base(node.GetTable(), index)
-        {
-        }
+		public override void CreateReferences()
+		{
+			for (int i = 0; i < m_items.Size(); i++)
+			{
+				m_items[i].CreateReferences();
+			}
+		}
 
-        public override void CreateReferences()
-        {
-            for (int i = 0; i < this.m_items.Size(); i++)
-            {
-                this.m_items[i].CreateReferences();
-            }
-        }
-
-        public void SetTable(CSVNode node)
-        {
-            // TODO: Implement this.
-        }
-    }
+		public void SetTable(CSVNode node)
+		{
+			// TODO: Implement this.
+		}
+	}
 }

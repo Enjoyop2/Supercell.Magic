@@ -1,88 +1,78 @@
+using Supercell.Magic.Titan.Math;
+using Supercell.Magic.Titan.Message;
+
 namespace Supercell.Magic.Logic.Message.Home
 {
-    using Supercell.Magic.Titan.Math;
-    using Supercell.Magic.Titan.Message;
+	public class AttackHomeMessage : PiranhaMessage
+	{
+		public const int MESSAGE_TYPE = 14106;
 
-    public class AttackHomeMessage : PiranhaMessage
-    {
-        public const int MESSAGE_TYPE = 14106;
+		private LogicLong m_homeId;
+		private LogicLong m_avatarStreamId;
 
-        private LogicLong m_homeId;
-        private LogicLong m_avatarStreamId;
+		private int m_attackSource;
 
-        private int m_attackSource;
+		public AttackHomeMessage() : this(0)
+		{
+			// AttackHomeMessage.
+		}
 
-        public AttackHomeMessage() : this(0)
-        {
-            // AttackHomeMessage.
-        }
+		public AttackHomeMessage(short messageVersion) : base(messageVersion)
+		{
+			// AttackHomeMessage.
+		}
 
-        public AttackHomeMessage(short messageVersion) : base(messageVersion)
-        {
-            // AttackHomeMessage.
-        }
+		public override void Decode()
+		{
+			base.Decode();
 
-        public override void Decode()
-        {
-            base.Decode();
+			m_homeId = m_stream.ReadLong();
+			m_attackSource = m_stream.ReadInt();
+			m_avatarStreamId = m_stream.ReadLong();
+		}
 
-            this.m_homeId = this.m_stream.ReadLong();
-            this.m_attackSource = this.m_stream.ReadInt();
-            this.m_avatarStreamId = this.m_stream.ReadLong();
-        }
+		public override void Encode()
+		{
+			base.Encode();
 
-        public override void Encode()
-        {
-            base.Encode();
+			m_stream.WriteLong(m_homeId);
+			m_stream.WriteInt(m_attackSource);
+			m_stream.WriteLong(m_avatarStreamId);
+		}
 
-            this.m_stream.WriteLong(this.m_homeId);
-            this.m_stream.WriteInt(this.m_attackSource);
-            this.m_stream.WriteLong(this.m_avatarStreamId);
-        }
+		public override short GetMessageType()
+			=> AttackHomeMessage.MESSAGE_TYPE;
 
-        public override short GetMessageType()
-        {
-            return AttackHomeMessage.MESSAGE_TYPE;
-        }
+		public override int GetServiceNodeType()
+			=> 10;
 
-        public override int GetServiceNodeType()
-        {
-            return 10;
-        }
+		public override void Destruct()
+		{
+			base.Destruct();
+		}
 
-        public override void Destruct()
-        {
-            base.Destruct();
-        }
+		public LogicLong GetHomeId()
+			=> m_homeId;
 
-        public LogicLong GetHomeId()
-        {
-            return this.m_homeId;
-        }
+		public void SetHomeId(LogicLong value)
+		{
+			m_homeId = value;
+		}
 
-        public void SetHomeId(LogicLong value)
-        {
-            this.m_homeId = value;
-        }
+		public LogicLong GetAvatarStreamId()
+			=> m_avatarStreamId;
 
-        public LogicLong GetAvatarStreamId()
-        {
-            return this.m_avatarStreamId;
-        }
+		public void SetAvatarStreamId(LogicLong value)
+		{
+			m_avatarStreamId = value;
+		}
 
-        public void SetAvatarStreamId(LogicLong value)
-        {
-            this.m_avatarStreamId = value;
-        }
+		public int GetAttackSource()
+			=> m_attackSource;
 
-        public int GetAttackSource()
-        {
-            return this.m_attackSource;
-        }
-
-        public void SetAttackSource(int value)
-        {
-            this.m_attackSource = value;
-        }
-    }
+		public void SetAttackSource(int value)
+		{
+			m_attackSource = value;
+		}
+	}
 }

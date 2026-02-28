@@ -1,143 +1,141 @@
+using Supercell.Magic.Logic.Data;
+using Supercell.Magic.Logic.GameObject;
+using Supercell.Magic.Logic.Helper;
+using Supercell.Magic.Logic.Level;
+using Supercell.Magic.Titan.DataStream;
+
 namespace Supercell.Magic.Logic.Command.Home
 {
-    using Supercell.Magic.Logic.Data;
-    using Supercell.Magic.Logic.GameObject;
-    using Supercell.Magic.Logic.Helper;
-    using Supercell.Magic.Logic.Level;
-    using Supercell.Magic.Titan.DataStream;
+	public sealed class LogicPlaceUnplacedObjectCommand : LogicCommand
+	{
+		private int m_x;
+		private int m_y;
+		private int m_upgradeLevel;
 
-    public sealed class LogicPlaceUnplacedObjectCommand : LogicCommand
-    {
-        private int m_x;
-        private int m_y;
-        private int m_upgradeLevel;
+		private LogicGameObjectData m_gameObjectData;
 
-        private LogicGameObjectData m_gameObjectData;
+		public LogicPlaceUnplacedObjectCommand()
+		{
+			// LogicPlaceUnplacedObjectCommand.
+		}
 
-        public LogicPlaceUnplacedObjectCommand()
-        {
-            // LogicPlaceUnplacedObjectCommand.
-        }
+		public LogicPlaceUnplacedObjectCommand(int x, int y, int upgradeLevel, LogicGameObjectData gameObjectData)
+		{
+			m_x = x;
+			m_y = y;
+			m_upgradeLevel = upgradeLevel;
+			m_gameObjectData = gameObjectData;
+		}
 
-        public LogicPlaceUnplacedObjectCommand(int x, int y, int upgradeLevel, LogicGameObjectData gameObjectData)
-        {
-            this.m_x = x;
-            this.m_y = y;
-            this.m_upgradeLevel = upgradeLevel;
-            this.m_gameObjectData = gameObjectData;
-        }
+		public override void Decode(ByteStream stream)
+		{
+			m_x = stream.ReadInt();
+			m_y = stream.ReadInt();
+			m_gameObjectData = (LogicGameObjectData)ByteStreamHelper.ReadDataReference(stream);
+			m_upgradeLevel = stream.ReadInt();
 
-        public override void Decode(ByteStream stream)
-        {
-            this.m_x = stream.ReadInt();
-            this.m_y = stream.ReadInt();
-            this.m_gameObjectData = (LogicGameObjectData) ByteStreamHelper.ReadDataReference(stream);
-            this.m_upgradeLevel = stream.ReadInt();
+			base.Decode(stream);
+		}
 
-            base.Decode(stream);
-        }
+		public override void Encode(ChecksumEncoder encoder)
+		{
+			encoder.WriteInt(m_x);
+			encoder.WriteInt(m_y);
+			ByteStreamHelper.WriteDataReference(encoder, m_gameObjectData);
+			encoder.WriteInt(m_upgradeLevel);
 
-        public override void Encode(ChecksumEncoder encoder)
-        {
-            encoder.WriteInt(this.m_x);
-            encoder.WriteInt(this.m_y);
-            ByteStreamHelper.WriteDataReference(encoder, this.m_gameObjectData);
-            encoder.WriteInt(this.m_upgradeLevel);
+			base.Encode(encoder);
+		}
 
-            base.Encode(encoder);
-        }
+		public override LogicCommandType GetCommandType()
+			=> LogicCommandType.PLACE_UNPLACED_OBJECT;
 
-        public override LogicCommandType GetCommandType()
-        {
-            return LogicCommandType.PLACE_UNPLACED_OBJECT;
-        }
+		public override void Destruct()
+		{
+			base.Destruct();
+			m_gameObjectData = null;
+		}
 
-        public override void Destruct()
-        {
-            base.Destruct();
-            this.m_gameObjectData = null;
-        }
+		public override int Execute(LogicLevel level)
+		{
+			if (m_gameObjectData != null && level.GetUnplacedObjectCount(m_gameObjectData) > 0)
+			{
+				if (level.GetVillageType() == m_gameObjectData.GetVillageType())
+				{
+					LogicDataType dataType = m_gameObjectData.GetDataType();
 
-        public override int Execute(LogicLevel level)
-        {
-            if (this.m_gameObjectData != null && level.GetUnplacedObjectCount(this.m_gameObjectData) > 0)
-            {
-                if (level.GetVillageType() == this.m_gameObjectData.GetVillageType())
-                {
-                    LogicDataType dataType = this.m_gameObjectData.GetDataType();
+					if (dataType == LogicDataType.BUILDING)
+					{
+						LogicBuildingData buildingData = (LogicBuildingData)m_gameObjectData;
 
-                    if (dataType == LogicDataType.BUILDING)
-                    {
-                        LogicBuildingData buildingData = (LogicBuildingData) this.m_gameObjectData;
+						if (level.IsValidPlaceForBuilding(m_x, m_y, buildingData.GetWidth(), buildingData.GetHeight(), null))
+						{
+							if (!level.RemoveUnplacedObject(m_gameObjectData, m_upgradeLevel))
+							{
+								return -63;
+							}
 
-                        if (level.IsValidPlaceForBuilding(this.m_x, this.m_y, buildingData.GetWidth(), buildingData.GetHeight(), null))
-                        {
-                            if (!level.RemoveUnplacedObject(this.m_gameObjectData, this.m_upgradeLevel))
-                            {
-                                return -63;
-                            }
+							LogicBuilding building = (LogicBuilding)LogicGameObjectFactory.CreateGameObject(m_gameObjectData, level, level.GetVillageType());
 
-                            LogicBuilding building = (LogicBuilding) LogicGameObjectFactory.CreateGameObject(this.m_gameObjectData, level, level.GetVillageType());
+							building.SetPositionXY(m_x << 9, m_y << 9);
+							level.GetGameObjectManager().AddGameObject(building, -1);
+							building.FinishConstruction(false, true);
+							building.SetUpgradeLevel(m_upgradeLevel);
+						}
 
-                            building.SetPositionXY(this.m_x << 9, this.m_y << 9);
-                            level.GetGameObjectManager().AddGameObject(building, -1);
-                            building.FinishConstruction(false, true);
-                            building.SetUpgradeLevel(this.m_upgradeLevel);
-                        }
+						return 0;
+					}
 
-                        return 0;
-                    }
+					if (dataType == LogicDataType.TRAP)
+					{
+						LogicTrapData trapData = (LogicTrapData)m_gameObjectData;
 
-                    if (dataType == LogicDataType.TRAP)
-                    {
-                        LogicTrapData trapData = (LogicTrapData) this.m_gameObjectData;
+						if (level.IsValidPlaceForBuilding(m_x, m_y, trapData.GetWidth(), trapData.GetHeight(), null))
+						{
+							if (!level.RemoveUnplacedObject(m_gameObjectData, m_upgradeLevel))
+							{
+								return -64;
+							}
 
-                        if (level.IsValidPlaceForBuilding(this.m_x, this.m_y, trapData.GetWidth(), trapData.GetHeight(), null))
-                        {
-                            if (!level.RemoveUnplacedObject(this.m_gameObjectData, this.m_upgradeLevel))
-                            {
-                                return -64;
-                            }
+							LogicTrap trap = (LogicTrap)LogicGameObjectFactory.CreateGameObject(m_gameObjectData, level, level.GetVillageType());
 
-                            LogicTrap trap = (LogicTrap) LogicGameObjectFactory.CreateGameObject(this.m_gameObjectData, level, level.GetVillageType());
+							trap.SetPositionXY(m_x << 9, m_y << 9);
+							trap.FinishConstruction(false);
+							trap.SetUpgradeLevel(m_upgradeLevel);
+							level.GetGameObjectManager().AddGameObject(trap, -1);
+						}
 
-                            trap.SetPositionXY(this.m_x << 9, this.m_y << 9);
-                            trap.FinishConstruction(false);
-                            trap.SetUpgradeLevel(this.m_upgradeLevel);
-                            level.GetGameObjectManager().AddGameObject(trap, -1);
-                        }
+						return 0;
+					}
 
-                        return 0;
-                    }
+					if (dataType == LogicDataType.DECO)
+					{
+						LogicDecoData decoData = (LogicDecoData)m_gameObjectData;
 
-                    if (dataType == LogicDataType.DECO)
-                    {
-                        LogicDecoData decoData = (LogicDecoData) this.m_gameObjectData;
+						if (level.IsValidPlaceForBuilding(m_x, m_y, decoData.GetWidth(), decoData.GetHeight(), null))
+						{
+							if (!level.RemoveUnplacedObject(m_gameObjectData, m_upgradeLevel))
+							{
+								return -65;
+							}
 
-                        if (level.IsValidPlaceForBuilding(this.m_x, this.m_y, decoData.GetWidth(), decoData.GetHeight(), null))
-                        {
-                            if (!level.RemoveUnplacedObject(this.m_gameObjectData, this.m_upgradeLevel))
-                            {
-                                return -65;
-                            }
+							LogicDeco deco = (LogicDeco)LogicGameObjectFactory.CreateGameObject(m_gameObjectData, level, level.GetVillageType());
 
-                            LogicDeco deco = (LogicDeco) LogicGameObjectFactory.CreateGameObject(this.m_gameObjectData, level, level.GetVillageType());
+							deco.SetPositionXY(m_x << 9, m_y << 9);
+							level.RemoveUnplacedObject(m_gameObjectData, m_upgradeLevel);
+							level.GetGameObjectManager().AddGameObject(deco, -1);
+						}
 
-                            deco.SetPositionXY(this.m_x << 9, this.m_y << 9);
-                            level.RemoveUnplacedObject(this.m_gameObjectData, this.m_upgradeLevel);
-                            level.GetGameObjectManager().AddGameObject(deco, -1);
-                        }
+						return 0;
+					}
 
-                        return 0;
-                    }
+					return -3;
+				}
 
-                    return -3;
-                }
+				return -35;
+			}
 
-                return -35;
-            }
-
-            return 0;
-        }
-    }
+			return 0;
+		}
+	}
 }

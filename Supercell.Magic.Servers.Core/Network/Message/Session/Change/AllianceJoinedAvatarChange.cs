@@ -1,52 +1,65 @@
-﻿namespace Supercell.Magic.Servers.Core.Network.Message.Session.Change
+using Supercell.Magic.Logic.Avatar;
+using Supercell.Magic.Logic.Message.Alliance;
+using Supercell.Magic.Titan.DataStream;
+using Supercell.Magic.Titan.Math;
+
+namespace Supercell.Magic.Servers.Core.Network.Message.Session.Change
 {
-    using Supercell.Magic.Logic.Avatar;
-    using Supercell.Magic.Logic.Message.Alliance;
-    using Supercell.Magic.Titan.DataStream;
-    using Supercell.Magic.Titan.Math;
+	public class AllianceJoinedAvatarChange : AvatarChange
+	{
+		public LogicLong AllianceId
+		{
+			get; set;
+		}
+		public string AllianceName
+		{
+			get; set;
+		}
+		public int AllianceBadgeId
+		{
+			get; set;
+		}
+		public int AllianceExpLevel
+		{
+			get; set;
+		}
+		public LogicAvatarAllianceRole AllianceRole
+		{
+			get; set;
+		}
 
-    public class AllianceJoinedAvatarChange : AvatarChange
-    {
-        public LogicLong AllianceId { get; set; }
-        public string AllianceName { get; set; }
-        public int AllianceBadgeId { get; set; }
-        public int AllianceExpLevel { get; set; }
-        public LogicAvatarAllianceRole AllianceRole { get; set; }
+		public override void Decode(ByteStream stream)
+		{
+			AllianceId = stream.ReadLong();
+			AllianceName = stream.ReadString(900000);
+			AllianceBadgeId = stream.ReadVInt();
+			AllianceExpLevel = stream.ReadVInt();
+			AllianceRole = (LogicAvatarAllianceRole)stream.ReadVInt();
+		}
 
-        public override void Decode(ByteStream stream)
-        {
-            this.AllianceId = stream.ReadLong();
-            this.AllianceName = stream.ReadString(900000);
-            this.AllianceBadgeId = stream.ReadVInt();
-            this.AllianceExpLevel = stream.ReadVInt();
-            this.AllianceRole = (LogicAvatarAllianceRole) stream.ReadVInt();
-        }
+		public override void Encode(ByteStream stream)
+		{
+			stream.WriteLong(AllianceId);
+			stream.WriteString(AllianceName);
+			stream.WriteVInt(AllianceBadgeId);
+			stream.WriteVInt(AllianceExpLevel);
+			stream.WriteVInt((int)AllianceRole);
+		}
 
-        public override void Encode(ByteStream stream)
-        {
-            stream.WriteLong(this.AllianceId);
-            stream.WriteString(this.AllianceName);
-            stream.WriteVInt(this.AllianceBadgeId);
-            stream.WriteVInt(this.AllianceExpLevel);
-            stream.WriteVInt((int) this.AllianceRole);
-        }
+		public override void ApplyAvatarChange(LogicClientAvatar avatar)
+		{
+			avatar.SetAllianceId(AllianceId);
+			avatar.SetAllianceName(AllianceName);
+			avatar.SetAllianceBadgeId(AllianceBadgeId);
+			avatar.SetAllianceLevel(AllianceExpLevel);
+			avatar.SetAllianceRole(AllianceRole);
+		}
 
-        public override void ApplyAvatarChange(LogicClientAvatar avatar)
-        {
-            avatar.SetAllianceId(this.AllianceId);
-            avatar.SetAllianceName(this.AllianceName);
-            avatar.SetAllianceBadgeId(this.AllianceBadgeId);
-            avatar.SetAllianceLevel(this.AllianceExpLevel);
-            avatar.SetAllianceRole(this.AllianceRole);
-        }
+		public override void ApplyAvatarChange(AllianceMemberEntry memberEntry)
+		{
+		}
 
-        public override void ApplyAvatarChange(AllianceMemberEntry memberEntry)
-        {
-        }
-
-        public override AvatarChangeType GetAvatarChangeType()
-        {
-            return AvatarChangeType.ALLIANCE_JOINED;
-        }
-    }
+		public override AvatarChangeType GetAvatarChangeType()
+			=> AvatarChangeType.ALLIANCE_JOINED;
+	}
 }

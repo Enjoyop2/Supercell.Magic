@@ -1,118 +1,110 @@
+using Supercell.Magic.Titan.Message;
+using Supercell.Magic.Titan.Util;
+
 namespace Supercell.Magic.Logic.Message.Scoring
 {
-    using Supercell.Magic.Titan.Message;
-    using Supercell.Magic.Titan.Util;
+	public class AvatarDuelLastSeasonRankingListMessage : PiranhaMessage
+	{
+		public const int MESSAGE_TYPE = 24408;
 
-    public class AvatarDuelLastSeasonRankingListMessage : PiranhaMessage
-    {
-        public const int MESSAGE_TYPE = 24408;
+		private int m_seasonYear;
+		private int m_seasonMonth;
 
-        private int m_seasonYear;
-        private int m_seasonMonth;
+		private LogicArrayList<AvatarDuelRankingEntry> m_avatarRankingList;
 
-        private LogicArrayList<AvatarDuelRankingEntry> m_avatarRankingList;
+		public AvatarDuelLastSeasonRankingListMessage() : this(0)
+		{
+			// AvatarLastSeasonRankingListMessage.
+		}
 
-        public AvatarDuelLastSeasonRankingListMessage() : this(0)
-        {
-            // AvatarLastSeasonRankingListMessage.
-        }
+		public AvatarDuelLastSeasonRankingListMessage(short messageVersion) : base(messageVersion)
+		{
+			// AvatarLastSeasonRankingListMessage.
+		}
 
-        public AvatarDuelLastSeasonRankingListMessage(short messageVersion) : base(messageVersion)
-        {
-            // AvatarLastSeasonRankingListMessage.
-        }
+		public override void Decode()
+		{
+			base.Decode();
 
-        public override void Decode()
-        {
-            base.Decode();
+			int count = m_stream.ReadInt();
 
-            int count = this.m_stream.ReadInt();
+			if (count > -1)
+			{
+				m_avatarRankingList = new LogicArrayList<AvatarDuelRankingEntry>(count);
 
-            if (count > -1)
-            {
-                this.m_avatarRankingList = new LogicArrayList<AvatarDuelRankingEntry>(count);
+				for (int i = 0; i < count; i++)
+				{
+					AvatarDuelRankingEntry avatarRankingEntry = new AvatarDuelRankingEntry();
+					avatarRankingEntry.Decode(m_stream);
+					m_avatarRankingList.Add(avatarRankingEntry);
+				}
+			}
 
-                for (int i = 0; i < count; i++)
-                {
-                    AvatarDuelRankingEntry avatarRankingEntry = new AvatarDuelRankingEntry();
-                    avatarRankingEntry.Decode(this.m_stream);
-                    this.m_avatarRankingList.Add(avatarRankingEntry);
-                }
-            }
+			m_seasonMonth = m_stream.ReadInt();
+			m_seasonYear = m_stream.ReadInt();
+		}
 
-            this.m_seasonMonth = this.m_stream.ReadInt();
-            this.m_seasonYear = this.m_stream.ReadInt();
-        }
+		public override void Encode()
+		{
+			base.Encode();
 
-        public override void Encode()
-        {
-            base.Encode();
+			if (m_avatarRankingList != null)
+			{
+				m_stream.WriteInt(m_avatarRankingList.Size());
 
-            if (this.m_avatarRankingList != null)
-            {
-                this.m_stream.WriteInt(this.m_avatarRankingList.Size());
+				for (int i = 0; i < m_avatarRankingList.Size(); i++)
+				{
+					m_avatarRankingList[i].Encode(m_stream);
+				}
+			}
+			else
+			{
+				m_stream.WriteInt(-1);
+			}
 
-                for (int i = 0; i < this.m_avatarRankingList.Size(); i++)
-                {
-                    this.m_avatarRankingList[i].Encode(this.m_stream);
-                }
-            }
-            else
-            {
-                this.m_stream.WriteInt(-1);
-            }
+			m_stream.WriteInt(m_seasonMonth);
+			m_stream.WriteInt(m_seasonYear);
+		}
 
-            this.m_stream.WriteInt(this.m_seasonMonth);
-            this.m_stream.WriteInt(this.m_seasonYear);
-        }
+		public override short GetMessageType()
+			=> AvatarDuelLastSeasonRankingListMessage.MESSAGE_TYPE;
 
-        public override short GetMessageType()
-        {
-            return AvatarDuelLastSeasonRankingListMessage.MESSAGE_TYPE;
-        }
+		public override int GetServiceNodeType()
+			=> 28;
 
-        public override int GetServiceNodeType()
-        {
-            return 28;
-        }
+		public override void Destruct()
+		{
+			base.Destruct();
 
-        public override void Destruct()
-        {
-            base.Destruct();
+			m_avatarRankingList = null;
+		}
 
-            this.m_avatarRankingList = null;
-        }
+		public LogicArrayList<AvatarDuelRankingEntry> RemoveAvatarRankingList()
+		{
+			LogicArrayList<AvatarDuelRankingEntry> tmp = m_avatarRankingList;
+			m_avatarRankingList = null;
+			return tmp;
+		}
 
-        public LogicArrayList<AvatarDuelRankingEntry> RemoveAvatarRankingList()
-        {
-            LogicArrayList<AvatarDuelRankingEntry> tmp = this.m_avatarRankingList;
-            this.m_avatarRankingList = null;
-            return tmp;
-        }
+		public void SetAvatarRankingList(LogicArrayList<AvatarDuelRankingEntry> list)
+		{
+			m_avatarRankingList = list;
+		}
 
-        public void SetAvatarRankingList(LogicArrayList<AvatarDuelRankingEntry> list)
-        {
-            this.m_avatarRankingList = list;
-        }
+		public int GetSeasonYear()
+			=> m_seasonYear;
 
-        public int GetSeasonYear()
-        {
-            return this.m_seasonYear;
-        }
+		public void SetSeasonYear(int value)
+		{
+			m_seasonYear = value;
+		}
 
-        public void SetSeasonYear(int value)
-        {
-            this.m_seasonYear = value;
-        }
+		public int GetSeasonMonth()
+			=> m_seasonMonth;
 
-        public int GetSeasonMonth()
-        {
-            return this.m_seasonMonth;
-        }
-
-        public void SetSeasonMonth(int value)
-        {
-            this.m_seasonMonth = value;
-        }
-    }
+		public void SetSeasonMonth(int value)
+		{
+			m_seasonMonth = value;
+		}
+	}
 }

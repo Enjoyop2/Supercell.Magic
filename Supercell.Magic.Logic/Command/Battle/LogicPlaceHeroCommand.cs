@@ -1,189 +1,187 @@
+using Supercell.Magic.Logic.Avatar;
+using Supercell.Magic.Logic.Battle;
+using Supercell.Magic.Logic.Data;
+using Supercell.Magic.Logic.GameObject;
+using Supercell.Magic.Logic.Helper;
+using Supercell.Magic.Logic.Level;
+using Supercell.Magic.Titan.DataStream;
+using Supercell.Magic.Titan.Debug;
+using Supercell.Magic.Titan.Json;
+
 namespace Supercell.Magic.Logic.Command.Battle
 {
-    using Supercell.Magic.Logic.Avatar;
-    using Supercell.Magic.Logic.Battle;
-    using Supercell.Magic.Logic.Data;
-    using Supercell.Magic.Logic.GameObject;
-    using Supercell.Magic.Logic.Helper;
-    using Supercell.Magic.Logic.Level;
-    using Supercell.Magic.Titan.DataStream;
-    using Supercell.Magic.Titan.Debug;
-    using Supercell.Magic.Titan.Json;
+	public sealed class LogicPlaceHeroCommand : LogicCommand
+	{
+		private int m_x;
+		private int m_y;
 
-    public sealed class LogicPlaceHeroCommand : LogicCommand
-    {
-        private int m_x;
-        private int m_y;
+		private LogicHeroData m_data;
 
-        private LogicHeroData m_data;
+		public override void Decode(ByteStream stream)
+		{
+			m_x = stream.ReadInt();
+			m_y = stream.ReadInt();
+			m_data = (LogicHeroData)ByteStreamHelper.ReadDataReference(stream, LogicDataType.HERO);
 
-        public override void Decode(ByteStream stream)
-        {
-            this.m_x = stream.ReadInt();
-            this.m_y = stream.ReadInt();
-            this.m_data = (LogicHeroData) ByteStreamHelper.ReadDataReference(stream, LogicDataType.HERO);
+			base.Decode(stream);
+		}
 
-            base.Decode(stream);
-        }
+		public override void Encode(ChecksumEncoder encoder)
+		{
+			encoder.WriteInt(m_x);
+			encoder.WriteInt(m_y);
+			ByteStreamHelper.WriteDataReference(encoder, m_data);
 
-        public override void Encode(ChecksumEncoder encoder)
-        {
-            encoder.WriteInt(this.m_x);
-            encoder.WriteInt(this.m_y);
-            ByteStreamHelper.WriteDataReference(encoder, this.m_data);
+			base.Encode(encoder);
+		}
 
-            base.Encode(encoder);
-        }
+		public override LogicCommandType GetCommandType()
+			=> LogicCommandType.PLACE_HERO;
 
-        public override LogicCommandType GetCommandType()
-        {
-            return LogicCommandType.PLACE_HERO;
-        }
+		public override void Destruct()
+		{
+			base.Destruct();
+			m_data = null;
+		}
 
-        public override void Destruct()
-        {
-            base.Destruct();
-            this.m_data = null;
-        }
+		public override int Execute(LogicLevel level)
+		{
+			if (level.IsReadyForAttack())
+			{
+				if (m_data != null && !level.IsAttackerHeroPlaced(m_data))
+				{
+					if (level.GetVillageType() == m_data.GetVillageType())
+					{
+						int tileX = m_x >> 9;
+						int tileY = m_y >> 9;
 
-        public override int Execute(LogicLevel level)
-        {
-            if (level.IsReadyForAttack())
-            {
-                if (this.m_data != null && !level.IsAttackerHeroPlaced(this.m_data))
-                {
-                    if (level.GetVillageType() == this.m_data.GetVillageType())
-                    {
-                        int tileX = this.m_x >> 9;
-                        int tileY = this.m_y >> 9;
+						if (level.GetTileMap().GetTile(tileX, tileY) != null)
+						{
+							if (level.GetTileMap().IsPassablePathFinder(m_x >> 8, m_y >> 8))
+							{
+								if (level.GetTileMap().IsValidAttackPos(tileX, tileY))
+								{
+									LogicClientAvatar playerAvatar = level.GetPlayerAvatar();
 
-                        if (level.GetTileMap().GetTile(tileX, tileY) != null)
-                        {
-                            if (level.GetTileMap().IsPassablePathFinder(this.m_x >> 8, this.m_y >> 8))
-                            {
-                                if (level.GetTileMap().IsValidAttackPos(tileX, tileY))
-                                {
-                                    LogicClientAvatar playerAvatar = level.GetPlayerAvatar();
+									if (playerAvatar != null)
+									{
+										if (playerAvatar.IsHeroAvailableForAttack(m_data))
+										{
+											if (level.GetBattleLog() != null)
+											{
+												if (!level.GetBattleLog().HasDeployedUnits() && level.GetTotalAttackerHeroPlaced() == 0)
+												{
+													level.UpdateLastUsedArmy();
+												}
+											}
 
-                                    if (playerAvatar != null)
-                                    {
-                                        if (playerAvatar.IsHeroAvailableForAttack(this.m_data))
-                                        {
-                                            if (level.GetBattleLog() != null)
-                                            {
-                                                if (!level.GetBattleLog().HasDeployedUnits() && level.GetTotalAttackerHeroPlaced() == 0)
-                                                {
-                                                    level.UpdateLastUsedArmy();
-                                                }
-                                            }
+											if (level.GetGameMode().IsInAttackPreparationMode())
+											{
+												level.GetGameMode().EndAttackPreparation();
+											}
 
-                                            if (level.GetGameMode().IsInAttackPreparationMode())
-                                            {
-                                                level.GetGameMode().EndAttackPreparation();
-                                            }
+											int health = playerAvatar.GetHeroHealth(m_data);
+											int upgLevel = playerAvatar.GetUnitUpgradeLevel(m_data);
 
-                                            int health = playerAvatar.GetHeroHealth(this.m_data);
-                                            int upgLevel = playerAvatar.GetUnitUpgradeLevel(this.m_data);
+											level.SetAttackerHeroPlaced(m_data,
+																		LogicPlaceHeroCommand.PlaceHero(m_data, level, m_x, m_y,
+																										m_data.GetHeroHitpoints(health, upgLevel), upgLevel));
 
-                                            level.SetAttackerHeroPlaced(this.m_data,
-                                                                        LogicPlaceHeroCommand.PlaceHero(this.m_data, level, this.m_x, this.m_y,
-                                                                                                        this.m_data.GetHeroHitpoints(health, upgLevel), upgLevel));
+											return 0;
+										}
+									}
 
-                                            return 0;
-                                        }
-                                    }
+									return -5;
+								}
 
-                                    return -5;
-                                }
+								return -4;
+							}
 
-                                return -4;
-                            }
+							return -2;
+						}
 
-                            return -2;
-                        }
+						return -3;
+					}
 
-                        return -3;
-                    }
+					return -23;
+				}
 
-                    return -23;
-                }
+				return -5;
+			}
 
-                return -5;
-            }
+			return -1;
+		}
 
-            return -1;
-        }
+		public static LogicCharacter PlaceHero(LogicHeroData data, LogicLevel level, int x, int y, int hitpoints, int upgLevel)
+		{
+			LogicCharacter character = (LogicCharacter)LogicGameObjectFactory.CreateGameObject(data, level, level.GetVillageType());
 
-        public static LogicCharacter PlaceHero(LogicHeroData data, LogicLevel level, int x, int y, int hitpoints, int upgLevel)
-        {
-            LogicCharacter character = (LogicCharacter) LogicGameObjectFactory.CreateGameObject(data, level, level.GetVillageType());
+			character.SetUpgradeLevel(upgLevel);
+			character.GetHitpointComponent().SetHitpoints(hitpoints);
+			character.SetInitialPosition(x, y);
 
-            character.SetUpgradeLevel(upgLevel);
-            character.GetHitpointComponent().SetHitpoints(hitpoints);
-            character.SetInitialPosition(x, y);
+			if (data.IsJumper())
+			{
+				character.GetMovementComponent().EnableJump(3600000);
+				character.GetCombatComponent().RefreshTarget(true);
+			}
 
-            if (data.IsJumper())
-            {
-                character.GetMovementComponent().EnableJump(3600000);
-                character.GetCombatComponent().RefreshTarget(true);
-            }
+			level.GetGameObjectManager().AddGameObject(character, -1);
+			level.GetGameListener().AttackerPlaced(data);
 
-            level.GetGameObjectManager().AddGameObject(character, -1);
-            level.GetGameListener().AttackerPlaced(data);
+			LogicBattleLog battleLog = level.GetBattleLog();
 
-            LogicBattleLog battleLog = level.GetBattleLog();
+			if (battleLog != null)
+			{
+				battleLog.IncrementDeployedAttackerUnits(data, 1);
+				battleLog.SetCombatItemLevel(data, upgLevel);
+			}
 
-            if (battleLog != null)
-            {
-                battleLog.IncrementDeployedAttackerUnits(data, 1);
-                battleLog.SetCombatItemLevel(data, upgLevel);
-            }
+			return character;
+		}
 
-            return character;
-        }
+		public override void LoadFromJSON(LogicJSONObject jsonRoot)
+		{
+			LogicJSONObject baseObject = jsonRoot.GetJSONObject("base");
 
-        public override void LoadFromJSON(LogicJSONObject jsonRoot)
-        {
-            LogicJSONObject baseObject = jsonRoot.GetJSONObject("base");
+			if (baseObject == null)
+			{
+				Debugger.Error("Replay LogicPlaceHeroCommand load failed! Base missing!");
+			}
 
-            if (baseObject == null)
-            {
-                Debugger.Error("Replay LogicPlaceHeroCommand load failed! Base missing!");
-            }
+			base.LoadFromJSON(baseObject);
 
-            base.LoadFromJSON(baseObject);
+			LogicJSONNumber dataNumber = jsonRoot.GetJSONNumber("d");
 
-            LogicJSONNumber dataNumber = jsonRoot.GetJSONNumber("d");
+			if (dataNumber != null)
+			{
+				m_data = (LogicHeroData)LogicDataTables.GetDataById(dataNumber.GetIntValue(), LogicDataType.HERO);
+			}
 
-            if (dataNumber != null)
-            {
-                this.m_data = (LogicHeroData) LogicDataTables.GetDataById(dataNumber.GetIntValue(), LogicDataType.HERO);
-            }
+			if (m_data == null)
+			{
+				Debugger.Error("Replay LogicPlaceHeroCommand load failed! Hero is NULL!");
+			}
 
-            if (this.m_data == null)
-            {
-                Debugger.Error("Replay LogicPlaceHeroCommand load failed! Hero is NULL!");
-            }
+			m_x = jsonRoot.GetJSONNumber("x").GetIntValue();
+			m_y = jsonRoot.GetJSONNumber("y").GetIntValue();
+		}
 
-            this.m_x = jsonRoot.GetJSONNumber("x").GetIntValue();
-            this.m_y = jsonRoot.GetJSONNumber("y").GetIntValue();
-        }
+		public override LogicJSONObject GetJSONForReplay()
+		{
+			LogicJSONObject jsonObject = new LogicJSONObject();
 
-        public override LogicJSONObject GetJSONForReplay()
-        {
-            LogicJSONObject jsonObject = new LogicJSONObject();
+			jsonObject.Put("base", base.GetJSONForReplay());
 
-            jsonObject.Put("base", base.GetJSONForReplay());
+			if (m_data != null)
+			{
+				jsonObject.Put("d", new LogicJSONNumber(m_data.GetGlobalID()));
+			}
 
-            if (this.m_data != null)
-            {
-                jsonObject.Put("d", new LogicJSONNumber(this.m_data.GetGlobalID()));
-            }
+			jsonObject.Put("x", new LogicJSONNumber(m_x));
+			jsonObject.Put("y", new LogicJSONNumber(m_y));
 
-            jsonObject.Put("x", new LogicJSONNumber(this.m_x));
-            jsonObject.Put("y", new LogicJSONNumber(this.m_y));
-
-            return jsonObject;
-        }
-    }
+			return jsonObject;
+		}
+	}
 }

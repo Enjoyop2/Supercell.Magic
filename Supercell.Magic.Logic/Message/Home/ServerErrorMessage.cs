@@ -1,59 +1,53 @@
+using Supercell.Magic.Titan.Message;
+
 namespace Supercell.Magic.Logic.Message.Home
 {
-    using Supercell.Magic.Titan.Message;
+	public class ServerErrorMessage : PiranhaMessage
+	{
+		public const int MESSAGE_TYPE = 24115;
 
-    public class ServerErrorMessage : PiranhaMessage
-    {
-        public const int MESSAGE_TYPE = 24115;
+		private string m_errorMessage;
 
-        private string m_errorMessage;
+		public ServerErrorMessage() : this(0)
+		{
+			// ServerErrorMessage.
+		}
 
-        public ServerErrorMessage() : this(0)
-        {
-            // ServerErrorMessage.
-        }
+		public ServerErrorMessage(short messageVersion) : base(messageVersion)
+		{
+			// ServerErrorMessage.
+		}
 
-        public ServerErrorMessage(short messageVersion) : base(messageVersion)
-        {
-            // ServerErrorMessage.
-        }
+		public override void Decode()
+		{
+			base.Decode();
+			m_errorMessage = m_stream.ReadString(900000);
+		}
 
-        public override void Decode()
-        {
-            base.Decode();
-            this.m_errorMessage = this.m_stream.ReadString(900000);
-        }
+		public override void Encode()
+		{
+			base.Encode();
+			m_stream.WriteString(m_errorMessage);
+		}
 
-        public override void Encode()
-        {
-            base.Encode();
-            this.m_stream.WriteString(this.m_errorMessage);
-        }
+		public override short GetMessageType()
+			=> ServerErrorMessage.MESSAGE_TYPE;
 
-        public override short GetMessageType()
-        {
-            return ServerErrorMessage.MESSAGE_TYPE;
-        }
+		public override int GetServiceNodeType()
+			=> 10;
 
-        public override int GetServiceNodeType()
-        {
-            return 10;
-        }
+		public override void Destruct()
+		{
+			base.Destruct();
+			m_errorMessage = null;
+		}
 
-        public override void Destruct()
-        {
-            base.Destruct();
-            this.m_errorMessage = null;
-        }
+		public string GetErrorMessage()
+			=> m_errorMessage;
 
-        public string GetErrorMessage()
-        {
-            return this.m_errorMessage;
-        }
-
-        public void SetErrorMessage(string value)
-        {
-            this.m_errorMessage = value;
-        }
-    }
+		public void SetErrorMessage(string value)
+		{
+			m_errorMessage = value;
+		}
+	}
 }

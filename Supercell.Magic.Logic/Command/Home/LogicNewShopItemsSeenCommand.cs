@@ -1,74 +1,72 @@
+using Supercell.Magic.Logic.Data;
+using Supercell.Magic.Logic.Level;
+using Supercell.Magic.Titan.DataStream;
+
 namespace Supercell.Magic.Logic.Command.Home
 {
-    using Supercell.Magic.Logic.Data;
-    using Supercell.Magic.Logic.Level;
-    using Supercell.Magic.Titan.DataStream;
-
-    public sealed class LogicNewShopItemsSeenCommand : LogicCommand
-    {
-        private LogicDataType m_newShopItemsType;
-        private int m_newShopItemsIndex;
-        private int m_newShopItemsCount;
+	public sealed class LogicNewShopItemsSeenCommand : LogicCommand
+	{
+		private LogicDataType m_newShopItemsType;
+		private int m_newShopItemsIndex;
+		private int m_newShopItemsCount;
 
 
-        public LogicNewShopItemsSeenCommand()
-        {
-            // LogicNewShopItemsSeenCommand.
-        }
+		public LogicNewShopItemsSeenCommand()
+		{
+			// LogicNewShopItemsSeenCommand.
+		}
 
-        public LogicNewShopItemsSeenCommand(int index, int type, int count)
-        {
-            this.m_newShopItemsIndex = index;
-            this.m_newShopItemsType = (LogicDataType) type;
-            this.m_newShopItemsCount = count;
-        }
+		public LogicNewShopItemsSeenCommand(int index, int type, int count)
+		{
+			m_newShopItemsIndex = index;
+			m_newShopItemsType = (LogicDataType)type;
+			m_newShopItemsCount = count;
+		}
 
-        public override void Decode(ByteStream stream)
-        {
-            this.m_newShopItemsIndex = stream.ReadInt();
-            this.m_newShopItemsType = (LogicDataType) stream.ReadInt();
-            this.m_newShopItemsCount = stream.ReadInt();
+		public override void Decode(ByteStream stream)
+		{
+			m_newShopItemsIndex = stream.ReadInt();
+			m_newShopItemsType = (LogicDataType)stream.ReadInt();
+			m_newShopItemsCount = stream.ReadInt();
 
-            base.Decode(stream);
-        }
+			base.Decode(stream);
+		}
 
-        public override void Encode(ChecksumEncoder encoder)
-        {
-            encoder.WriteInt(this.m_newShopItemsIndex);
-            encoder.WriteInt((int) this.m_newShopItemsType);
-            encoder.WriteInt(this.m_newShopItemsCount);
+		public override void Encode(ChecksumEncoder encoder)
+		{
+			encoder.WriteInt(m_newShopItemsIndex);
+			encoder.WriteInt((int)m_newShopItemsType);
+			encoder.WriteInt(m_newShopItemsCount);
 
-            base.Encode(encoder);
-        }
+			base.Encode(encoder);
+		}
 
-        public override LogicCommandType GetCommandType()
-        {
-            return LogicCommandType.NEW_SHOP_ITEMS_SEEN;
-        }
+		public override LogicCommandType GetCommandType()
+			=> LogicCommandType.NEW_SHOP_ITEMS_SEEN;
 
-        public override void Destruct()
-        {
-            base.Destruct();
-        }
+		public override void Destruct()
+		{
+			base.Destruct();
+		}
 
-        public override int Execute(LogicLevel level)
-        {
-            if (this.m_newShopItemsType == LogicDataType.BUILDING || 
-                this.m_newShopItemsType == LogicDataType.TRAP || 
-                this.m_newShopItemsType == LogicDataType.DECO)
-            {
-                if (level.SetUnlockedShopItemCount((LogicGameObjectData) LogicDataTables.GetTable(this.m_newShopItemsType).GetItemAt(this.m_newShopItemsIndex),
-                    this.m_newShopItemsIndex,
-                    this.m_newShopItemsCount,
-                    level.GetVillageType()))
-                {
-                    return 0;
-                }
+		public override int Execute(LogicLevel level)
+		{
+			if (m_newShopItemsType == LogicDataType.BUILDING ||
+				m_newShopItemsType == LogicDataType.TRAP ||
+				m_newShopItemsType == LogicDataType.DECO)
+			{
+				if (level.SetUnlockedShopItemCount((LogicGameObjectData)LogicDataTables.GetTable(m_newShopItemsType).GetItemAt(m_newShopItemsIndex),
+					m_newShopItemsIndex,
+					m_newShopItemsCount,
+					level.GetVillageType()))
+				{
+					return 0;
+				}
 
-                return -2;
-            }
+				return -2;
+			}
 
-            return -1;
-        }
-    }
+			return -1;
+		}
+	}
 }

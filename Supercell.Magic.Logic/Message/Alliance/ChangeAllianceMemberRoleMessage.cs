@@ -1,68 +1,62 @@
+using Supercell.Magic.Logic.Avatar;
+using Supercell.Magic.Titan.Math;
+using Supercell.Magic.Titan.Message;
+
 namespace Supercell.Magic.Logic.Message.Alliance
 {
-    using Supercell.Magic.Logic.Avatar;
-    using Supercell.Magic.Titan.Math;
-    using Supercell.Magic.Titan.Message;
+	public class ChangeAllianceMemberRoleMessage : PiranhaMessage
+	{
+		public const int MESSAGE_TYPE = 14306;
 
-    public class ChangeAllianceMemberRoleMessage : PiranhaMessage
-    {
-        public const int MESSAGE_TYPE = 14306;
+		private LogicLong m_memberId;
+		private LogicAvatarAllianceRole m_memberRole;
 
-        private LogicLong m_memberId;
-        private LogicAvatarAllianceRole m_memberRole;
+		public ChangeAllianceMemberRoleMessage() : this(0)
+		{
+			// ChangeAllianceMemberRoleMessage.
+		}
 
-        public ChangeAllianceMemberRoleMessage() : this(0)
-        {
-            // ChangeAllianceMemberRoleMessage.
-        }
+		public ChangeAllianceMemberRoleMessage(short messageVersion) : base(messageVersion)
+		{
+			// ChangeAllianceMemberRoleMessage.
+		}
 
-        public ChangeAllianceMemberRoleMessage(short messageVersion) : base(messageVersion)
-        {
-            // ChangeAllianceMemberRoleMessage.
-        }
+		public override void Decode()
+		{
+			base.Decode();
 
-        public override void Decode()
-        {
-            base.Decode();
+			m_memberId = m_stream.ReadLong();
+			m_memberRole = (LogicAvatarAllianceRole)m_stream.ReadInt();
+		}
 
-            this.m_memberId = this.m_stream.ReadLong();
-            this.m_memberRole = (LogicAvatarAllianceRole) this.m_stream.ReadInt();
-        }
+		public override void Encode()
+		{
+			base.Encode();
 
-        public override void Encode()
-        {
-            base.Encode();
+			m_stream.WriteLong(m_memberId);
+			m_stream.WriteInt((int)m_memberRole);
+		}
 
-            this.m_stream.WriteLong(this.m_memberId);
-            this.m_stream.WriteInt((int) this.m_memberRole);
-        }
+		public override short GetMessageType()
+			=> ChangeAllianceMemberRoleMessage.MESSAGE_TYPE;
 
-        public override short GetMessageType()
-        {
-            return ChangeAllianceMemberRoleMessage.MESSAGE_TYPE;
-        }
+		public override int GetServiceNodeType()
+			=> 11;
 
-        public override int GetServiceNodeType()
-        {
-            return 11;
-        }
+		public LogicLong RemoveMemberId()
+		{
+			LogicLong tmp = m_memberId;
+			m_memberId = null;
+			return tmp;
+		}
 
-        public LogicLong RemoveMemberId()
-        {
-            LogicLong tmp = this.m_memberId;
-            this.m_memberId = null;
-            return tmp;
-        }
+		public LogicAvatarAllianceRole GetMemberRole()
+			=> m_memberRole;
 
-        public LogicAvatarAllianceRole GetMemberRole()
-        {
-            return this.m_memberRole;
-        }
-
-        public void SetAllianceData(LogicLong memberId, LogicAvatarAllianceRole memberRole)
-        {
-            this.m_memberId = memberId;
-            this.m_memberRole = memberRole;
-        }
-    }
+		public void SetAllianceData(LogicLong memberId, LogicAvatarAllianceRole memberRole)
+		{
+			m_memberId = memberId;
+			m_memberRole = memberRole;
+		}
+	}
 }

@@ -1,75 +1,71 @@
+using Supercell.Magic.Titan.Math;
+using Supercell.Magic.Titan.Message;
+
 namespace Supercell.Magic.Logic.Message.Scoring
 {
-    using Supercell.Magic.Titan.Math;
-    using Supercell.Magic.Titan.Message;
+	public class AskForAvatarDuelLastSeasonRankingListMessage : PiranhaMessage
+	{
+		public const int MESSAGE_TYPE = 14408;
 
-    public class AskForAvatarDuelLastSeasonRankingListMessage : PiranhaMessage
-    {
-        public const int MESSAGE_TYPE = 14408;
+		private LogicLong m_avatarId;
 
-        private LogicLong m_avatarId;
+		public AskForAvatarDuelLastSeasonRankingListMessage() : this(0)
+		{
+			// AskForAvatarDuelLastSeasonRankingListMessage.
+		}
 
-        public AskForAvatarDuelLastSeasonRankingListMessage() : this(0)
-        {
-            // AskForAvatarDuelLastSeasonRankingListMessage.
-        }
+		public AskForAvatarDuelLastSeasonRankingListMessage(short messageVersion) : base(messageVersion)
+		{
+			// AskForAvatarDuelLastSeasonRankingListMessage.
+		}
 
-        public AskForAvatarDuelLastSeasonRankingListMessage(short messageVersion) : base(messageVersion)
-        {
-            // AskForAvatarDuelLastSeasonRankingListMessage.
-        }
+		public override void Decode()
+		{
+			base.Decode();
 
-        public override void Decode()
-        {
-            base.Decode();
+			if (m_stream.ReadBoolean())
+			{
+				m_avatarId = m_stream.ReadLong();
+			}
+		}
 
-            if (this.m_stream.ReadBoolean())
-            {
-                this.m_avatarId = this.m_stream.ReadLong();
-            }
-        }
+		public override void Encode()
+		{
+			base.Encode();
 
-        public override void Encode()
-        {
-            base.Encode();
+			if (m_avatarId != null)
+			{
+				m_stream.WriteBoolean(true);
+				m_stream.WriteLong(m_avatarId);
+			}
+			else
+			{
+				m_stream.WriteBoolean(false);
+			}
+		}
 
-            if (this.m_avatarId != null)
-            {
-                this.m_stream.WriteBoolean(true);
-                this.m_stream.WriteLong(this.m_avatarId);
-            }
-            else
-            {
-                this.m_stream.WriteBoolean(false);
-            }
-        }
+		public override short GetMessageType()
+			=> AskForAvatarDuelLastSeasonRankingListMessage.MESSAGE_TYPE;
 
-        public override short GetMessageType()
-        {
-            return AskForAvatarDuelLastSeasonRankingListMessage.MESSAGE_TYPE;
-        }
+		public override int GetServiceNodeType()
+			=> 28;
 
-        public override int GetServiceNodeType()
-        {
-            return 28;
-        }
+		public override void Destruct()
+		{
+			base.Destruct();
+			m_avatarId = null;
+		}
 
-        public override void Destruct()
-        {
-            base.Destruct();
-            this.m_avatarId = null;
-        }
+		public LogicLong RemoveAvatarId()
+		{
+			LogicLong tmp = m_avatarId;
+			m_avatarId = null;
+			return tmp;
+		}
 
-        public LogicLong RemoveAvatarId()
-        {
-            LogicLong tmp = this.m_avatarId;
-            this.m_avatarId = null;
-            return tmp;
-        }
-
-        public void SetAvatarId(LogicLong id)
-        {
-            this.m_avatarId = id;
-        }
-    }
+		public void SetAvatarId(LogicLong id)
+		{
+			m_avatarId = id;
+		}
+	}
 }

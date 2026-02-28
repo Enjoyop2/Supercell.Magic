@@ -1,34 +1,28 @@
-﻿namespace Supercell.Magic.Logic.Calendar
+using Supercell.Magic.Logic.Data;
+
+namespace Supercell.Magic.Logic.Calendar
 {
-    using Supercell.Magic.Logic.Data;
+	public class LogicCalendarBuildingDestroyedSpawnUnit
+	{
+		private readonly LogicBuildingData m_buildingData;
+		private readonly LogicCharacterData m_characterData;
 
-    public class LogicCalendarBuildingDestroyedSpawnUnit
-    {
-        private readonly LogicBuildingData m_buildingData;
-        private readonly LogicCharacterData m_characterData;
+		private readonly int m_count;
 
-        private readonly int m_count;
+		public LogicCalendarBuildingDestroyedSpawnUnit(LogicBuildingData buildingData, LogicCharacterData unitData, int count)
+		{
+			m_buildingData = buildingData;
+			m_characterData = unitData;
+			m_count = count;
+		}
 
-        public LogicCalendarBuildingDestroyedSpawnUnit(LogicBuildingData buildingData, LogicCharacterData unitData, int count)
-        {
-            this.m_buildingData = buildingData;
-            this.m_characterData = unitData;
-            this.m_count = count;
-        }
+		public LogicBuildingData GetBuildingData()
+			=> m_buildingData;
 
-        public LogicBuildingData GetBuildingData()
-        {
-            return this.m_buildingData;
-        }
+		public LogicCharacterData GetCharacterData()
+			=> m_characterData;
 
-        public LogicCharacterData GetCharacterData()
-        {
-            return this.m_characterData;
-        }
-
-        public int GetCount()
-        {
-            return this.m_count;
-        }
-    }
+		public int GetCount()
+			=> m_count;
+	}
 }

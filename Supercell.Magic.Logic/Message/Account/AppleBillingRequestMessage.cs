@@ -1,131 +1,119 @@
+using Supercell.Magic.Titan.Debug;
+using Supercell.Magic.Titan.Message;
+
 namespace Supercell.Magic.Logic.Message.Account
 {
-    using Supercell.Magic.Titan.Debug;
-    using Supercell.Magic.Titan.Message;
+	public class AppleBillingRequestMessage : PiranhaMessage
+	{
+		public const int MESSAGE_TYPE = 10150;
 
-    public class AppleBillingRequestMessage : PiranhaMessage
-    {
-        public const int MESSAGE_TYPE = 10150;
+		private string m_tid;
+		private string m_prodId;
+		private string m_currencyCode;
+		private string m_price;
 
-        private string m_tid;
-        private string m_prodId;
-        private string m_currencyCode;
-        private string m_price;
+		private byte[] m_receiptData;
 
-        private byte[] m_receiptData;
+		public AppleBillingRequestMessage() : this(0)
+		{
+			// AppleBillingRequestMessage.
+		}
 
-        public AppleBillingRequestMessage() : this(0)
-        {
-            // AppleBillingRequestMessage.
-        }
+		public AppleBillingRequestMessage(short messageVersion) : base(messageVersion)
+		{
+			// AppleBillingRequestMessage.
+		}
 
-        public AppleBillingRequestMessage(short messageVersion) : base(messageVersion)
-        {
-            // AppleBillingRequestMessage.
-        }
+		public override void Decode()
+		{
+			base.Decode();
 
-        public override void Decode()
-        {
-            base.Decode();
+			m_tid = m_stream.ReadString(900000);
+			m_prodId = m_stream.ReadString(900000);
+			m_currencyCode = m_stream.ReadString(900000);
+			m_price = m_stream.ReadString(900000);
 
-            this.m_tid = this.m_stream.ReadString(900000);
-            this.m_prodId = this.m_stream.ReadString(900000);
-            this.m_currencyCode = this.m_stream.ReadString(900000);
-            this.m_price = this.m_stream.ReadString(900000);
+			int length = m_stream.ReadBytesLength();
 
-            int length = this.m_stream.ReadBytesLength();
+			if (length > 300000)
+			{
+				Debugger.Error("Illegal byte array length encountered.");
+			}
 
-            if (length > 300000)
-            {
-                Debugger.Error("Illegal byte array length encountered.");
-            }
+			m_receiptData = m_stream.ReadBytes(length, 900000);
+			m_stream.ReadVInt();
+		}
 
-            this.m_receiptData = this.m_stream.ReadBytes(length, 900000);
-            this.m_stream.ReadVInt();
-        }
+		public override void Encode()
+		{
+			base.Encode();
 
-        public override void Encode()
-        {
-            base.Encode();
+			m_stream.WriteString(m_tid);
+			m_stream.WriteString(m_prodId);
+			m_stream.WriteString(m_currencyCode);
+			m_stream.WriteString(m_price);
+			m_stream.WriteBytes(m_receiptData, m_receiptData.Length);
+			m_stream.WriteVInt(0);
+			m_stream.WriteInt(0);
+		}
 
-            this.m_stream.WriteString(this.m_tid);
-            this.m_stream.WriteString(this.m_prodId);
-            this.m_stream.WriteString(this.m_currencyCode);
-            this.m_stream.WriteString(this.m_price);
-            this.m_stream.WriteBytes(this.m_receiptData, this.m_receiptData.Length);
-            this.m_stream.WriteVInt(0);
-            this.m_stream.WriteInt(0);
-        }
+		public override short GetMessageType()
+			=> AppleBillingRequestMessage.MESSAGE_TYPE;
 
-        public override short GetMessageType()
-        {
-            return AppleBillingRequestMessage.MESSAGE_TYPE;
-        }
+		public override int GetServiceNodeType()
+			=> 1;
 
-        public override int GetServiceNodeType()
-        {
-            return 1;
-        }
+		public override void Destruct()
+		{
+			base.Destruct();
 
-        public override void Destruct()
-        {
-            base.Destruct();
+			m_tid = null;
+			m_prodId = null;
+			m_currencyCode = null;
+			m_price = null;
+			m_receiptData = null;
+		}
 
-            this.m_tid = null;
-            this.m_prodId = null;
-            this.m_currencyCode = null;
-            this.m_price = null;
-            this.m_receiptData = null;
-        }
+		public string GetTID()
+			=> m_tid;
 
-        public string GetTID()
-        {
-            return this.m_tid;
-        }
+		public void SetTID(string value)
+		{
+			m_tid = value;
+		}
 
-        public void SetTID(string value)
-        {
-            this.m_tid = value;
-        }
+		public string GetProdID()
+			=> m_prodId;
 
-        public string GetProdID()
-        {
-            return this.m_prodId;
-        }
+		public void SetProdID(string value)
+		{
+			m_prodId = value;
+		}
 
-        public void SetProdID(string value)
-        {
-            this.m_prodId = value;
-        }
+		public string GetCurrencyCode()
+			=> m_currencyCode;
 
-        public string GetCurrencyCode()
-        {
-            return this.m_currencyCode;
-        }
+		public void SetCurrencyCode(string value)
+		{
+			m_currencyCode = value;
+		}
 
-        public void SetCurrencyCode(string value)
-        {
-            this.m_currencyCode = value;
-        }
+		public byte[] GetReceiptData()
+			=> m_receiptData;
 
-        public byte[] GetReceiptData()
-        {
-            return this.m_receiptData;
-        }
+		public void SetReceiptData(byte[] data, int length)
+		{
+			m_receiptData = null;
 
-        public void SetReceiptData(byte[] data, int length)
-        {
-            this.m_receiptData = null;
+			if (length > -1)
+			{
+				m_receiptData = new byte[length];
 
-            if (length > -1)
-            {
-                this.m_receiptData = new byte[length];
-
-                for (int i = 0; i < length; i++)
-                {
-                    this.m_receiptData[i] = data[i];
-                }
-            }
-        }
-    }
+				for (int i = 0; i < length; i++)
+				{
+					m_receiptData[i] = data[i];
+				}
+			}
+		}
+	}
 }

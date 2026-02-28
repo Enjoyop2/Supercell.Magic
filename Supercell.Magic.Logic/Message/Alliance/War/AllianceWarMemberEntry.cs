@@ -1,229 +1,217 @@
-﻿namespace Supercell.Magic.Logic.Message.Alliance.War
+using Supercell.Magic.Logic.Message.Alliance.Stream;
+using Supercell.Magic.Titan.DataStream;
+using Supercell.Magic.Titan.Debug;
+using Supercell.Magic.Titan.Math;
+using Supercell.Magic.Titan.Util;
+
+namespace Supercell.Magic.Logic.Message.Alliance.War
 {
-    using Supercell.Magic.Logic.Message.Alliance.Stream;
-    using Supercell.Magic.Titan.DataStream;
-    using Supercell.Magic.Titan.Debug;
-    using Supercell.Magic.Titan.Math;
-    using Supercell.Magic.Titan.Util;
+	public class AllianceWarMemberEntry
+	{
+		private LogicLong m_accountId;
+		private LogicLong m_avatarId;
+		private LogicLong m_homeId;
 
-    public class AllianceWarMemberEntry
-    {
-        private LogicLong m_accountId;
-        private LogicLong m_avatarId;
-        private LogicLong m_homeId;
+		private LogicArrayList<DonationContainer> m_donations;
 
-        private LogicArrayList<DonationContainer> m_donations;
+		private string m_name;
 
-        private string m_name;
+		private int m_expLevel;
+		private int m_index;
 
-        private int m_expLevel;
-        private int m_index;
+		public void Decode(ByteStream stream)
+		{
+			m_accountId = stream.ReadLong();
+			m_avatarId = stream.ReadLong();
+			m_homeId = stream.ReadLong();
+			m_name = stream.ReadString(900000);
+			m_expLevel = stream.ReadInt();
+			stream.ReadInt();
+			stream.ReadInt();
+			stream.ReadInt();
+			stream.ReadInt();
+			stream.ReadInt();
+			stream.ReadInt();
+			stream.ReadInt();
+			stream.ReadInt();
+			stream.ReadInt();
+			stream.ReadInt();
+			stream.ReadInt();
+			stream.ReadInt();
+			stream.ReadInt();
+			stream.ReadInt();
+			stream.ReadInt();
+			m_index = stream.ReadInt();
 
-        public void Decode(ByteStream stream)
-        {
-            this.m_accountId = stream.ReadLong();
-            this.m_avatarId = stream.ReadLong();
-            this.m_homeId = stream.ReadLong();
-            this.m_name = stream.ReadString(900000);
-            this.m_expLevel = stream.ReadInt();
-            stream.ReadInt();
-            stream.ReadInt();
-            stream.ReadInt();
-            stream.ReadInt();
-            stream.ReadInt();
-            stream.ReadInt();
-            stream.ReadInt();
-            stream.ReadInt();
-            stream.ReadInt();
-            stream.ReadInt();
-            stream.ReadInt();
-            stream.ReadInt();
-            stream.ReadInt();
-            stream.ReadInt();
-            stream.ReadInt();
-            this.m_index = stream.ReadInt();
+			if (stream.ReadBoolean())
+			{
+				stream.ReadString(900000);
+				stream.ReadInt();
+				stream.ReadInt();
+				stream.ReadInt();
+				stream.ReadInt();
+			}
 
-            if (stream.ReadBoolean())
-            {
-                stream.ReadString(900000);
-                stream.ReadInt();
-                stream.ReadInt();
-                stream.ReadInt();
-                stream.ReadInt();
-            }
+			if (stream.ReadBoolean())
+			{
+				stream.ReadLong();
+			}
 
-            if (stream.ReadBoolean())
-            {
-                stream.ReadLong();
-            }
+			if (stream.ReadBoolean())
+			{
+				stream.ReadLong();
+			}
 
-            if (stream.ReadBoolean())
-            {
-                stream.ReadLong();
-            }
+			if (stream.ReadBoolean())
+			{
+				stream.ReadLong();
+			}
 
-            if (stream.ReadBoolean())
-            {
-                stream.ReadLong();
-            }
+			stream.ReadInt();
+			stream.ReadInt();
+			stream.ReadInt();
+			stream.ReadString(900000);
+			stream.ReadInt();
 
-            stream.ReadInt();
-            stream.ReadInt();
-            stream.ReadInt();
-            stream.ReadString(900000);
-            stream.ReadInt();
+			int count = stream.ReadInt();
 
-            int count = stream.ReadInt();
+			if (count >= 0)
+			{
+				Debugger.DoAssert(count < 10000, "Too large amount of donations in AllianceWarMemberEntry");
 
-            if (count >= 0)
-            {
-                Debugger.DoAssert(count < 10000, "Too large amount of donations in AllianceWarMemberEntry");
+				m_donations = new LogicArrayList<DonationContainer>();
+				m_donations.EnsureCapacity(count);
 
-                this.m_donations = new LogicArrayList<DonationContainer>();
-                this.m_donations.EnsureCapacity(count);
+				for (int i = stream.ReadInt(); i > 0; i--)
+				{
+					DonationContainer donationContainer = new DonationContainer();
+					donationContainer.Decode(stream);
+					m_donations.Add(donationContainer);
+				}
+			}
+		}
 
-                for (int i = stream.ReadInt(); i > 0; i--)
-                {
-                    DonationContainer donationContainer = new DonationContainer();
-                    donationContainer.Decode(stream);
-                    this.m_donations.Add(donationContainer);
-                }
-            }
-        }
+		public void Encode(ByteStream encoder)
+		{
+			encoder.WriteLong(m_accountId);
+			encoder.WriteLong(m_avatarId);
+			encoder.WriteLong(m_homeId);
+			encoder.WriteString(m_name);
+			encoder.WriteInt(m_expLevel);
+			encoder.WriteInt(0);
+			encoder.WriteInt(0);
+			encoder.WriteInt(0);
+			encoder.WriteInt(0);
+			encoder.WriteInt(0);
+			encoder.WriteInt(0);
+			encoder.WriteInt(0);
+			encoder.WriteInt(0);
+			encoder.WriteInt(0);
+			encoder.WriteInt(0);
+			encoder.WriteInt(0);
+			encoder.WriteInt(0);
+			encoder.WriteInt(0);
+			encoder.WriteInt(0);
+			encoder.WriteInt(0);
+			encoder.WriteInt(0);
 
-        public void Encode(ByteStream encoder)
-        {
-            encoder.WriteLong(this.m_accountId);
-            encoder.WriteLong(this.m_avatarId);
-            encoder.WriteLong(this.m_homeId);
-            encoder.WriteString(this.m_name);
-            encoder.WriteInt(this.m_expLevel);
-            encoder.WriteInt(0);
-            encoder.WriteInt(0);
-            encoder.WriteInt(0);
-            encoder.WriteInt(0);
-            encoder.WriteInt(0);
-            encoder.WriteInt(0);
-            encoder.WriteInt(0);
-            encoder.WriteInt(0);
-            encoder.WriteInt(0);
-            encoder.WriteInt(0);
-            encoder.WriteInt(0);
-            encoder.WriteInt(0);
-            encoder.WriteInt(0);
-            encoder.WriteInt(0);
-            encoder.WriteInt(0);
-            encoder.WriteInt(0);
+			encoder.WriteBoolean(false);
 
-            encoder.WriteBoolean(false);
+			if (false)
+			{
+				encoder.WriteString(null);
+				encoder.WriteInt(0);
+				encoder.WriteInt(0);
+				encoder.WriteInt(0);
+				encoder.WriteInt(0);
+			}
 
-            if (false)
-            {
-                encoder.WriteString(null);
-                encoder.WriteInt(0);
-                encoder.WriteInt(0);
-                encoder.WriteInt(0);
-                encoder.WriteInt(0);
-            }
+			if (false)
+			{
+				encoder.WriteBoolean(true);
+				encoder.WriteLong(0);
+			}
 
-            if (false)
-            {
-                encoder.WriteBoolean(true);
-                encoder.WriteLong(0);
-            }
+			encoder.WriteBoolean(false);
 
-            encoder.WriteBoolean(false);
+			if (false)
+			{
+				encoder.WriteBoolean(true);
+				encoder.WriteLong(0);
+			}
 
-            if (false)
-            {
-                encoder.WriteBoolean(true);
-                encoder.WriteLong(0);
-            }
+			encoder.WriteBoolean(false);
 
-            encoder.WriteBoolean(false);
+			if (false)
+			{
+				encoder.WriteBoolean(true);
+				encoder.WriteLong(0);
+			}
 
-            if (false)
-            {
-                encoder.WriteBoolean(true);
-                encoder.WriteLong(0);
-            }
+			encoder.WriteBoolean(false);
 
-            encoder.WriteBoolean(false);
+			encoder.WriteInt(0);
+			encoder.WriteInt(0);
+			encoder.WriteInt(0);
+			encoder.WriteString(null);
+			encoder.WriteInt(0);
 
-            encoder.WriteInt(0);
-            encoder.WriteInt(0);
-            encoder.WriteInt(0);
-            encoder.WriteString(null);
-            encoder.WriteInt(0);
+			if (m_donations != null)
+			{
+				encoder.WriteInt(m_donations.Size());
 
-            if (this.m_donations != null)
-            {
-                encoder.WriteInt(this.m_donations.Size());
+				for (int i = 0; i < m_donations.Size(); i++)
+				{
+					m_donations[i].Encode(encoder);
+				}
+			}
+			else
+			{
+				encoder.WriteInt(0);
+			}
+		}
 
-                for (int i = 0; i < this.m_donations.Size(); i++)
-                {
-                    this.m_donations[i].Encode(encoder);
-                }
-            }
-            else
-            {
-                encoder.WriteInt(0);
-            }
-        }
+		public LogicLong GetAccountId()
+			=> m_accountId;
 
-        public LogicLong GetAccountId()
-        {
-            return this.m_accountId;
-        }
+		public void SetAccountId(LogicLong value)
+		{
+			m_accountId = value;
+		}
 
-        public void SetAccountId(LogicLong value)
-        {
-            this.m_accountId = value;
-        }
+		public LogicLong GetAvatarId()
+			=> m_avatarId;
 
-        public LogicLong GetAvatarId()
-        {
-            return this.m_avatarId;
-        }
+		public void SetAvatarId(LogicLong value)
+		{
+			m_avatarId = value;
+		}
 
-        public void SetAvatarId(LogicLong value)
-        {
-            this.m_avatarId = value;
-        }
+		public LogicLong GetHomeId()
+			=> m_homeId;
 
-        public LogicLong GetHomeId()
-        {
-            return this.m_homeId;
-        }
+		public void SetHomeId(LogicLong value)
+		{
+			m_homeId = value;
+		}
 
-        public void SetHomeId(LogicLong value)
-        {
-            this.m_homeId = value;
-        }
+		public LogicArrayList<DonationContainer> GetDonations()
+			=> m_donations;
 
-        public LogicArrayList<DonationContainer> GetDonations()
-        {
-            return this.m_donations;
-        }
+		public string GetName()
+			=> m_name;
 
-        public string GetName()
-        {
-            return this.m_name;
-        }
+		public void SetName(string value)
+		{
+			m_name = value;
+		}
 
-        public void SetName(string value)
-        {
-            this.m_name = value;
-        }
+		public int GetExpLevel()
+			=> m_expLevel;
 
-        public int GetExpLevel()
-        {
-            return this.m_expLevel;
-        }
-
-        public void SetExpLevel(int value)
-        {
-            this.m_expLevel = value;
-        }
-    }
+		public void SetExpLevel(int value)
+		{
+			m_expLevel = value;
+		}
+	}
 }

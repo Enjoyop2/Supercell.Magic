@@ -1,95 +1,87 @@
+using Supercell.Magic.Titan.Math;
+using Supercell.Magic.Titan.Message;
+
 namespace Supercell.Magic.Logic.Message.Home
 {
-    using Supercell.Magic.Titan.Math;
-    using Supercell.Magic.Titan.Message;
+	public class StartFriendlyChallengeSpectateMessage : PiranhaMessage
+	{
+		public const int MESSAGE_TYPE = 14110;
 
-    public class StartFriendlyChallengeSpectateMessage : PiranhaMessage
-    {
-        public const int MESSAGE_TYPE = 14110;
+		private LogicLong m_streamId;
+		private LogicLong m_attackerId;
 
-        private LogicLong m_streamId;
-        private LogicLong m_attackerId;
+		public StartFriendlyChallengeSpectateMessage() : this(0)
+		{
+			// StartFriendlyChallengeSpectateMessage.
+		}
 
-        public StartFriendlyChallengeSpectateMessage() : this(0)
-        {
-            // StartFriendlyChallengeSpectateMessage.
-        }
+		public StartFriendlyChallengeSpectateMessage(short messageVersion) : base(messageVersion)
+		{
+			// StartFriendlyChallengeSpectateMessage.
+		}
 
-        public StartFriendlyChallengeSpectateMessage(short messageVersion) : base(messageVersion)
-        {
-            // StartFriendlyChallengeSpectateMessage.
-        }
+		public override void Decode()
+		{
+			base.Decode();
 
-        public override void Decode()
-        {
-            base.Decode();
+			m_stream.ReadInt();
 
-            this.m_stream.ReadInt();
+			if (m_stream.ReadBoolean())
+			{
+				m_streamId = m_stream.ReadLong();
+			}
 
-            if (this.m_stream.ReadBoolean())
-            {
-                this.m_streamId = this.m_stream.ReadLong();
-            }
+			if (m_stream.ReadBoolean())
+			{
+				m_attackerId = m_stream.ReadLong();
+			}
+		}
 
-            if (this.m_stream.ReadBoolean())
-            {
-                this.m_attackerId = this.m_stream.ReadLong();
-            }
-        }
+		public override void Encode()
+		{
+			base.Encode();
 
-        public override void Encode()
-        {
-            base.Encode();
+			m_stream.WriteInt(0);
+			m_stream.WriteBoolean(m_streamId != null);
 
-            this.m_stream.WriteInt(0);
-            this.m_stream.WriteBoolean(this.m_streamId != null);
+			if (m_streamId != null)
+			{
+				m_stream.WriteLong(m_streamId);
+			}
 
-            if (this.m_streamId != null)
-            {
-                this.m_stream.WriteLong(this.m_streamId);
-            }
+			m_stream.WriteBoolean(m_attackerId != null);
 
-            this.m_stream.WriteBoolean(this.m_attackerId != null);
+			if (m_attackerId != null)
+			{
+				m_stream.WriteLong(m_attackerId);
+			}
+		}
 
-            if (this.m_attackerId != null)
-            {
-                this.m_stream.WriteLong(this.m_attackerId);
-            }
-        }
+		public override short GetMessageType()
+			=> StartFriendlyChallengeSpectateMessage.MESSAGE_TYPE;
 
-        public override short GetMessageType()
-        {
-            return StartFriendlyChallengeSpectateMessage.MESSAGE_TYPE;
-        }
+		public override int GetServiceNodeType()
+			=> 11;
 
-        public override int GetServiceNodeType()
-        {
-            return 11;
-        }
+		public override void Destruct()
+		{
+			base.Destruct();
+		}
 
-        public override void Destruct()
-        {
-            base.Destruct();
-        }
+		public LogicLong GetStreamId()
+			=> m_streamId;
 
-        public LogicLong GetStreamId()
-        {
-            return this.m_streamId;
-        }
+		public void SetStreamId(LogicLong value)
+		{
+			m_streamId = value;
+		}
 
-        public void SetStreamId(LogicLong value)
-        {
-            this.m_streamId = value;
-        }
+		public LogicLong GetAttackerId()
+			=> m_attackerId;
 
-        public LogicLong GetAttackerId()
-        {
-            return this.m_attackerId;
-        }
-
-        public void SetAttackerId(LogicLong value)
-        {
-            this.m_attackerId = value;
-        }
-    }
+		public void SetAttackerId(LogicLong value)
+		{
+			m_attackerId = value;
+		}
+	}
 }

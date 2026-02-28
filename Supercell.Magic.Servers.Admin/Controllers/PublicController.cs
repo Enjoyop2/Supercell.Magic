@@ -1,22 +1,23 @@
-﻿namespace Supercell.Magic.Servers.Admin.Controllers
-{
-    using System.Net;
-    using Microsoft.AspNetCore.Mvc;
-    using Newtonsoft.Json.Linq;
-    using Supercell.Magic.Servers.Admin.Helper;
-    using Supercell.Magic.Servers.Admin.Logic;
+using System.Net;
 
-    [Route("api/[controller]")]
-    [Produces("application/json")]
-    public class PublicController : Controller
-    {
-        [HttpGet]
-        public JObject Index()
-        {
-            return this.BuildResponse(HttpStatusCode.OK)
-                       .AddAttribute("totalUsers", DashboardManager.TotalUsers)
-                       .AddAttribute("onlineUsers", ServerManager.OnlineUsers)
-                       .AddAttribute("averagePings", ServerManager.AveragePings);
-        }
-    }
+using Microsoft.AspNetCore.Mvc;
+
+using Newtonsoft.Json.Linq;
+
+using Supercell.Magic.Servers.Admin.Helper;
+using Supercell.Magic.Servers.Admin.Logic;
+
+namespace Supercell.Magic.Servers.Admin.Controllers
+{
+	[Route("api/[controller]")]
+	[Produces("application/json")]
+	public class PublicController : Controller
+	{
+		[HttpGet]
+		public JObject Index()
+			=> this.BuildResponse(HttpStatusCode.OK)
+					   .AddAttribute("totalUsers", DashboardManager.TotalUsers)
+					   .AddAttribute("onlineUsers", ServerManager.OnlineUsers)
+					   .AddAttribute("averagePings", ServerManager.AveragePings);
+	}
 }

@@ -1,104 +1,104 @@
-﻿namespace Supercell.Magic.Servers.Home.Logic.Mode.Listener
+using Supercell.Magic.Logic.Command;
+using Supercell.Magic.Logic.Command.Listener;
+using Supercell.Magic.Logic.Command.Server;
+using Supercell.Magic.Logic.Mode;
+
+using Supercell.Magic.Titan.Util;
+
+namespace Supercell.Magic.Servers.Home.Logic.Mode.Listener
 {
-    using Supercell.Magic.Logic.Command;
-    using Supercell.Magic.Logic.Command.Listener;
-    using Supercell.Magic.Logic.Command.Server;
-    using Supercell.Magic.Logic.Mode;
+	public class ServerCommandStorage : LogicCommandManagerListener
+	{
+		private readonly GameMode m_gameMode;
+		private readonly LogicGameMode m_logicGameMode;
+		private readonly LogicArrayList<LogicServerCommand> m_bufferedServerCommands;
+		private readonly LogicArrayList<LogicServerCommand> m_executedServerCommands;
 
-    using Supercell.Magic.Titan.Util;
+		public ServerCommandStorage(GameMode gameMode, LogicGameMode logicGameMode)
+		{
+			m_gameMode = gameMode;
+			m_logicGameMode = logicGameMode;
+			m_bufferedServerCommands = new LogicArrayList<LogicServerCommand>();
+			m_executedServerCommands = new LogicArrayList<LogicServerCommand>();
+		}
 
-    public class ServerCommandStorage : LogicCommandManagerListener
-    {
-        private readonly GameMode m_gameMode;
-        private readonly LogicGameMode m_logicGameMode;
-        private readonly LogicArrayList<LogicServerCommand> m_bufferedServerCommands;
-        private readonly LogicArrayList<LogicServerCommand> m_executedServerCommands;
+		public override void Destruct()
+		{
+			base.Destruct();
+			m_bufferedServerCommands.Clear();
+		}
 
-        public ServerCommandStorage(GameMode gameMode, LogicGameMode logicGameMode)
-        {
-            this.m_gameMode = gameMode;
-            this.m_logicGameMode = logicGameMode;
-            this.m_bufferedServerCommands = new LogicArrayList<LogicServerCommand>();
-            this.m_executedServerCommands = new LogicArrayList<LogicServerCommand>();
-        }
+		public override void CommandExecuted(LogicCommand command)
+		{
+			if (command.IsServerCommand())
+			{
+				m_bufferedServerCommands.Remove(m_bufferedServerCommands.IndexOf((LogicServerCommand)command));
+				m_executedServerCommands.Add((LogicServerCommand)command);
+			}
+		}
 
-        public override void Destruct()
-        {
-            base.Destruct();
-            this.m_bufferedServerCommands.Clear();
-        }
+		public void AddServerCommand(LogicServerCommand serverCommand)
+		{
+			m_bufferedServerCommands.Add(serverCommand);
+		}
 
-        public override void CommandExecuted(LogicCommand command)
-        {
-            if (command.IsServerCommand())
-            {
-                this.m_bufferedServerCommands.Remove(this.m_bufferedServerCommands.IndexOf((LogicServerCommand) command));
-                this.m_executedServerCommands.Add((LogicServerCommand) command);
-            }
-        }
+		public bool GetAwaitingExecutionOfCommandType(LogicCommandType type)
+		{
+			for (int i = 0; i < m_bufferedServerCommands.Size(); i++)
+			{
+				if (m_bufferedServerCommands[i].GetCommandType() == type)
+					return true;
+			}
 
-        public void AddServerCommand(LogicServerCommand serverCommand)
-        {
-            this.m_bufferedServerCommands.Add(serverCommand);
-        }
+			return false;
+		}
 
-        public bool GetAwaitingExecutionOfCommandType(LogicCommandType type)
-        {
-            for (int i = 0; i < this.m_bufferedServerCommands.Size(); i++)
-            {
-                if (this.m_bufferedServerCommands[i].GetCommandType() == type)
-                    return true;
-            }
+		public LogicArrayList<LogicServerCommand> RemoveExecutedServerCommands()
+		{
+			LogicArrayList<LogicServerCommand> arrayList = new LogicArrayList<LogicServerCommand>();
+			arrayList.AddAll(m_executedServerCommands);
+			m_executedServerCommands.Clear();
+			return arrayList;
+		}
 
-            return false;
-        }
+		public void CheckExecutableServerCommands(int endSubTick, LogicArrayList<LogicCommand> commands)
+		{
+			for (int i = 0; i < commands.Size(); i++)
+			{
+				LogicCommand command = commands[i];
 
-        public LogicArrayList<LogicServerCommand> RemoveExecutedServerCommands()
-        {
-            LogicArrayList<LogicServerCommand> arrayList = new LogicArrayList<LogicServerCommand>();
-            arrayList.AddAll(this.m_executedServerCommands);
-            this.m_executedServerCommands.Clear();
-            return arrayList;
-        }
+				if (command.IsServerCommand())
+				{
+					if (m_logicGameMode.GetState() != 1)
+					{
+						commands.Remove(i--);
+						continue;
+					}
 
-        public void CheckExecutableServerCommands(int endSubTick, LogicArrayList<LogicCommand> commands)
-        {
-            for (int i = 0; i < commands.Size(); i++)
-            {
-                LogicCommand command = commands[i];
-                
-                if (command.IsServerCommand())
-                {
-                    if (this.m_logicGameMode.GetState() != 1)
-                    {
-                        commands.Remove(i--);
-                        continue;
-                    }
-                    
-                    LogicServerCommand serverCommand = (LogicServerCommand) command;
-                    LogicServerCommand bufferedServerCommand = null;
+					LogicServerCommand serverCommand = (LogicServerCommand)command;
+					LogicServerCommand bufferedServerCommand = null;
 
-                    for (int j = 0; j < this.m_bufferedServerCommands.Size(); j++)
-                    {
-                        LogicServerCommand tmp = this.m_bufferedServerCommands[j];
+					for (int j = 0; j < m_bufferedServerCommands.Size(); j++)
+					{
+						LogicServerCommand tmp = m_bufferedServerCommands[j];
 
-                        if (tmp.GetId() == serverCommand.GetId())
-                        {
-                            bufferedServerCommand = tmp;
-                        }
-                    }
+						if (tmp.GetId() == serverCommand.GetId())
+						{
+							bufferedServerCommand = tmp;
+						}
+					}
 
-                    if (bufferedServerCommand == null || bufferedServerCommand.GetCommandType() != serverCommand.GetCommandType() ||
-                        bufferedServerCommand.GetExecuteSubTick() != -1 && bufferedServerCommand.GetExecuteSubTick() >= this.m_logicGameMode.GetLevel().GetLogicTime().GetTick())
-                    {
-                        commands.Remove(i--);
-                        continue;
-                    }
+					if (bufferedServerCommand == null || bufferedServerCommand.GetCommandType() != serverCommand.GetCommandType() ||
+						bufferedServerCommand.GetExecuteSubTick() != -1 && bufferedServerCommand.GetExecuteSubTick() >= m_logicGameMode.GetLevel().GetLogicTime().GetTick())
+					{
+						commands.Remove(i--);
+						continue;
+					}
 
-                    bufferedServerCommand.SetExecuteSubTick(serverCommand.GetExecuteSubTick());
-                    commands[i] = bufferedServerCommand;
-                }
-            }
-        }
-    }
+					bufferedServerCommand.SetExecuteSubTick(serverCommand.GetExecuteSubTick());
+					commands[i] = bufferedServerCommand;
+				}
+			}
+		}
+	}
 }

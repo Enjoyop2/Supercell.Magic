@@ -1,238 +1,243 @@
-﻿namespace Supercell.Magic.Servers.Core.Database.Document
+using System;
+
+using Supercell.Magic.Logic;
+using Supercell.Magic.Logic.Message.Alliance.Stream;
+using Supercell.Magic.Logic.Message.Avatar.Stream;
+using Supercell.Magic.Titan.DataStream;
+using Supercell.Magic.Titan.Json;
+using Supercell.Magic.Titan.Math;
+
+namespace Supercell.Magic.Servers.Core.Database.Document
 {
-    using System;
-    using Supercell.Magic.Logic;
-    using Supercell.Magic.Logic.Message.Alliance.Stream;
-    using Supercell.Magic.Logic.Message.Avatar.Stream;
-    using Supercell.Magic.Titan.DataStream;
-    using Supercell.Magic.Titan.Json;
-    using Supercell.Magic.Titan.Math;
+	public class StreamDocument : CouchbaseDocument
+	{
+		private const string JSON_ATTRIBUTE_OWNER_ID = "ownerId";
+		private const string JSON_ATTRIBUTE_TYPE = "type";
+		private const string JSON_ATTRIBUTE_CREATE_TIME = "createT";
+		private const string JSON_ATTRIBUTE_ENTRY = "entry";
+		private const string JSON_ATTRIBUTE_ENTRY_TYPE = "entryT";
 
-    public class StreamDocument : CouchbaseDocument
-    {
-        private const string JSON_ATTRIBUTE_OWNER_ID = "ownerId";
-        private const string JSON_ATTRIBUTE_TYPE = "type";
-        private const string JSON_ATTRIBUTE_CREATE_TIME = "createT";
-        private const string JSON_ATTRIBUTE_ENTRY = "entry";
-        private const string JSON_ATTRIBUTE_ENTRY_TYPE = "entryT";
+		public DateTime CreateTime
+		{
+			get; set;
+		}
+		public StreamType Type
+		{
+			get; set;
+		}
+		public LogicLong OwnerId
+		{
+			get; set;
+		}
 
-        public DateTime CreateTime { get; set; }
-        public StreamType Type { get; set; }
-        public LogicLong OwnerId { get; set; }
+		public object Entry
+		{
+			get; set;
+		}
 
-        public object Entry { get; set; }
+		public StreamDocument()
+		{
+		}
 
-        public StreamDocument()
-        {
-        }
+		public StreamDocument(LogicLong id, LogicLong ownerId, StreamEntry entry) : base(id)
+		{
+			CreateTime = DateTime.UtcNow;
+			OwnerId = ownerId;
+			Type = StreamType.ALLIANCE;
+			Entry = entry;
 
-        public StreamDocument(LogicLong id, LogicLong ownerId, StreamEntry entry) : base(id)
-        {
-            this.CreateTime = DateTime.UtcNow;
-            this.OwnerId = ownerId;
-            this.Type = StreamType.ALLIANCE;
-            this.Entry = entry;
+			entry.SetId(id);
+		}
 
-            entry.SetId(id);
-        }
+		public StreamDocument(LogicLong id, LogicLong ownerId, AvatarStreamEntry entry) : base(id)
+		{
+			CreateTime = DateTime.UtcNow;
+			OwnerId = ownerId;
+			Type = StreamType.AVATAR;
+			Entry = entry;
 
-        public StreamDocument(LogicLong id, LogicLong ownerId, AvatarStreamEntry entry) : base(id)
-        {
-            this.CreateTime = DateTime.UtcNow;
-            this.OwnerId = ownerId;
-            this.Type = StreamType.AVATAR;
-            this.Entry = entry;
+			entry.SetId(id);
+		}
 
-            entry.SetId(id);
-        }
+		public StreamDocument(LogicLong id, ReplayStreamEntry entry) : base(id)
+		{
+			CreateTime = DateTime.UtcNow;
+			OwnerId = new LogicLong();
+			Type = StreamType.REPLAY;
+			Entry = entry;
+		}
 
-        public StreamDocument(LogicLong id, ReplayStreamEntry entry) : base(id)
-        {
-            this.CreateTime = DateTime.UtcNow;
-            this.OwnerId = new LogicLong();
-            this.Type = StreamType.REPLAY;
-            this.Entry = entry;
-        }
+		protected sealed override void Encode(ByteStream stream)
+		{
+		}
 
-        protected sealed override void Encode(ByteStream stream)
-        {
-        }
+		protected sealed override void Decode(ByteStream stream)
+		{
+		}
 
-        protected sealed override void Decode(ByteStream stream)
-        {
-        }
+		protected sealed override void Save(LogicJSONObject jsonObject)
+		{
+			LogicJSONArray ownerIdArray = new LogicJSONArray(2);
 
-        protected sealed override void Save(LogicJSONObject jsonObject)
-        {
-            LogicJSONArray ownerIdArray = new LogicJSONArray(2);
+			ownerIdArray.Add(new LogicJSONNumber(OwnerId.GetHigherInt()));
+			ownerIdArray.Add(new LogicJSONNumber(OwnerId.GetLowerInt()));
 
-            ownerIdArray.Add(new LogicJSONNumber(this.OwnerId.GetHigherInt()));
-            ownerIdArray.Add(new LogicJSONNumber(this.OwnerId.GetLowerInt()));
+			jsonObject.Put(StreamDocument.JSON_ATTRIBUTE_OWNER_ID, ownerIdArray);
+			jsonObject.Put(StreamDocument.JSON_ATTRIBUTE_CREATE_TIME, new LogicJSONString(CreateTime.ToString("O")));
+			jsonObject.Put(StreamDocument.JSON_ATTRIBUTE_TYPE, new LogicJSONNumber((int)Type));
 
-            jsonObject.Put(StreamDocument.JSON_ATTRIBUTE_OWNER_ID, ownerIdArray);
-            jsonObject.Put(StreamDocument.JSON_ATTRIBUTE_CREATE_TIME, new LogicJSONString(this.CreateTime.ToString("O")));
-            jsonObject.Put(StreamDocument.JSON_ATTRIBUTE_TYPE, new LogicJSONNumber((int) this.Type));
+			switch (Type)
+			{
+				case StreamType.ALLIANCE:
+					{
+						LogicJSONObject entryObject = new LogicJSONObject();
+						StreamEntry entry = (StreamEntry)Entry;
 
-            switch (this.Type)
-            {
-                case StreamType.ALLIANCE:
-                {
-                    LogicJSONObject entryObject = new LogicJSONObject();
-                    StreamEntry entry = (StreamEntry) this.Entry;
+						jsonObject.Put(StreamDocument.JSON_ATTRIBUTE_ENTRY_TYPE, new LogicJSONNumber((int)entry.GetStreamEntryType()));
+						jsonObject.Put(StreamDocument.JSON_ATTRIBUTE_ENTRY, entryObject);
 
-                    jsonObject.Put(StreamDocument.JSON_ATTRIBUTE_ENTRY_TYPE, new LogicJSONNumber((int) entry.GetStreamEntryType()));
-                    jsonObject.Put(StreamDocument.JSON_ATTRIBUTE_ENTRY, entryObject);
+						entry.Save(entryObject);
+						break;
+					}
+				case StreamType.AVATAR:
+					{
+						LogicJSONObject entryObject = new LogicJSONObject();
+						AvatarStreamEntry entry = (AvatarStreamEntry)Entry;
 
-                    entry.Save(entryObject);
-                    break;
-                }
-                case StreamType.AVATAR:
-                {
-                    LogicJSONObject entryObject = new LogicJSONObject();
-                    AvatarStreamEntry entry = (AvatarStreamEntry) this.Entry;
+						jsonObject.Put(StreamDocument.JSON_ATTRIBUTE_ENTRY_TYPE, new LogicJSONNumber((int)entry.GetAvatarStreamEntryType()));
+						jsonObject.Put(StreamDocument.JSON_ATTRIBUTE_ENTRY, entryObject);
 
-                    jsonObject.Put(StreamDocument.JSON_ATTRIBUTE_ENTRY_TYPE, new LogicJSONNumber((int) entry.GetAvatarStreamEntryType()));
-                    jsonObject.Put(StreamDocument.JSON_ATTRIBUTE_ENTRY, entryObject);
+						entry.Save(entryObject);
+						break;
+					}
+				case StreamType.REPLAY:
+					{
+						LogicJSONObject entryObject = new LogicJSONObject();
+						ReplayStreamEntry entry = (ReplayStreamEntry)Entry;
 
-                    entry.Save(entryObject);
-                    break;
-                }
-                case StreamType.REPLAY:
-                {
-                    LogicJSONObject entryObject = new LogicJSONObject();
-                    ReplayStreamEntry entry = (ReplayStreamEntry) this.Entry;
+						jsonObject.Put(StreamDocument.JSON_ATTRIBUTE_ENTRY, entryObject);
 
-                    jsonObject.Put(StreamDocument.JSON_ATTRIBUTE_ENTRY, entryObject);
+						entry.Save(entryObject);
 
-                    entry.Save(entryObject);
+						break;
+					}
+			}
+		}
 
-                    break;
-                }
-            }
-        }
+		protected sealed override void Load(LogicJSONObject jsonObject)
+		{
+			LogicJSONArray ownerIdArray = jsonObject.GetJSONArray(StreamDocument.JSON_ATTRIBUTE_OWNER_ID);
 
-        protected sealed override void Load(LogicJSONObject jsonObject)
-        {
-            LogicJSONArray ownerIdArray = jsonObject.GetJSONArray(StreamDocument.JSON_ATTRIBUTE_OWNER_ID);
+			OwnerId = new LogicLong(ownerIdArray.GetJSONNumber(0).GetIntValue(), ownerIdArray.GetJSONNumber(1).GetIntValue());
+			CreateTime = DateTime.Parse(jsonObject.GetJSONString(StreamDocument.JSON_ATTRIBUTE_CREATE_TIME).GetStringValue());
+			Type = (StreamType)jsonObject.GetJSONNumber(StreamDocument.JSON_ATTRIBUTE_TYPE).GetIntValue();
 
-            this.OwnerId = new LogicLong(ownerIdArray.GetJSONNumber(0).GetIntValue(), ownerIdArray.GetJSONNumber(1).GetIntValue());
-            this.CreateTime = DateTime.Parse(jsonObject.GetJSONString(StreamDocument.JSON_ATTRIBUTE_CREATE_TIME).GetStringValue());
-            this.Type = (StreamType) jsonObject.GetJSONNumber(StreamDocument.JSON_ATTRIBUTE_TYPE).GetIntValue();
+			switch (Type)
+			{
+				case StreamType.ALLIANCE:
+					{
+						StreamEntry entry = StreamEntryFactory.CreateStreamEntryByType((StreamEntryType)jsonObject.GetJSONNumber(StreamDocument.JSON_ATTRIBUTE_ENTRY_TYPE).GetIntValue());
+						entry.Load(jsonObject.GetJSONObject(StreamDocument.JSON_ATTRIBUTE_ENTRY));
+						entry.SetId(Id);
+						Entry = entry;
+						break;
+					}
+				case StreamType.AVATAR:
+					{
+						AvatarStreamEntry entry =
+							AvatarStreamEntryFactory.CreateStreamEntryByType((AvatarStreamEntryType)jsonObject.GetJSONNumber(StreamDocument.JSON_ATTRIBUTE_ENTRY_TYPE).GetIntValue());
+						entry.Load(jsonObject.GetJSONObject(StreamDocument.JSON_ATTRIBUTE_ENTRY));
+						entry.SetId(Id);
+						Entry = entry;
+						break;
+					}
+				case StreamType.REPLAY:
+					{
+						ReplayStreamEntry entry = new ReplayStreamEntry();
+						entry.Load(jsonObject.GetJSONObject(StreamDocument.JSON_ATTRIBUTE_ENTRY));
+						Entry = entry;
+						break;
+					}
+			}
+		}
 
-            switch (this.Type)
-            {
-                case StreamType.ALLIANCE:
-                {
-                    StreamEntry entry = StreamEntryFactory.CreateStreamEntryByType((StreamEntryType) jsonObject.GetJSONNumber(StreamDocument.JSON_ATTRIBUTE_ENTRY_TYPE).GetIntValue());
-                    entry.Load(jsonObject.GetJSONObject(StreamDocument.JSON_ATTRIBUTE_ENTRY));
-                    entry.SetId(this.Id);
-                    this.Entry = entry;
-                    break;
-                }
-                case StreamType.AVATAR:
-                {
-                    AvatarStreamEntry entry =
-                        AvatarStreamEntryFactory.CreateStreamEntryByType((AvatarStreamEntryType) jsonObject.GetJSONNumber(StreamDocument.JSON_ATTRIBUTE_ENTRY_TYPE).GetIntValue());
-                    entry.Load(jsonObject.GetJSONObject(StreamDocument.JSON_ATTRIBUTE_ENTRY));
-                    entry.SetId(this.Id);
-                    this.Entry = entry;
-                    break;
-                }
-                case StreamType.REPLAY:
-                {
-                    ReplayStreamEntry entry = new ReplayStreamEntry();
-                    entry.Load(jsonObject.GetJSONObject(StreamDocument.JSON_ATTRIBUTE_ENTRY));
-                    this.Entry = entry;
-                    break;
-                }
-            }
-        }
+		public void Update()
+		{
+			switch (Type)
+			{
+				case StreamType.ALLIANCE:
+					((StreamEntry)Entry).SetAgeSeconds((int)DateTime.UtcNow.Subtract(CreateTime).TotalSeconds);
+					break;
+				case StreamType.AVATAR:
+					((AvatarStreamEntry)Entry).SetAgeSeconds((int)DateTime.UtcNow.Subtract(CreateTime).TotalSeconds);
+					break;
+			}
+		}
+	}
 
-        public void Update()
-        {
-            switch (this.Type)
-            {
-                case StreamType.ALLIANCE:
-                    ((StreamEntry) this.Entry).SetAgeSeconds((int) DateTime.UtcNow.Subtract(this.CreateTime).TotalSeconds);
-                    break;
-                case StreamType.AVATAR:
-                    ((AvatarStreamEntry) this.Entry).SetAgeSeconds((int) DateTime.UtcNow.Subtract(this.CreateTime).TotalSeconds);
-                    break;
-            }
-        }
-    }
+	public class ReplayStreamEntry
+	{
+		public const string JSON_ATTRIBUTE_STREAM_DATA = "data";
+		public const string JSON_ATTRIBUTE_STREAM_VERSION = "version";
 
-    public class ReplayStreamEntry
-    {
-        public const string JSON_ATTRIBUTE_STREAM_DATA = "data";
-        public const string JSON_ATTRIBUTE_STREAM_VERSION = "version";
+		private byte[] m_streamData;
+		private int m_majorVersion;
+		private int m_buildVersion;
+		private int m_contentVersion;
 
-        private byte[] m_streamData;
-        private int m_majorVersion;
-        private int m_buildVersion;
-        private int m_contentVersion;
+		public ReplayStreamEntry()
+		{
+		}
 
-        public ReplayStreamEntry()
-        {
-        }
+		public ReplayStreamEntry(byte[] streamData)
+		{
+			m_streamData = streamData;
+			m_majorVersion = LogicVersion.MAJOR_VERSION;
+			m_buildVersion = LogicVersion.BUILD_VERSION;
+			m_contentVersion = ResourceManager.GetContentVersion();
+		}
 
-        public ReplayStreamEntry(byte[] streamData)
-        {
-            this.m_streamData = streamData;
-            this.m_majorVersion = LogicVersion.MAJOR_VERSION;
-            this.m_buildVersion = LogicVersion.BUILD_VERSION;
-            this.m_contentVersion = ResourceManager.GetContentVersion();
-        }
+		public byte[] GetStreamData()
+			=> m_streamData;
 
-        public byte[] GetStreamData()
-        {
-            return this.m_streamData;
-        }
+		public int GetMajorVersion()
+			=> m_majorVersion;
 
-        public int GetMajorVersion()
-        {
-            return this.m_majorVersion;
-        }
+		public int GetBuildVersion()
+			=> m_buildVersion;
 
-        public int GetBuildVersion()
-        {
-            return this.m_buildVersion;
-        }
+		public int GetContentVersion()
+			=> m_contentVersion;
 
-        public int GetContentVersion()
-        {
-            return this.m_contentVersion;
-        }
+		public void Save(LogicJSONObject jsonObject)
+		{
+			jsonObject.Put(ReplayStreamEntry.JSON_ATTRIBUTE_STREAM_DATA, new LogicJSONString(Convert.ToBase64String(m_streamData)));
 
-        public void Save(LogicJSONObject jsonObject)
-        {
-            jsonObject.Put(ReplayStreamEntry.JSON_ATTRIBUTE_STREAM_DATA, new LogicJSONString(Convert.ToBase64String(this.m_streamData)));
+			LogicJSONArray versionArray = new LogicJSONArray(3);
 
-            LogicJSONArray versionArray = new LogicJSONArray(3);
+			versionArray.Add(new LogicJSONNumber(m_majorVersion));
+			versionArray.Add(new LogicJSONNumber(m_buildVersion));
+			versionArray.Add(new LogicJSONNumber(m_contentVersion));
 
-            versionArray.Add(new LogicJSONNumber(this.m_majorVersion));
-            versionArray.Add(new LogicJSONNumber(this.m_buildVersion));
-            versionArray.Add(new LogicJSONNumber(this.m_contentVersion));
+			jsonObject.Put(ReplayStreamEntry.JSON_ATTRIBUTE_STREAM_VERSION, versionArray);
+		}
 
-            jsonObject.Put(ReplayStreamEntry.JSON_ATTRIBUTE_STREAM_VERSION, versionArray);
-        }
+		public void Load(LogicJSONObject jsonObject)
+		{
+			m_streamData = Convert.FromBase64String(jsonObject.GetJSONString(ReplayStreamEntry.JSON_ATTRIBUTE_STREAM_DATA).GetStringValue());
 
-        public void Load(LogicJSONObject jsonObject)
-        {
-            this.m_streamData = Convert.FromBase64String(jsonObject.GetJSONString(ReplayStreamEntry.JSON_ATTRIBUTE_STREAM_DATA).GetStringValue());
+			LogicJSONArray versionArray = jsonObject.GetJSONArray(ReplayStreamEntry.JSON_ATTRIBUTE_STREAM_VERSION);
 
-            LogicJSONArray versionArray = jsonObject.GetJSONArray(ReplayStreamEntry.JSON_ATTRIBUTE_STREAM_VERSION);
+			m_majorVersion = versionArray.GetJSONNumber(0).GetIntValue();
+			m_buildVersion = versionArray.GetJSONNumber(1).GetIntValue();
+			m_contentVersion = versionArray.GetJSONNumber(2).GetIntValue();
+		}
+	}
 
-            this.m_majorVersion = versionArray.GetJSONNumber(0).GetIntValue();
-            this.m_buildVersion = versionArray.GetJSONNumber(1).GetIntValue();
-            this.m_contentVersion = versionArray.GetJSONNumber(2).GetIntValue();
-        }
-    }
-
-    public enum StreamType
-    {
-        ALLIANCE,
-        AVATAR,
-        REPLAY
-    }
+	public enum StreamType
+	{
+		ALLIANCE,
+		AVATAR,
+		REPLAY
+	}
 }

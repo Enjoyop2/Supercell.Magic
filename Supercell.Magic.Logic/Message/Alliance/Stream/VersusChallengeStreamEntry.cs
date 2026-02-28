@@ -1,147 +1,135 @@
-﻿namespace Supercell.Magic.Logic.Message.Alliance.Stream
+using Supercell.Magic.Titan.DataStream;
+using Supercell.Magic.Titan.Debug;
+using Supercell.Magic.Titan.Json;
+
+namespace Supercell.Magic.Logic.Message.Alliance.Stream
 {
-    using Supercell.Magic.Titan.DataStream;
-    using Supercell.Magic.Titan.Debug;
-    using Supercell.Magic.Titan.Json;
+	public class VersusChallengeStreamEntry : StreamEntry
+	{
+		private string m_message;
+		private string m_battleLogJSON;
 
-    public class VersusChallengeStreamEntry : StreamEntry
-    {
-        private string m_message;
-        private string m_battleLogJSON;
+		private int m_spectatorCount;
+		private int m_layoutId;
 
-        private int m_spectatorCount;
-        private int m_layoutId;
+		private bool m_started;
 
-        private bool m_started;
+		public override void Decode(ByteStream stream)
+		{
+			base.Decode(stream);
 
-        public override void Decode(ByteStream stream)
-        {
-            base.Decode(stream);
+			m_message = stream.ReadString(900000);
 
-            this.m_message = stream.ReadString(900000);
+			if (stream.ReadBoolean())
+			{
+				m_battleLogJSON = stream.ReadString(900000);
+			}
 
-            if (stream.ReadBoolean())
-            {
-                this.m_battleLogJSON = stream.ReadString(900000);
-            }
+			stream.ReadVInt();
+			m_spectatorCount = stream.ReadVInt();
+			m_started = stream.ReadBoolean();
+			stream.ReadVInt();
+		}
 
-            stream.ReadVInt();
-            this.m_spectatorCount = stream.ReadVInt();
-            this.m_started = stream.ReadBoolean();
-            stream.ReadVInt();
-        }
+		public override void Encode(ByteStream stream)
+		{
+			base.Encode(stream);
 
-        public override void Encode(ByteStream stream)
-        {
-            base.Encode(stream);
+			stream.WriteString(m_message);
 
-            stream.WriteString(this.m_message);
+			if (m_battleLogJSON != null)
+			{
+				stream.WriteBoolean(true);
+				stream.WriteString(m_message);
+			}
+			else
+			{
+				stream.WriteBoolean(false);
+			}
 
-            if (this.m_battleLogJSON != null)
-            {
-                stream.WriteBoolean(true);
-                stream.WriteString(this.m_message);
-            }
-            else
-            {
-                stream.WriteBoolean(false);
-            }
+			stream.WriteVInt(0);
+			stream.WriteVInt(m_spectatorCount);
+			stream.WriteBoolean(m_started);
+			stream.WriteVInt(0);
+		}
 
-            stream.WriteVInt(0);
-            stream.WriteVInt(this.m_spectatorCount);
-            stream.WriteBoolean(this.m_started);
-            stream.WriteVInt(0);
-        }
+		public override StreamEntryType GetStreamEntryType()
+			=> StreamEntryType.VERSUS_BATTLE_REQUEST;
 
-        public override StreamEntryType GetStreamEntryType()
-        {
-            return StreamEntryType.VERSUS_BATTLE_REQUEST;
-        }
+		public string GetMessage()
+			=> m_message;
 
-        public string GetMessage()
-        {
-            return this.m_message;
-        }
+		public void SetMessage(string value)
+		{
+			m_message = value;
+		}
 
-        public void SetMessage(string value)
-        {
-            this.m_message = value;
-        }
+		public int GetLayoutId()
+			=> m_layoutId;
 
-        public int GetLayoutId()
-        {
-            return this.m_layoutId;
-        }
+		public void SetLayoutId(int value)
+		{
+			m_layoutId = value;
+		}
 
-        public void SetLayoutId(int value)
-        {
-            this.m_layoutId = value;
-        }
+		public string GetBattleLogJSON()
+			=> m_battleLogJSON;
 
-        public string GetBattleLogJSON()
-        {
-            return this.m_battleLogJSON;
-        }
+		public void SetBattleLogJSON(string value)
+		{
+			m_battleLogJSON = value;
+		}
 
-        public void SetBattleLogJSON(string value)
-        {
-            this.m_battleLogJSON = value;
-        }
+		public int GetSpectatorCount()
+			=> m_spectatorCount;
 
-        public int GetSpectatorCount()
-        {
-            return this.m_spectatorCount;
-        }
+		public void SetSpectatorCount(int value)
+		{
+			m_spectatorCount = value;
+		}
 
-        public void SetSpectatorCount(int value)
-        {
-            this.m_spectatorCount = value;
-        }
+		public bool IsStarted()
+			=> m_started;
 
-        public bool IsStarted()
-        {
-            return this.m_started;
-        }
+		public void SetStarted(bool started)
+		{
+			m_started = started;
+		}
 
-        public void SetStarted(bool started)
-        {
-            this.m_started = started;
-        }
+		public override void Load(LogicJSONObject jsonObject)
+		{
+			LogicJSONObject baseObject = jsonObject.GetJSONObject("base");
 
-        public override void Load(LogicJSONObject jsonObject)
-        {
-            LogicJSONObject baseObject = jsonObject.GetJSONObject("base");
+			if (baseObject == null)
+			{
+				Debugger.Error("VersusChallengeStreamEntry::load base is NULL");
+			}
 
-            if (baseObject == null)
-            {
-                Debugger.Error("VersusChallengeStreamEntry::load base is NULL");
-            }
+			base.Load(baseObject);
 
-            base.Load(baseObject);
+			m_message = jsonObject.GetJSONString("message").GetStringValue();
 
-            this.m_message = jsonObject.GetJSONString("message").GetStringValue();
+			LogicJSONString battleLogString = jsonObject.GetJSONString("battleLog");
 
-            LogicJSONString battleLogString = jsonObject.GetJSONString("battleLog");
+			if (battleLogString != null)
+			{
+				m_battleLogJSON = battleLogString.GetStringValue();
+			}
+		}
 
-            if (battleLogString != null)
-            {
-                this.m_battleLogJSON = battleLogString.GetStringValue();
-            }
-        }
+		public override void Save(LogicJSONObject jsonObject)
+		{
+			LogicJSONObject baseObject = new LogicJSONObject();
 
-        public override void Save(LogicJSONObject jsonObject)
-        {
-            LogicJSONObject baseObject = new LogicJSONObject();
+			base.Save(baseObject);
 
-            base.Save(baseObject);
+			jsonObject.Put("base", baseObject);
+			jsonObject.Put("message", new LogicJSONString(m_message));
 
-            jsonObject.Put("base", baseObject);
-            jsonObject.Put("message", new LogicJSONString(this.m_message));
-
-            if (this.m_battleLogJSON != null)
-            {
-                jsonObject.Put("battleLog", new LogicJSONString(this.m_battleLogJSON));
-            }
-        }
-    }
+			if (m_battleLogJSON != null)
+			{
+				jsonObject.Put("battleLog", new LogicJSONString(m_battleLogJSON));
+			}
+		}
+	}
 }
