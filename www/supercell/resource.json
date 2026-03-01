@@ -1,12 +1,11 @@
 {
-  "contentUrls": [
-    "http://127.0.0.1/assets/",
-    "http://127.0.0.1/assets"
-  ],
-  "chronosContentUrls": [],
-  "appstoreUrls": [
-  ],
-  "resourceSHA": "",
-  "googleServiceId": "",
-  "fbAppId": ""
+	"contentUrls": [
+		"http://127.0.0.1/assets/",
+		"http://127.0.0.1/assets"
+	],
+	"chronosContentUrls": [],
+	"appstoreUrls": [],
+	"resourceSHA": "",
+	"googleServiceId": "",
+	"fbAppId": ""
 }
