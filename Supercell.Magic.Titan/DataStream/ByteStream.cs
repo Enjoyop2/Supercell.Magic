@@ -74,7 +74,7 @@ namespace Supercell.Magic.Titan.DataStream
 			m_bitIdx = 0;
 
 			return (short)((m_buffer[m_offset++] << 8) |
-							m_buffer[m_offset++]);
+					m_buffer[m_offset++]);
 		}
 
 		public int ReadInt()
@@ -534,7 +534,7 @@ namespace Supercell.Magic.Titan.DataStream
 
 			if (m_offset + capacity > bufferLength)
 			{
-				byte[] tmpBuffer = new byte[m_buffer.Length + capacity + 100];
+				byte[] tmpBuffer = new byte[bufferLength + capacity + 100];
 				Buffer.BlockCopy(m_buffer, 0, tmpBuffer, 0, bufferLength);
 				m_buffer = tmpBuffer;
 			}

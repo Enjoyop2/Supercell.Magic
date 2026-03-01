@@ -35,6 +35,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Supercell.Magic.Tools.Patch
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Supercell.Magic.Servers.Battle", "Supercell.Magic.Servers.Battle\Supercell.Magic.Servers.Battle.csproj", "{E292067B-2058-5EB0-B68F-75DD84235CD0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Supercell.Magic.Servers.Scoring", "Supercell.Magic.Servers.Scoring\Supercell.Magic.Servers.Scoring.csproj", "{E47D1290-FBC2-1489-A288-993F0B79C845}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -93,6 +95,10 @@ Global
 		{E292067B-2058-5EB0-B68F-75DD84235CD0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E292067B-2058-5EB0-B68F-75DD84235CD0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E292067B-2058-5EB0-B68F-75DD84235CD0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E47D1290-FBC2-1489-A288-993F0B79C845}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E47D1290-FBC2-1489-A288-993F0B79C845}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E47D1290-FBC2-1489-A288-993F0B79C845}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E47D1290-FBC2-1489-A288-993F0B79C845}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -109,6 +115,7 @@ Global
 		{6FF76D11-F8A5-4400-A928-0D63B0ABE751} = {5E6C87D6-8D74-4259-95CD-941C8B60CA7D}
 		{43EF0A77-BBFB-4C6D-BA02-DEE67C28A8A0} = {5E6C87D6-8D74-4259-95CD-941C8B60CA7D}
 		{E292067B-2058-5EB0-B68F-75DD84235CD0} = {06DADCA2-9AD7-48C3-B7FC-9463B20FEDFE}
+		{E47D1290-FBC2-1489-A288-993F0B79C845} = {06DADCA2-9AD7-48C3-B7FC-9463B20FEDFE}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {7A314E80-1DD5-42B0-8E3E-83866A582FFE}

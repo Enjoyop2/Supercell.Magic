@@ -76,7 +76,7 @@ namespace Supercell.Magic.Logic.Message.Scoring
 			m_allianceId = id;
 		}
 
-		public bool LocalRanking()
+		public bool IsLocalRanking()
 			=> m_localRanking;
 
 		public void SetLocalRanking(bool value)

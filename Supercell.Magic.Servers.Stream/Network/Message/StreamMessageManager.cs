@@ -910,7 +910,7 @@ namespace Supercell.Magic.Servers.Stream.Network.Message
 				case ServerMessageType.SERVER_PERFORMANCE:
 					ServerMessageManager.SendMessage(new ServerPerformanceDataMessage
 					{
-						SessionCount = AllianceSessionManager.Count
+						SessionCount = AllianceSessionManager.GetCount()
 					}, message.Sender);
 					break;
 			}

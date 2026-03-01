@@ -16,7 +16,7 @@ namespace Supercell.Magic.Servers.Stream.Util
 
 		public static void SetLogicClientAvatarToAllianceMemberEntry(LogicClientAvatar avatar, AllianceMemberEntry allianceMemberEntry, Alliance alliance = null)
 		{
-			bool updateScoring = avatar.GetScore() != avatar.GetScore();
+			bool updateScoring = avatar.GetScore() != allianceMemberEntry.GetScore();
 
 			allianceMemberEntry.SetAvatarId(avatar.GetId());
 			allianceMemberEntry.SetHomeId(avatar.GetCurrentHomeId());

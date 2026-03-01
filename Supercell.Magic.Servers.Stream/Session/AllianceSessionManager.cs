@@ -9,13 +9,8 @@ namespace Supercell.Magic.Servers.Stream.Session
 	{
 		private static Dictionary<long, AllianceSession> m_sessions;
 
-		public static int Count
-		{
-			get
-			{
-				return AllianceSessionManager.m_sessions.Count;
-			}
-		}
+		public static int GetCount()
+			=> AllianceSessionManager.m_sessions.Count;
 
 		public static void Init()
 		{

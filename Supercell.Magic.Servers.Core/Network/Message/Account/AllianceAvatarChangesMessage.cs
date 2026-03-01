@@ -23,7 +23,10 @@ namespace Supercell.Magic.Servers.Core.Network.Message.Account
 			stream.WriteVInt(AvatarChanges.Size());
 
 			for (int i = 0; i < AvatarChanges.Size(); i++)
+			{
+
 				AvatarChangeFactory.Encode(stream, AvatarChanges[i]);
+			}
 		}
 
 		public override void Decode(ByteStream stream)
@@ -32,7 +35,10 @@ namespace Supercell.Magic.Servers.Core.Network.Message.Account
 			AvatarChanges = new LogicArrayList<AvatarChange>();
 
 			for (int i = stream.ReadVInt(); i > 0; i--)
+			{
+
 				AvatarChanges.Add(AvatarChangeFactory.Decode(stream));
+			}
 		}
 
 		public override ServerMessageType GetMessageType()

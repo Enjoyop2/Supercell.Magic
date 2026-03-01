@@ -1,0 +1,9 @@
+dotnet Supercell.Magic.Servers.Proxy/bin/Debug/netcoreapp2.2/Supercell.Magic.Servers.Proxy.dll &
+dotnet Supercell.Magic.Servers.Account/bin/Debug/netcoreapp2.2/Supercell.Magic.Servers.Battle.dll &
+dotnet Supercell.Magic.Servers.Game/bin/Debug/netcoreapp2.2/Supercell.Magic.Servers.Game.dll &
+dotnet Supercell.Magic.Servers.Home/bin/Debug/netcoreapp2.2/Supercell.Magic.Servers.Home.dll &
+dotnet Supercell.Magic.Servers.Chat/bin/Debug/netcoreapp2.2/Supercell.Magic.Servers.Chat.dll &
+dotnet Supercell.Magic.Servers.Alliance/bin/Debug/netcoreapp2.2/Supercell.Magic.Servers.Scoring.dll &
+dotnet Supercell.Magic.Servers.Search/bin/Debug/netcoreapp2.2/Supercell.Magic.Servers.Search.dll &
+dotnet Supercell.Magic.Servers.Stream/bin/Debug/netcoreapp2.2/Supercell.Magic.Servers.Stream.dll &
+dotnet Supercell.Magic.Servers.Admin/bin/Debug/netcoreapp2.2/Supercell.Magic.Servers.Admin.dll &

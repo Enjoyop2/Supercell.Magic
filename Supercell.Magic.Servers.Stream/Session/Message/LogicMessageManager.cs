@@ -533,13 +533,13 @@ namespace Supercell.Magic.Servers.Stream.Session.Message
 					return;
 				}
 
-				if (memberEntry.GetAllianceRole() == LogicAvatarAllianceRole.ELDER)
-				{
-					AllianceInvitationSendFailedMessage allianceInvitationSendFailedMessage = new AllianceInvitationSendFailedMessage();
-					allianceInvitationSendFailedMessage.SetReason(AllianceInvitationSendFailedMessage.Reason.USER_BANNED);
-					m_session.SendPiranhaMessage(allianceInvitationSendFailedMessage, 1);
-					return;
-				}
+				//if (memberEntry.GetAllianceRole() == LogicAvatarAllianceRole.ELDER)
+				//{
+				//	AllianceInvitationSendFailedMessage allianceInvitationSendFailedMessage = new AllianceInvitationSendFailedMessage();
+				//	allianceInvitationSendFailedMessage.SetReason(AllianceInvitationSendFailedMessage.Reason.USER_BANNED);
+				//	m_session.SendPiranhaMessage(allianceInvitationSendFailedMessage, 1);
+				//	return;
+				//}
 
 				AllianceInvitationAvatarStreamEntry allianceInvitationAvatarStreamEntry = new AllianceInvitationAvatarStreamEntry();
 

@@ -1,0 +1,28 @@
+
+using Supercell.Magic.Titan.DataStream;
+
+using Supercell.Magic.Titan.Math;
+
+namespace Supercell.Magic.Servers.Core.Network.Message.Request.Stream
+{
+	public class LoadVillage2AttackEntryRequestMessage : ServerRequestMessage
+	{
+		public LogicLong Id
+		{
+			get; set;
+		}
+
+		public override void Encode(ByteStream stream)
+		{
+			stream.WriteLong(Id);
+		}
+
+		public override void Decode(ByteStream stream)
+		{
+			Id = stream.ReadLong();
+		}
+
+		public override ServerMessageType GetMessageType()
+			=> ServerMessageType.LOAD_VILLAGE2_ATTACK_ENTRY_REQUEST;
+	}
+}

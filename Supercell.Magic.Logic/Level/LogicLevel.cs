@@ -1233,10 +1233,10 @@ namespace Supercell.Magic.Logic.Level
 					if (LogicDataTables.GetGlobals().RevertBrokenWarLayouts())
 					{
 						/* if ( sub_1E436C(v22) != 1 )
-                           {
-                               this.m_warBase = false;
-                           }
-                        */
+						   {
+							   this.m_warBase = false;
+						   }
+						*/
 					}
 
 					jsonObject.Put("war_layout", new LogicJSONNumber(m_warLayout));
@@ -3747,11 +3747,11 @@ namespace Supercell.Magic.Logic.Level
 				m_tileMap = null;
 			}
 
-			if (m_playArea != null)
+			/*if (m_playArea != null)
 			{
 				m_playArea.Destruct();
 				m_playArea = null;
-			}
+			}*/
 
 			if (m_offerManager != null)
 			{

@@ -6,8 +6,9 @@ namespace Supercell.Magic.Logic.Message.Avatar.Attack
 {
 	public class Village2AttackEntry
 	{
-		public const int ATTACK_ENTRY_TYPE_BASE = 0;
-		public const int ATTACK_ENTRY_TYPE_BATTLE_PROGRESS = 1;
+		public const int
+			ATTACK_ENTRY_TYPE_BASE = 0,
+			ATTACK_ENTRY_TYPE_BATTLE_PROGRESS = 1;
 
 		private bool m_new;
 		private bool m_removed;
@@ -121,97 +122,73 @@ namespace Supercell.Magic.Logic.Message.Avatar.Attack
 			=> m_new;
 
 		public void SetNew(bool value)
-		{
-			m_new = value;
-		}
+			=> m_new = value;
 
 		public bool IsRemoved()
 			=> m_removed;
 
 		public void SetRemoved(bool value)
-		{
-			m_removed = value;
-		}
+			=> m_removed = value;
 
 		public LogicLong GetId()
 			=> m_id;
 
 		public void SetId(LogicLong value)
-		{
-			m_id = value;
-		}
+			=> m_id = value;
 
 		public LogicLong GetAccountId()
 			=> m_accountId;
 
 		public void SetAccountId(LogicLong value)
-		{
-			m_accountId = value;
-		}
+			=> m_accountId = value;
 
 		public LogicLong GetAvatarId()
 			=> m_avatarId;
 
 		public void SetAvatarId(LogicLong value)
-		{
-			m_avatarId = value;
-		}
+			=> m_avatarId = value;
 
 		public LogicLong GetHomeId()
 			=> m_homeId;
 
 		public void SetHomeId(LogicLong value)
-		{
-			m_homeId = value;
-		}
+			=> m_homeId = value;
 
 		public LogicLong GetAllianceId()
 			=> m_allianceId;
 
 		public void SetAllianceId(LogicLong value)
-		{
-			m_allianceId = value;
-		}
+			=> m_allianceId = value;
 
 		public string GetName()
 			=> m_name;
 
 		public void SetName(string value)
-		{
-			m_name = value;
-		}
+			=> m_name = value;
 
 		public string GetAllianceName()
 			=> m_allianceName;
 
 		public void SetAllianceName(string value)
-		{
-			m_allianceName = value;
-		}
+			=> m_allianceName = value;
 
 		public int GetAllianceBadgeId()
 			=> m_allianceBadgeId;
 
 		public void SetAllianceBadgeId(int value)
-		{
-			m_allianceBadgeId = value;
-		}
+			=> m_allianceBadgeId = value;
 
 		public int GetAllianceExpLevel()
 			=> m_allianceExpLevel;
 
 		public void SetAllianceExpLevel(int value)
-		{
-			m_allianceExpLevel = value;
-		}
+			=> m_allianceExpLevel = value;
 
 		public int GetRemainingSeconds()
 			=> m_remainingSeconds;
 
 		public void SetRemainingSeconds(int value)
-		{
-			m_remainingSeconds = value;
-		}
+			=> m_remainingSeconds = value;
 
 		public virtual void Load(LogicJSONObject jsonObject)
 		{
