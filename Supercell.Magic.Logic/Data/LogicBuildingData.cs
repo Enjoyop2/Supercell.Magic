@@ -272,7 +272,7 @@ namespace Supercell.Magic.Logic.Data
 				m_storedResourceCounts[i] = new LogicArrayList<int>();
 				m_percentageStoredResourceCounts[i] = new LogicArrayList<int>();
 
-				LogicDataTable table = LogicDataTables.GetTable(LogicDataType.RESOURCE);
+				LogicDataTable table = LogicDataTables.GetTable(DataType.RESOURCE);
 
 				for (int j = 0; j < table.GetItemCount(); j++)
 				{

@@ -90,12 +90,14 @@ namespace Supercell.Magic.Tools.PatchGenerator
 		{
 			LogicJSONObject jsonRoot = new LogicJSONObject();
 
-			if (m_filePath.Contains("highres_tex"))
+			/*if (m_filePath.Contains("highres_tex"))
 			{
 				jsonRoot.Put("defer", new LogicJSONBoolean(true));
-			}
+			}*/
 
-			jsonRoot.Put("file", new LogicJSONString(m_filePath.Replace("\\", "/")));
+			jsonRoot.Put("file", new LogicJSONString(
+				m_filePath.Replace("\\", "\\/").Replace("/", "\\/")
+			));
 			jsonRoot.Put("sha", new LogicJSONString(GetSha()));
 
 			return jsonRoot;

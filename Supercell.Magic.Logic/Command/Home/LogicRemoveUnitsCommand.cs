@@ -33,7 +33,7 @@ namespace Supercell.Magic.Logic.Command.Home
 			{
 				m_removeType.Add(stream.ReadInt());
 				m_unitsData.Add((LogicCombatItemData)ByteStreamHelper.ReadDataReference(stream,
-																							  stream.ReadInt() != 0 ? LogicDataType.SPELL : LogicDataType.CHARACTER));
+																							  stream.ReadInt() != 0 ? DataType.SPELL : DataType.CHARACTER));
 				m_unitsCount.Add(stream.ReadInt());
 				m_unitsUpgLevel.Add(stream.ReadInt());
 			}

@@ -73,9 +73,9 @@ namespace Supercell.Magic.Logic.Data
 			}
 		}
 
-		public static void InitDataTable(CSVNode node, LogicDataType index)
+		public static void InitDataTable(CSVNode node, DataType index)
 		{
-			if (index == LogicDataType.ANIMATION)
+			if (index == DataType.ANIMATION)
 			{
 				if (LogicDataTables.m_animationTable != null)
 				{
@@ -96,10 +96,10 @@ namespace Supercell.Magic.Logic.Data
 				{
 					switch (index)
 					{
-						case LogicDataType.GLOBAL:
+						case DataType.GLOBAL:
 							LogicDataTables.m_tables[(int)index] = new LogicGlobals(node.GetTable(), index);
 							break;
-						case LogicDataType.CLIENT_GLOBAL:
+						case DataType.CLIENT_GLOBAL:
 							LogicDataTables.m_tables[(int)index] = new LogicClientGlobals(node.GetTable(), index);
 							break;
 						default:
@@ -112,11 +112,11 @@ namespace Supercell.Magic.Logic.Data
 
 		public static void CreateReferences()
 		{
-			LogicDataTables.m_tables[(int)LogicDataType.PARTICLE_EMITTER].CreateReferences();
+			LogicDataTables.m_tables[(int)DataType.PARTICLE_EMITTER].CreateReferences();
 
 			for (int i = 0; i < LogicDataTables.m_tables.Length; i++)
 			{
-				if ((LogicDataType)i != LogicDataType.PARTICLE_EMITTER)
+				if ((DataType)i != DataType.PARTICLE_EMITTER)
 				{
 					if (LogicDataTables.m_tables[i] != null)
 					{
@@ -135,7 +135,7 @@ namespace Supercell.Magic.Logic.Data
 
 			// LogicDataTables.m_animationTable.CreateReferences();
 
-			LogicDataTable buildingDataTable = LogicDataTables.m_tables[(int)LogicDataType.BUILDING];
+			LogicDataTable buildingDataTable = LogicDataTables.m_tables[(int)DataType.BUILDING];
 
 			for (int i = 0; i < buildingDataTable.GetItemCount(); i++)
 			{
@@ -184,7 +184,7 @@ namespace Supercell.Magic.Logic.Data
 		public static bool IsSkeleton(LogicCharacterData data)
 			=> data == LogicDataTables.m_skeletonData || data == LogicDataTables.m_balloonSkeletonData;
 
-		public static LogicDataTable GetTable(LogicDataType tableIndex)
+		public static LogicDataTable GetTable(DataType tableIndex)
 			=> LogicDataTables.m_tables[(int)tableIndex];
 
 		public static LogicData GetDataById(int globalId)
@@ -199,7 +199,7 @@ namespace Supercell.Magic.Logic.Data
 			return null;
 		}
 
-		public static LogicData GetDataById(int globalId, LogicDataType dataType)
+		public static LogicData GetDataById(int globalId, DataType dataType)
 		{
 			LogicData data = LogicDataTables.GetDataById(globalId);
 
@@ -210,52 +210,52 @@ namespace Supercell.Magic.Logic.Data
 		}
 
 		public static LogicBuildingData GetBuildingByName(string name, LogicData data)
-			=> (LogicBuildingData)LogicDataTables.m_tables[(int)LogicDataType.BUILDING].GetDataByName(name, data);
+			=> (LogicBuildingData)LogicDataTables.m_tables[(int)DataType.BUILDING].GetDataByName(name, data);
 
 		public static LogicLocaleData GetLocaleByName(string name, LogicData data)
-			=> (LogicLocaleData)LogicDataTables.m_tables[(int)LogicDataType.LOCALE].GetDataByName(name, data);
+			=> (LogicLocaleData)LogicDataTables.m_tables[(int)DataType.LOCALE].GetDataByName(name, data);
 
 		public static LogicDecoData GetDecoByName(string name, LogicData data)
-			=> (LogicDecoData)LogicDataTables.m_tables[(int)LogicDataType.DECO].GetDataByName(name, data);
+			=> (LogicDecoData)LogicDataTables.m_tables[(int)DataType.DECO].GetDataByName(name, data);
 
 		public static LogicBillingPackageData GetBillingPackageByName(string name, LogicData data)
-			=> (LogicBillingPackageData)LogicDataTables.m_tables[(int)LogicDataType.BILLING_PACKAGE].GetDataByName(name, data);
+			=> (LogicBillingPackageData)LogicDataTables.m_tables[(int)DataType.BILLING_PACKAGE].GetDataByName(name, data);
 
 		public static LogicVillageObjectData GetVillageObjectByName(string name, LogicData data)
-			=> (LogicVillageObjectData)LogicDataTables.m_tables[(int)LogicDataType.VILLAGE_OBJECT].GetDataByName(name, data);
+			=> (LogicVillageObjectData)LogicDataTables.m_tables[(int)DataType.VILLAGE_OBJECT].GetDataByName(name, data);
 
 		public static LogicData GetVariableByName(string name, LogicData data)
-			=> LogicDataTables.m_tables[(int)LogicDataType.VARIABLE].GetDataByName(name, data);
+			=> LogicDataTables.m_tables[(int)DataType.VARIABLE].GetDataByName(name, data);
 
 		public static LogicObstacleData GetObstacleByName(string name, LogicData data)
-			=> (LogicObstacleData)LogicDataTables.m_tables[(int)LogicDataType.OBSTACLE].GetDataByName(name, data);
+			=> (LogicObstacleData)LogicDataTables.m_tables[(int)DataType.OBSTACLE].GetDataByName(name, data);
 
 		public static LogicHeroData GetHeroByName(string name, LogicData data)
-			=> (LogicHeroData)LogicDataTables.m_tables[(int)LogicDataType.HERO].GetDataByName(name, data);
+			=> (LogicHeroData)LogicDataTables.m_tables[(int)DataType.HERO].GetDataByName(name, data);
 
 		public static LogicCharacterData GetCharacterByName(string name, LogicData data)
-			=> (LogicCharacterData)LogicDataTables.m_tables[(int)LogicDataType.CHARACTER].GetDataByName(name, data);
+			=> (LogicCharacterData)LogicDataTables.m_tables[(int)DataType.CHARACTER].GetDataByName(name, data);
 
 		public static LogicSpellData GetSpellByName(string name, LogicData data)
-			=> (LogicSpellData)LogicDataTables.m_tables[(int)LogicDataType.SPELL].GetDataByName(name, data);
+			=> (LogicSpellData)LogicDataTables.m_tables[(int)DataType.SPELL].GetDataByName(name, data);
 
 		public static LogicEffectData GetEffectByName(string name, LogicData data)
-			=> (LogicEffectData)LogicDataTables.m_tables[(int)LogicDataType.EFFECT].GetDataByName(name, data);
+			=> (LogicEffectData)LogicDataTables.m_tables[(int)DataType.EFFECT].GetDataByName(name, data);
 
 		public static LogicParticleEmitterData GetParticleEmitterByName(string name, LogicData data)
-			=> (LogicParticleEmitterData)LogicDataTables.m_tables[(int)LogicDataType.PARTICLE_EMITTER].GetDataByName(name, data);
+			=> (LogicParticleEmitterData)LogicDataTables.m_tables[(int)DataType.PARTICLE_EMITTER].GetDataByName(name, data);
 
 		public static LogicProjectileData GetProjectileByName(string name, LogicData data)
-			=> (LogicProjectileData)LogicDataTables.m_tables[(int)LogicDataType.PROJECTILE].GetDataByName(name, data);
+			=> (LogicProjectileData)LogicDataTables.m_tables[(int)DataType.PROJECTILE].GetDataByName(name, data);
 
 		public static LogicRegionData GetRegionByName(string name, LogicData data)
-			=> (LogicRegionData)LogicDataTables.m_tables[(int)LogicDataType.REGION].GetDataByName(name, data);
+			=> (LogicRegionData)LogicDataTables.m_tables[(int)DataType.REGION].GetDataByName(name, data);
 
 		public static LogicCalendarEventFunctionData GetCalendarEventFunctionByName(string name, LogicData data)
-			=> (LogicCalendarEventFunctionData)LogicDataTables.m_tables[(int)LogicDataType.CALENDAR_EVENT_FUNCTION].GetDataByName(name, data);
+			=> (LogicCalendarEventFunctionData)LogicDataTables.m_tables[(int)DataType.CALENDAR_EVENT_FUNCTION].GetDataByName(name, data);
 
 		public static LogicEventEntryData GetEventEntryByName(string name, LogicData data)
-			=> (LogicEventEntryData)LogicDataTables.m_tables[(int)LogicDataType.EVENT_ENTRY].GetDataByName(name, data);
+			=> (LogicEventEntryData)LogicDataTables.m_tables[(int)DataType.EVENT_ENTRY].GetDataByName(name, data);
 
 		public static LogicData GetDataByName(string name, int tableIdx, LogicData caller)
 		{
@@ -271,9 +271,9 @@ namespace Supercell.Magic.Logic.Data
 		{
 			if (level > 0)
 			{
-				if (level - 1 < LogicDataTables.m_tables[(int)LogicDataType.EXPERIENCE_LEVEL].GetItemCount())
+				if (level - 1 < LogicDataTables.m_tables[(int)DataType.EXPERIENCE_LEVEL].GetItemCount())
 				{
-					return (LogicExperienceLevelData)LogicDataTables.m_tables[(int)LogicDataType.EXPERIENCE_LEVEL].GetItemAt(level - 1);
+					return (LogicExperienceLevelData)LogicDataTables.m_tables[(int)DataType.EXPERIENCE_LEVEL].GetItemAt(level - 1);
 				}
 			}
 
@@ -283,24 +283,24 @@ namespace Supercell.Magic.Logic.Data
 		}
 
 		public static LogicAllianceLevelData GetAllianceLevel(int level)
-			=> (LogicAllianceLevelData)LogicDataTables.m_tables[(int)LogicDataType.ALLIANCE_LEVEL].GetItemAt(level - 1);
+			=> (LogicAllianceLevelData)LogicDataTables.m_tables[(int)DataType.ALLIANCE_LEVEL].GetItemAt(level - 1);
 
 		public static int GetExperienceLevelCount()
-			=> LogicDataTables.m_tables[(int)LogicDataType.EXPERIENCE_LEVEL].GetItemCount();
+			=> LogicDataTables.m_tables[(int)DataType.EXPERIENCE_LEVEL].GetItemCount();
 
 		public static int GetAllianceLevelCount()
-			=> LogicDataTables.m_tables[(int)LogicDataType.ALLIANCE_LEVEL].GetItemCount();
+			=> LogicDataTables.m_tables[(int)DataType.ALLIANCE_LEVEL].GetItemCount();
 
 		public static int GetTownHallLevelCount()
-			=> LogicDataTables.m_tables[(int)LogicDataType.TOWNHALL_LEVEL].GetItemCount();
+			=> LogicDataTables.m_tables[(int)DataType.TOWNHALL_LEVEL].GetItemCount();
 
 		public static LogicTownhallLevelData GetTownHallLevel(int levelIndex)
 		{
 			if (levelIndex > -1)
 			{
-				if (levelIndex < LogicDataTables.m_tables[(int)LogicDataType.TOWNHALL_LEVEL].GetItemCount())
+				if (levelIndex < LogicDataTables.m_tables[(int)DataType.TOWNHALL_LEVEL].GetItemCount())
 				{
-					return (LogicTownhallLevelData)LogicDataTables.m_tables[(int)LogicDataType.TOWNHALL_LEVEL].GetItemAt(levelIndex);
+					return (LogicTownhallLevelData)LogicDataTables.m_tables[(int)DataType.TOWNHALL_LEVEL].GetItemAt(levelIndex);
 				}
 			}
 
@@ -310,28 +310,28 @@ namespace Supercell.Magic.Logic.Data
 		}
 
 		public static LogicNpcData GetNpcByName(string name, LogicData data)
-			=> (LogicNpcData)LogicDataTables.m_tables[(int)LogicDataType.NPC].GetDataByName(name, data);
+			=> (LogicNpcData)LogicDataTables.m_tables[(int)DataType.NPC].GetDataByName(name, data);
 
 		public static LogicMissionData GetMissionByName(string name, LogicData data)
-			=> (LogicMissionData)LogicDataTables.m_tables[(int)LogicDataType.MISSION].GetDataByName(name, data);
+			=> (LogicMissionData)LogicDataTables.m_tables[(int)DataType.MISSION].GetDataByName(name, data);
 
 		public static LogicResourceData GetResourceByName(string name, LogicData data)
-			=> (LogicResourceData)LogicDataTables.m_tables[(int)LogicDataType.RESOURCE].GetDataByName(name, data);
+			=> (LogicResourceData)LogicDataTables.m_tables[(int)DataType.RESOURCE].GetDataByName(name, data);
 
 		public static LogicGlobalData GetClientGlobalByName(string name, LogicData data)
-			=> (LogicGlobalData)LogicDataTables.m_tables[(int)LogicDataType.CLIENT_GLOBAL].GetDataByName(name, data);
+			=> (LogicGlobalData)LogicDataTables.m_tables[(int)DataType.CLIENT_GLOBAL].GetDataByName(name, data);
 
 		public static LogicGlobalData GetGlobalByName(string name, LogicData data)
-			=> (LogicGlobalData)LogicDataTables.m_tables[(int)LogicDataType.GLOBAL].GetDataByName(name, data);
+			=> (LogicGlobalData)LogicDataTables.m_tables[(int)DataType.GLOBAL].GetDataByName(name, data);
 
 		public static LogicBuildingClassData GetBuildingClassByName(string name, LogicData data)
-			=> (LogicBuildingClassData)LogicDataTables.m_tables[(int)LogicDataType.BUILDING_CLASS].GetDataByName(name, data);
+			=> (LogicBuildingClassData)LogicDataTables.m_tables[(int)DataType.BUILDING_CLASS].GetDataByName(name, data);
 
 		public static LogicClientGlobals GetClientGlobals()
-			=> (LogicClientGlobals)LogicDataTables.m_tables[(int)LogicDataType.CLIENT_GLOBAL];
+			=> (LogicClientGlobals)LogicDataTables.m_tables[(int)DataType.CLIENT_GLOBAL];
 
 		public static LogicGlobals GetGlobals()
-			=> (LogicGlobals)LogicDataTables.m_tables[(int)LogicDataType.GLOBAL];
+			=> (LogicGlobals)LogicDataTables.m_tables[(int)DataType.GLOBAL];
 
 		public static LogicBuildingData GetAllianceCastleData()
 			=> LogicDataTables.m_allianceCastleData;

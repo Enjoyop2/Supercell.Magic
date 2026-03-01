@@ -32,12 +32,12 @@ namespace Supercell.Magic.Logic.Command.Home
 		public override void Decode(ByteStream stream)
 		{
 			m_resourceCount = stream.ReadInt();
-			m_resourceData = (LogicResourceData)ByteStreamHelper.ReadDataReference(stream, LogicDataType.RESOURCE);
+			m_resourceData = (LogicResourceData)ByteStreamHelper.ReadDataReference(stream, DataType.RESOURCE);
 			m_resource2Count = stream.ReadInt();
 
 			if (m_resource2Count > 0)
 			{
-				m_resource2Data = (LogicResourceData)ByteStreamHelper.ReadDataReference(stream, LogicDataType.RESOURCE);
+				m_resource2Data = (LogicResourceData)ByteStreamHelper.ReadDataReference(stream, DataType.RESOURCE);
 			}
 
 			if (stream.ReadBoolean())

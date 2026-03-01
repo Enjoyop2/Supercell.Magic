@@ -22,7 +22,7 @@ namespace Supercell.Magic.Logic.Command.Home
 
 		public override void Decode(ByteStream stream)
 		{
-			m_achievementData = (LogicAchievementData)ByteStreamHelper.ReadDataReference(stream, LogicDataType.ACHIEVEMENT);
+			m_achievementData = (LogicAchievementData)ByteStreamHelper.ReadDataReference(stream, DataType.ACHIEVEMENT);
 			base.Decode(stream);
 		}
 

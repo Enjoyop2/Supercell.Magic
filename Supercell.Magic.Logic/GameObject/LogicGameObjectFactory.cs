@@ -12,32 +12,32 @@ namespace Supercell.Magic.Logic.GameObject
 
 			switch (data.GetDataType())
 			{
-				case LogicDataType.BUILDING:
+				case DataType.BUILDING:
 					gameObject = new LogicBuilding(data, level, villageType);
 					break;
-				case LogicDataType.CHARACTER:
-				case LogicDataType.HERO:
+				case DataType.CHARACTER:
+				case DataType.HERO:
 					gameObject = new LogicCharacter(data, level, villageType);
 					break;
-				case LogicDataType.PROJECTILE:
+				case DataType.PROJECTILE:
 					gameObject = new LogicProjectile(data, level, villageType);
 					break;
-				case LogicDataType.OBSTACLE:
+				case DataType.OBSTACLE:
 					gameObject = new LogicObstacle(data, level, villageType);
 					break;
-				case LogicDataType.TRAP:
+				case DataType.TRAP:
 					gameObject = new LogicTrap(data, level, villageType);
 					break;
-				case LogicDataType.ALLIANCE_PORTAL:
+				case DataType.ALLIANCE_PORTAL:
 					gameObject = new LogicAlliancePortal(data, level, villageType);
 					break;
-				case LogicDataType.DECO:
+				case DataType.DECO:
 					gameObject = new LogicDeco(data, level, villageType);
 					break;
-				case LogicDataType.SPELL:
+				case DataType.SPELL:
 					gameObject = new LogicSpell(data, level, villageType);
 					break;
-				case LogicDataType.VILLAGE_OBJECT:
+				case DataType.VILLAGE_OBJECT:
 					gameObject = new LogicVillageObject(data, level, villageType);
 					break;
 				default:

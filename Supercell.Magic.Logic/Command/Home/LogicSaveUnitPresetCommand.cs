@@ -75,7 +75,7 @@ namespace Supercell.Magic.Logic.Command.Home
 				{
 					if (m_presetId <= 3)
 					{
-						LogicDataTable table = LogicDataTables.GetTable(LogicDataType.CHARACTER);
+						LogicDataTable table = LogicDataTables.GetTable(DataType.CHARACTER);
 						LogicComponentManager componentManager = level.GetComponentManager();
 
 						int totalMaxHousing = componentManager.GetTotalMaxHousing(0);
@@ -113,7 +113,7 @@ namespace Supercell.Magic.Logic.Command.Home
 							}
 						}
 
-						table = LogicDataTables.GetTable(LogicDataType.SPELL);
+						table = LogicDataTables.GetTable(DataType.SPELL);
 						totalMaxHousing = componentManager.GetTotalMaxHousing(0);
 
 						for (int i = 0, housingSpace = 0; i < table.GetItemCount(); i++)

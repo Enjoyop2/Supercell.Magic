@@ -29,7 +29,7 @@ namespace Supercell.Magic.Logic.Message.Alliance
 			base.Decode();
 
 			m_unitData = (LogicCombatItemData)ByteStreamHelper.ReadDataReference(m_stream,
-																					   m_stream.ReadInt() != 0 ? LogicDataType.SPELL : LogicDataType.CHARACTER);
+																					   m_stream.ReadInt() != 0 ? DataType.SPELL : DataType.CHARACTER);
 			m_streamId = m_stream.ReadLong();
 			m_quickDonate = m_stream.ReadBoolean();
 		}

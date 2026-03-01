@@ -102,7 +102,7 @@ namespace Supercell.Magic.Logic.Message.Account
 
 			if (!m_stream.IsAtEnd())
 			{
-				m_preferredLanguage = ByteStreamHelper.ReadDataReference(m_stream, LogicDataType.LOCALE);
+				m_preferredLanguage = ByteStreamHelper.ReadDataReference(m_stream, DataType.LOCALE);
 				m_preferredDeviceLanguage = m_stream.ReadString(900000);
 
 				if (m_preferredDeviceLanguage == null)

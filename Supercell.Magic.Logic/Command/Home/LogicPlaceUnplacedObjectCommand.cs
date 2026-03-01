@@ -62,9 +62,9 @@ namespace Supercell.Magic.Logic.Command.Home
 			{
 				if (level.GetVillageType() == m_gameObjectData.GetVillageType())
 				{
-					LogicDataType dataType = m_gameObjectData.GetDataType();
+					DataType dataType = m_gameObjectData.GetDataType();
 
-					if (dataType == LogicDataType.BUILDING)
+					if (dataType == DataType.BUILDING)
 					{
 						LogicBuildingData buildingData = (LogicBuildingData)m_gameObjectData;
 
@@ -86,7 +86,7 @@ namespace Supercell.Magic.Logic.Command.Home
 						return 0;
 					}
 
-					if (dataType == LogicDataType.TRAP)
+					if (dataType == DataType.TRAP)
 					{
 						LogicTrapData trapData = (LogicTrapData)m_gameObjectData;
 
@@ -108,7 +108,7 @@ namespace Supercell.Magic.Logic.Command.Home
 						return 0;
 					}
 
-					if (dataType == LogicDataType.DECO)
+					if (dataType == DataType.DECO)
 					{
 						LogicDecoData decoData = (LogicDecoData)m_gameObjectData;
 

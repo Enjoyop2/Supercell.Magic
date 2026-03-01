@@ -31,7 +31,7 @@ namespace Supercell.Magic.Logic.GameObject
 			if (obstacleData.IsLootCart())
 			{
 				LogicLootCartComponent logicLootCartComponent = new LogicLootCartComponent(this);
-				LogicDataTable resourceTable = LogicDataTables.GetTable(LogicDataType.RESOURCE);
+				LogicDataTable resourceTable = LogicDataTables.GetTable(DataType.RESOURCE);
 				LogicBuilding townHall = GetGameObjectManager().GetTownHall();
 
 				LogicArrayList<int> capacityCount = new LogicArrayList<int>();
@@ -343,7 +343,7 @@ namespace Supercell.Magic.Logic.GameObject
 
 						if (lootCartComponent != null)
 						{
-							LogicDataTable resourceTable = LogicDataTables.GetTable(LogicDataType.RESOURCE);
+							LogicDataTable resourceTable = LogicDataTables.GetTable(DataType.RESOURCE);
 
 							bool empty = true;
 
@@ -471,7 +471,7 @@ namespace Supercell.Magic.Logic.GameObject
 			Debugger.DoAssert(lootCartComponent != null, string.Empty);
 			Debugger.DoAssert(townHall != null, string.Empty);
 
-			LogicDataTable resourceTable = LogicDataTables.GetTable(LogicDataType.RESOURCE);
+			LogicDataTable resourceTable = LogicDataTables.GetTable(DataType.RESOURCE);
 
 			for (int i = 0; i < resourceTable.GetItemCount(); i++)
 			{

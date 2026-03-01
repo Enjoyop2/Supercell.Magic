@@ -12,7 +12,7 @@ namespace Supercell.Magic.Logic.GameObject.Component
 
 		public LogicLootCartComponent(LogicGameObject gameObject) : base(gameObject)
 		{
-			LogicDataTable resourceTable = LogicDataTables.GetTable(LogicDataType.RESOURCE);
+			LogicDataTable resourceTable = LogicDataTables.GetTable(DataType.RESOURCE);
 
 			m_lootCount = new LogicArrayList<int>(resourceTable.GetItemCount());
 			m_capCount = new LogicArrayList<int>(resourceTable.GetItemCount());
@@ -37,7 +37,7 @@ namespace Supercell.Magic.Logic.GameObject.Component
 
 		public override void Load(LogicJSONObject jsonObject)
 		{
-			LogicDataTable resourceTable = LogicDataTables.GetTable(LogicDataType.RESOURCE);
+			LogicDataTable resourceTable = LogicDataTables.GetTable(DataType.RESOURCE);
 
 			for (int i = 0; i < resourceTable.GetItemCount(); i++)
 			{
@@ -78,7 +78,7 @@ namespace Supercell.Magic.Logic.GameObject.Component
 
 		public override void Save(LogicJSONObject jsonObject, int villageType)
 		{
-			LogicDataTable resourceTable = LogicDataTables.GetTable(LogicDataType.RESOURCE);
+			LogicDataTable resourceTable = LogicDataTables.GetTable(DataType.RESOURCE);
 
 			for (int i = 0; i < resourceTable.GetItemCount(); i++)
 			{

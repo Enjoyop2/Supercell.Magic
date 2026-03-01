@@ -240,7 +240,7 @@ namespace Supercell.Magic.Logic.Mode
 
 							if (!duelMatch && homeOwnerAvatar.GetTownHallLevel() >= LogicDataTables.GetGlobals().GetLootCartEnabledTownHall())
 							{
-								LogicDataTable resourceTable = LogicDataTables.GetTable(LogicDataType.RESOURCE);
+								LogicDataTable resourceTable = LogicDataTables.GetTable(DataType.RESOURCE);
 
 								if (resourceTable.GetItemCount() > 0)
 								{

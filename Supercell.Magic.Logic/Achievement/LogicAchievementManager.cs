@@ -24,7 +24,7 @@ namespace Supercell.Magic.Logic.Achievement
 		public void ObstacleCleared()
 		{
 			LogicAvatar homeOwnerAvatar = m_level.GetHomeOwnerAvatar();
-			LogicDataTable dataTable = LogicDataTables.GetTable(LogicDataType.ACHIEVEMENT);
+			LogicDataTable dataTable = LogicDataTables.GetTable(DataType.ACHIEVEMENT);
 
 			if (homeOwnerAvatar != null)
 			{
@@ -50,7 +50,7 @@ namespace Supercell.Magic.Logic.Achievement
 			if (m_level.GetState() == 1)
 			{
 				LogicClientAvatar playerAvatar = m_level.GetPlayerAvatar();
-				LogicDataTable dataTable = LogicDataTables.GetTable(LogicDataType.ACHIEVEMENT);
+				LogicDataTable dataTable = LogicDataTables.GetTable(DataType.ACHIEVEMENT);
 
 				for (int i = 0, progress = 0; i < dataTable.GetItemCount(); i++, progress = 0)
 				{
@@ -153,7 +153,7 @@ namespace Supercell.Magic.Logic.Achievement
 			if (data != null)
 			{
 				LogicClientAvatar playerAvatar = m_level.GetPlayerAvatar();
-				LogicDataTable dataTable = LogicDataTables.GetTable(LogicDataType.ACHIEVEMENT);
+				LogicDataTable dataTable = LogicDataTables.GetTable(DataType.ACHIEVEMENT);
 
 				for (int i = 0; i < dataTable.GetItemCount(); i++)
 				{
@@ -172,7 +172,7 @@ namespace Supercell.Magic.Logic.Achievement
 			if (data != null)
 			{
 				LogicClientAvatar playerAvatar = m_level.GetPlayerAvatar();
-				LogicDataTable dataTable = LogicDataTables.GetTable(LogicDataType.ACHIEVEMENT);
+				LogicDataTable dataTable = LogicDataTables.GetTable(DataType.ACHIEVEMENT);
 
 				for (int i = 0; i < dataTable.GetItemCount(); i++)
 				{
@@ -188,7 +188,7 @@ namespace Supercell.Magic.Logic.Achievement
 
 		public void PvpAttackWon()
 		{
-			LogicDataTable table = LogicDataTables.GetTable(LogicDataType.ACHIEVEMENT);
+			LogicDataTable table = LogicDataTables.GetTable(DataType.ACHIEVEMENT);
 			LogicClientAvatar playerAvatar = m_level.GetPlayerAvatar();
 
 			for (int i = 0; i < table.GetItemCount(); i++)
@@ -206,7 +206,7 @@ namespace Supercell.Magic.Logic.Achievement
 		{
 			if (m_level.GetHomeOwnerAvatar().IsClientAvatar())
 			{
-				LogicDataTable table = LogicDataTables.GetTable(LogicDataType.ACHIEVEMENT);
+				LogicDataTable table = LogicDataTables.GetTable(DataType.ACHIEVEMENT);
 				LogicClientAvatar homeOwnerAvatar = (LogicClientAvatar)m_level.GetHomeOwnerAvatar();
 
 				for (int i = 0; i < table.GetItemCount(); i++)
@@ -223,7 +223,7 @@ namespace Supercell.Magic.Logic.Achievement
 
 		public void IncreaseWarStars(int stars)
 		{
-			LogicDataTable table = LogicDataTables.GetTable(LogicDataType.ACHIEVEMENT);
+			LogicDataTable table = LogicDataTables.GetTable(DataType.ACHIEVEMENT);
 			LogicClientAvatar playerAvatar = m_level.GetPlayerAvatar();
 
 			for (int i = 0; i < table.GetItemCount(); i++)
@@ -239,7 +239,7 @@ namespace Supercell.Magic.Logic.Achievement
 
 		public void IncreaseLoot(LogicResourceData resourceData, int count)
 		{
-			LogicDataTable table = LogicDataTables.GetTable(LogicDataType.ACHIEVEMENT);
+			LogicDataTable table = LogicDataTables.GetTable(DataType.ACHIEVEMENT);
 			LogicClientAvatar playerAvatar = m_level.GetPlayerAvatar();
 
 			for (int i = 0; i < table.GetItemCount(); i++)
@@ -255,7 +255,7 @@ namespace Supercell.Magic.Logic.Achievement
 
 		public void IncreaseWarGoldResourceLoot(int count)
 		{
-			LogicDataTable table = LogicDataTables.GetTable(LogicDataType.ACHIEVEMENT);
+			LogicDataTable table = LogicDataTables.GetTable(DataType.ACHIEVEMENT);
 			LogicClientAvatar playerAvatar = m_level.GetPlayerAvatar();
 
 			for (int i = 0; i < table.GetItemCount(); i++)
@@ -271,7 +271,7 @@ namespace Supercell.Magic.Logic.Achievement
 
 		public void BuildingDestroyedInPvP(LogicBuildingData buildingData)
 		{
-			LogicDataTable table = LogicDataTables.GetTable(LogicDataType.ACHIEVEMENT);
+			LogicDataTable table = LogicDataTables.GetTable(DataType.ACHIEVEMENT);
 			LogicClientAvatar playerAvatar = m_level.GetPlayerAvatar();
 
 			for (int i = 0; i < table.GetItemCount(); i++)

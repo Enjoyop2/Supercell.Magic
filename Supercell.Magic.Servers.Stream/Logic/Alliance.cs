@@ -363,7 +363,7 @@ namespace Supercell.Magic.Servers.Stream.Logic
 
 			badgeId = AllianceBadgeUtil.GetAllianceBadgeId(middle, background, foreground);
 
-			if (originData != null && originData.GetDataType() != LogicDataType.REGION)
+			if (originData != null && originData.GetDataType() != DataType.REGION)
 				originData = null;
 
 			Description = description;

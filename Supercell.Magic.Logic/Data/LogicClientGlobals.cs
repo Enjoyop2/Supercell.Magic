@@ -7,7 +7,7 @@ namespace Supercell.Magic.Logic.Data
 		private bool m_pepperEnabled;
 		private bool m_powerSaveModeLessEndTurnMessages;
 
-		public LogicClientGlobals(CSVTable table, LogicDataType index) : base(table, index)
+		public LogicClientGlobals(CSVTable table, DataType index) : base(table, index)
 		{
 		}
 

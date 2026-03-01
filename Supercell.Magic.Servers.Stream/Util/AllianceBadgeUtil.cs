@@ -6,9 +6,9 @@ namespace Supercell.Magic.Servers.Stream.Util
 	{
 		public static void ParseAllianceBadgeLayer(int allianceBadgeId, out LogicAllianceBadgeLayerData middle, out LogicAllianceBadgeLayerData background, out LogicAllianceBadgeLayerData foreground)
 		{
-			LogicDataTable allianceBadgeLayerTable = LogicDataTables.GetTable(LogicDataType.ALLIANCE_BADGE_LAYER);
+			LogicDataTable allianceBadgeLayerTable = LogicDataTables.GetTable(DataType.ALLIANCE_BADGE_LAYER);
 
-			int allianceBadgeCount = LogicDataTables.GetTable(LogicDataType.ALLIANCE_BADGE_LAYER).GetItemCount();
+			int allianceBadgeCount = LogicDataTables.GetTable(DataType.ALLIANCE_BADGE_LAYER).GetItemCount();
 			int allianceBadgeMiddle = (byte)(allianceBadgeId) % allianceBadgeCount;
 			int allianceBadgeBackground = (byte)(allianceBadgeId >> 8) % allianceBadgeCount;
 			int allianceBadgeForeground = (byte)(allianceBadgeId >> 16) % allianceBadgeCount;
@@ -30,7 +30,7 @@ namespace Supercell.Magic.Servers.Stream.Util
 		public static LogicAllianceBadgeLayerData GetFirstUnlockedAllianceBadgeLayerByType(LogicAllianceBadgeLayerType type, int allianceLevel)
 		{
 			LogicAllianceBadgeLayerData allianceBadgeLayer = null;
-			LogicDataTable allianceBadgeLayerTable = LogicDataTables.GetTable(LogicDataType.ALLIANCE_BADGE_LAYER);
+			LogicDataTable allianceBadgeLayerTable = LogicDataTables.GetTable(DataType.ALLIANCE_BADGE_LAYER);
 
 			for (int i = 0; i < allianceBadgeLayerTable.GetItemCount(); i++)
 			{

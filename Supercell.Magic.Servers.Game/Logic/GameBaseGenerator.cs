@@ -33,15 +33,15 @@ namespace Supercell.Magic.Servers.Game.Logic
 			GameBaseGenerator.HomeOwnerAvatar.SetName("Supercell - Private CoC Server");
 			GameBaseGenerator.HomeOwnerAvatar.SetExpLevel(500);
 			GameBaseGenerator.HomeOwnerAvatar.SetScore(5000);
-			GameBaseGenerator.HomeOwnerAvatar.SetLeagueType(LogicDataTables.GetTable(LogicDataType.LEAGUE).GetItemCount() - 1);
+			GameBaseGenerator.HomeOwnerAvatar.SetLeagueType(LogicDataTables.GetTable(DataType.LEAGUE).GetItemCount() - 1);
 
 			GameBaseGenerator.m_random = new LogicRandom(Environment.TickCount);
 			GameBaseGenerator.m_defenseBuildingArray = new LogicArrayList<LogicBuildingData>();
 			GameBaseGenerator.m_otherBuildingArray = new LogicArrayList<LogicBuildingData>();
 			GameBaseGenerator.m_trapArray = new LogicArrayList<LogicTrapData>();
 
-			LogicDataTable buildingTable = LogicDataTables.GetTable(LogicDataType.BUILDING);
-			LogicDataTable trapTable = LogicDataTables.GetTable(LogicDataType.TRAP);
+			LogicDataTable buildingTable = LogicDataTables.GetTable(DataType.BUILDING);
+			LogicDataTable trapTable = LogicDataTables.GetTable(DataType.TRAP);
 
 			for (int i = 0; i < buildingTable.GetItemCount(); i++)
 			{
@@ -200,7 +200,7 @@ namespace Supercell.Magic.Servers.Game.Logic
 
 				switch (gameObjectData.GetDataType())
 				{
-					case LogicDataType.BUILDING:
+					case DataType.BUILDING:
 						{
 							LogicBuildingData logicBuildingData = (LogicBuildingData)gameObjectData;
 							maxUpgradeLevel = logicBuildingData.GetUpgradeLevelCount();
@@ -209,7 +209,7 @@ namespace Supercell.Magic.Servers.Game.Logic
 							break;
 						}
 
-					case LogicDataType.TRAP:
+					case DataType.TRAP:
 						LogicTrapData logicTrapData = (LogicTrapData)gameObjectData;
 						maxUpgradeLevel = logicTrapData.GetUpgradeLevelCount();
 						width = logicTrapData.GetWidth();

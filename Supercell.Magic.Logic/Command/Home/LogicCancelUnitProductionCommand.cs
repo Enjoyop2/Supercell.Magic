@@ -38,7 +38,7 @@ namespace Supercell.Magic.Logic.Command.Home
 		{
 			m_gameObjectId = stream.ReadInt();
 			m_unitType = stream.ReadInt();
-			m_unitData = (LogicCombatItemData)ByteStreamHelper.ReadDataReference(stream, m_unitType != 0 ? LogicDataType.SPELL : LogicDataType.CHARACTER);
+			m_unitData = (LogicCombatItemData)ByteStreamHelper.ReadDataReference(stream, m_unitType != 0 ? DataType.SPELL : DataType.CHARACTER);
 			m_unitCount = stream.ReadInt();
 			m_slotId = stream.ReadInt();
 
@@ -99,7 +99,7 @@ namespace Supercell.Magic.Logic.Command.Home
 								LogicClientAvatar playerAvatar = level.GetPlayerAvatar();
 								LogicResourceData trainingResourceData = m_unitData.GetTrainingResource();
 								int trainingCost = level.GetGameMode().GetCalendar().GetTrainingCost(m_unitData, playerAvatar.GetUnitUpgradeLevel(m_unitData));
-								int refundCount = LogicMath.Max(trainingCost * (m_unitData.GetDataType() != LogicDataType.CHARACTER
+								int refundCount = LogicMath.Max(trainingCost * (m_unitData.GetDataType() != DataType.CHARACTER
 																	? LogicDataTables.GetGlobals().GetSpellCancelMultiplier()
 																	: LogicDataTables.GetGlobals().GetTrainCancelMultiplier()) / 100, 0);
 

@@ -23,7 +23,7 @@ namespace Supercell.Magic.Logic.Command.Battle
 		{
 			m_x = stream.ReadInt();
 			m_y = stream.ReadInt();
-			m_data = (LogicSpellData)ByteStreamHelper.ReadDataReference(stream, LogicDataType.SPELL);
+			m_data = (LogicSpellData)ByteStreamHelper.ReadDataReference(stream, DataType.SPELL);
 			m_allianceSpell = stream.ReadBoolean();
 			m_upgLevel = stream.ReadInt();
 
@@ -151,7 +151,7 @@ namespace Supercell.Magic.Logic.Command.Battle
 
 			if (dataNumber != null)
 			{
-				m_data = (LogicSpellData)LogicDataTables.GetDataById(dataNumber.GetIntValue(), LogicDataType.SPELL);
+				m_data = (LogicSpellData)LogicDataTables.GetDataById(dataNumber.GetIntValue(), DataType.SPELL);
 			}
 
 			if (m_data == null)

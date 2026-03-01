@@ -74,7 +74,7 @@ namespace Supercell.Magic.Logic.Mission
 			if (m_level.GetState() != 4)
 			{
 				LogicClientAvatar playerAvatar = m_level.GetPlayerAvatar();
-				LogicDataTable missionTable = LogicDataTables.GetTable(LogicDataType.MISSION);
+				LogicDataTable missionTable = LogicDataTables.GetTable(DataType.MISSION);
 
 				for (int i = 0; i < missionTable.GetItemCount(); i++)
 				{
@@ -161,7 +161,7 @@ namespace Supercell.Magic.Logic.Mission
 
 		public bool HasTravel(LogicAvatar playerAvatar)
 		{
-			LogicDataTable missionTable = LogicDataTables.GetTable(LogicDataType.MISSION);
+			LogicDataTable missionTable = LogicDataTables.GetTable(DataType.MISSION);
 
 			for (int i = 0; i < missionTable.GetItemCount(); i++)
 			{
@@ -182,7 +182,7 @@ namespace Supercell.Magic.Logic.Mission
 		public void DebugCompleteAllTutorials(bool onlyHomeMissions, bool completeNameMission, bool completeWarMissions)
 		{
 			LogicClientAvatar playerAvatar = m_level.GetPlayerAvatar();
-			LogicDataTable table = LogicDataTables.GetTable(LogicDataType.MISSION);
+			LogicDataTable table = LogicDataTables.GetTable(DataType.MISSION);
 
 			bool restartMission = false;
 
@@ -230,7 +230,7 @@ namespace Supercell.Magic.Logic.Mission
 		public void DebugResetAllTutorials()
 		{
 			LogicClientAvatar playerAvatar = m_level.GetPlayerAvatar();
-			LogicDataTable table = LogicDataTables.GetTable(LogicDataType.MISSION);
+			LogicDataTable table = LogicDataTables.GetTable(DataType.MISSION);
 
 			for (int i = 0; i < table.GetItemCount(); i++)
 			{
@@ -252,7 +252,7 @@ namespace Supercell.Magic.Logic.Mission
 		public void DebugResetWarTutorials()
 		{
 			LogicClientAvatar playerAvatar = m_level.GetPlayerAvatar();
-			LogicDataTable table = LogicDataTables.GetTable(LogicDataType.MISSION);
+			LogicDataTable table = LogicDataTables.GetTable(DataType.MISSION);
 
 			for (int i = 0; i < table.GetItemCount(); i++)
 			{

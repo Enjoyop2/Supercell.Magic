@@ -17,45 +17,39 @@ namespace Supercell.Magic.Servers.Admin.Logic
 		private static ServerPerformance[][] m_entry;
 		private static Thread m_thread;
 
-		public static int OnlineUsers
+		public static int GetOnlineUsers()
 		{
-			get
+			int count = 0;
+			ServerPerformance[] proxies = ServerManager.m_entry[1];
+
+			for (int i = 0; i < proxies.Length; i++)
 			{
-				int count = 0;
-				ServerPerformance[] proxies = ServerManager.m_entry[1];
-
-				for (int i = 0; i < proxies.Length; i++)
-				{
-					count += proxies[i].SessionCount;
-				}
-
-				return count;
+				count += proxies[i].SessionCount;
 			}
+
+			return count;
 		}
 
-		public static int AveragePings
+		public static int GetAveragePings()
 		{
-			get
+			int totalServers = 0;
+			int sumPing = 0;
+
+			for (int i = 0; i < EnvironmentSettings.SERVER_TYPE_COUNT; i++)
 			{
-				int totalServers = 0;
-				int sumPing = 0;
+				ServerPerformance[] serverPerformances = ServerManager.m_entry[i];
 
-				for (int i = 0; i < EnvironmentSettings.SERVER_TYPE_COUNT; i++)
+				for (int j = 0; j < serverPerformances.Length; j++)
 				{
-					ServerPerformance[] serverPerformances = ServerManager.m_entry[i];
-
-					for (int j = 0; j < serverPerformances.Length; j++)
+					if (serverPerformances[j].Status == ServerPerformanceStatus.ONLINE)
 					{
-						if (serverPerformances[j].Status == ServerPerformanceStatus.ONLINE)
-						{
-							totalServers += 1;
-							sumPing = serverPerformances[j].Ping;
-						}
+						totalServers += 1;
+						sumPing = serverPerformances[j].Ping;
 					}
 				}
-
-				return totalServers > 0 ? sumPing / totalServers : 0;
 			}
+
+			return totalServers > 0 ? sumPing / totalServers : 0;
 		}
 
 		public static void Init()
@@ -276,12 +270,12 @@ namespace Supercell.Magic.Servers.Admin.Logic
 
 		public JObject Save()
 		{
-			JObject jObject = new JObject();
+			JObject jobject = new JObject();
 
-			jObject.Add("ping", Ping);
-			jObject.Add("sessionCount", SessionCount);
+			jobject.Add("ping", Ping);
+			jobject.Add("sessionCount", SessionCount);
 
-			return jObject;
+			return jobject;
 		}
 	}
 

@@ -4,7 +4,7 @@ namespace Supercell.Magic.Logic.Data
 {
 	public class LogicAnimationTable : LogicDataTable
 	{
-		public LogicAnimationTable(CSVNode node, LogicDataType index) : base(node.GetTable(), index)
+		public LogicAnimationTable(CSVNode node, DataType index) : base(node.GetTable(), index)
 		{
 		}
 

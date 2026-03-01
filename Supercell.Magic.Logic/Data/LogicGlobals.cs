@@ -254,7 +254,7 @@ namespace Supercell.Magic.Logic.Data
 		private LogicResourceData m_allianceCreateResourceData;
 		private LogicCharacterData m_village2StartUnit;
 
-		public LogicGlobals(CSVTable table, LogicDataType index) : base(table, index)
+		public LogicGlobals(CSVTable table, DataType index) : base(table, index)
 		{
 		}
 

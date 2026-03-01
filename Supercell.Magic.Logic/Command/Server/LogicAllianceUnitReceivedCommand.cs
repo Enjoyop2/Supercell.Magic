@@ -29,7 +29,7 @@ namespace Supercell.Magic.Logic.Command.Server
 		public override void Decode(ByteStream stream)
 		{
 			m_senderName = stream.ReadString(900000);
-			m_unitData = (LogicCombatItemData)ByteStreamHelper.ReadDataReference(stream, stream.ReadInt() != 0 ? LogicDataType.SPELL : LogicDataType.CHARACTER);
+			m_unitData = (LogicCombatItemData)ByteStreamHelper.ReadDataReference(stream, stream.ReadInt() != 0 ? DataType.SPELL : DataType.CHARACTER);
 			m_upgLevel = stream.ReadInt();
 
 			base.Decode(stream);

@@ -29,7 +29,7 @@ namespace Supercell.Magic.Logic.Command.Home
 		{
 			m_x = stream.ReadInt();
 			m_y = stream.ReadInt();
-			m_trapData = (LogicTrapData)ByteStreamHelper.ReadDataReference(stream, LogicDataType.TRAP);
+			m_trapData = (LogicTrapData)ByteStreamHelper.ReadDataReference(stream, DataType.TRAP);
 
 			base.Decode(stream);
 		}

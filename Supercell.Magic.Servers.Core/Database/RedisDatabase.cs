@@ -20,6 +20,8 @@ namespace Supercell.Magic.Servers.Core.Database
 			if (!EnvironmentSettings.Redis.TryGetDatabase(name, out EnvironmentSettings.RedisSettings.RedisDatabaseEntry database))
 				throw new Exception("Unknown redis database: " + name);
 
+			Logging.Warning(database.ConnectionString);
+
 			m_redis = ConnectionMultiplexer.Connect(database.ConnectionString);
 			m_database = m_redis.GetDatabase();
 

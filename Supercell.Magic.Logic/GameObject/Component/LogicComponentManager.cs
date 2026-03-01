@@ -72,7 +72,7 @@ namespace Supercell.Magic.Logic.GameObject.Component
 						}
 					}
 
-					LogicDataTable characterTable = LogicDataTables.GetTable(LogicDataType.CHARACTER);
+					LogicDataTable characterTable = LogicDataTables.GetTable(DataType.CHARACTER);
 
 					for (int i = 0; i < characterTable.GetItemCount(); i++)
 					{
@@ -104,7 +104,7 @@ namespace Supercell.Magic.Logic.GameObject.Component
 						}
 					}
 
-					LogicDataTable spellTable = LogicDataTables.GetTable(LogicDataType.SPELL);
+					LogicDataTable spellTable = LogicDataTables.GetTable(DataType.SPELL);
 
 					for (int i = 0; i < spellTable.GetItemCount(); i++)
 					{
@@ -218,7 +218,7 @@ namespace Supercell.Magic.Logic.GameObject.Component
 			{
 				LogicArrayList<LogicComponent> resourceStorageComponents = m_components[(int)LogicComponentType.RESOURCE_STORAGE];
 				LogicArrayList<LogicComponent> warResourceStorageComponents = m_components[(int)LogicComponentType.WAR_RESOURCE_STORAGE];
-				LogicDataTable resourceTable = LogicDataTables.GetTable(LogicDataType.RESOURCE);
+				LogicDataTable resourceTable = LogicDataTables.GetTable(DataType.RESOURCE);
 
 				for (int i = 0; i < resourceTable.GetItemCount(); i++)
 				{

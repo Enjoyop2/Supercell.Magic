@@ -29,7 +29,7 @@ namespace Supercell.Magic.Logic.Command.Home
 				m_position.Add(new LogicVector2(stream.ReadInt(), stream.ReadInt()));
 			}
 
-			m_buildingData = (LogicBuildingData)ByteStreamHelper.ReadDataReference(stream, LogicDataType.BUILDING);
+			m_buildingData = (LogicBuildingData)ByteStreamHelper.ReadDataReference(stream, DataType.BUILDING);
 
 			base.Decode(stream);
 		}

@@ -22,7 +22,7 @@ namespace Supercell.Magic.Logic.Command.Battle
 		{
 			m_x = stream.ReadInt();
 			m_y = stream.ReadInt();
-			m_data = (LogicAlliancePortalData)ByteStreamHelper.ReadDataReference(stream, LogicDataType.ALLIANCE_PORTAL);
+			m_data = (LogicAlliancePortalData)ByteStreamHelper.ReadDataReference(stream, DataType.ALLIANCE_PORTAL);
 
 			base.Decode(stream);
 		}
@@ -165,7 +165,7 @@ namespace Supercell.Magic.Logic.Command.Battle
 
 			if (dataNumber != null)
 			{
-				m_data = (LogicAlliancePortalData)LogicDataTables.GetDataById(dataNumber.GetIntValue(), LogicDataType.ALLIANCE_PORTAL);
+				m_data = (LogicAlliancePortalData)LogicDataTables.GetDataById(dataNumber.GetIntValue(), DataType.ALLIANCE_PORTAL);
 			}
 
 			if (m_data == null)

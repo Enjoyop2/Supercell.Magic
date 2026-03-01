@@ -32,8 +32,8 @@ namespace Supercell.Magic.Servers.Core.Network.Message.Session.Change
 			ScoreGain = stream.ReadVInt();
 			Attacker = stream.ReadBoolean();
 
-			PrevLeagueData = (LogicLeagueData)ByteStreamHelper.ReadDataReference(stream, LogicDataType.LEAGUE);
-			LeagueData = (LogicLeagueData)ByteStreamHelper.ReadDataReference(stream, LogicDataType.LEAGUE);
+			PrevLeagueData = (LogicLeagueData)ByteStreamHelper.ReadDataReference(stream, DataType.LEAGUE);
+			LeagueData = (LogicLeagueData)ByteStreamHelper.ReadDataReference(stream, DataType.LEAGUE);
 		}
 
 		public override void Encode(ByteStream stream)

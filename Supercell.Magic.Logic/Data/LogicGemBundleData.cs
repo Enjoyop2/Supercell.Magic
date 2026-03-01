@@ -257,7 +257,7 @@ namespace Supercell.Magic.Logic.Data
 
 					switch (data.GetDataType())
 					{
-						case LogicDataType.BUILDING:
+						case DataType.BUILDING:
 							LogicDeliverableBuilding deliverableBuilding = new LogicDeliverableBuilding();
 
 							deliverableBuilding.SetBuildingData((LogicBuildingData)data);
@@ -267,7 +267,7 @@ namespace Supercell.Magic.Logic.Data
 							bundle.AddDeliverable(deliverableBuilding);
 
 							break;
-						case LogicDataType.DECO:
+						case DataType.DECO:
 							LogicDeliverableDecoration deliverableDecoration = new LogicDeliverableDecoration();
 							deliverableDecoration.SetDecorationData((LogicDecoData)data);
 							bundle.AddDeliverable(deliverableDecoration);

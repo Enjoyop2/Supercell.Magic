@@ -14,7 +14,7 @@ namespace Supercell.Magic.Logic.Command.Battle
 
 		public override void Decode(ByteStream stream)
 		{
-			m_buyResourceData = (LogicResourceData)ByteStreamHelper.ReadDataReference(stream, LogicDataType.RESOURCE);
+			m_buyResourceData = (LogicResourceData)ByteStreamHelper.ReadDataReference(stream, DataType.RESOURCE);
 			m_buyResourceCount = stream.ReadInt();
 
 			base.Decode(stream);

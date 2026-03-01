@@ -71,7 +71,7 @@ namespace Supercell.Magic.Logic.Command.Debug
 							playerAvatar.GetChangeListener().FreeDiamondsAdded(50000 - diamondCount, 3);
 						}
 
-						LogicDataTable resourceTable = LogicDataTables.GetTable(LogicDataType.RESOURCE);
+						LogicDataTable resourceTable = LogicDataTables.GetTable(DataType.RESOURCE);
 
 						for (int i = 0; i < resourceTable.GetItemCount(); i++)
 						{
@@ -154,7 +154,7 @@ namespace Supercell.Magic.Logic.Command.Debug
 					break;
 				case LogicDebugActionType.UNLOCK_MAP:
 					{
-						LogicDataTable npcTable = LogicDataTables.GetTable(LogicDataType.NPC);
+						LogicDataTable npcTable = LogicDataTables.GetTable(DataType.NPC);
 
 						for (int i = 0; i < npcTable.GetItemCount(); i++)
 						{
@@ -212,7 +212,7 @@ namespace Supercell.Magic.Logic.Command.Debug
 					{
 						if (playerAvatar.HasAllianceCastle())
 						{
-							LogicDataTable characterTable = LogicDataTables.GetTable(LogicDataType.CHARACTER);
+							LogicDataTable characterTable = LogicDataTables.GetTable(DataType.CHARACTER);
 
 							for (int i = 0; i < characterTable.GetItemCount(); i++)
 							{
@@ -242,7 +242,7 @@ namespace Supercell.Magic.Logic.Command.Debug
 										LogicAttackerItemData attackerItemData = data.GetAttackerItemData(0);
 										LogicData preferredTargetData = attackerItemData.GetPreferredTargetData();
 
-										if (preferredTargetData != null && preferredTargetData.GetDataType() == LogicDataType.BUILDING_CLASS)
+										if (preferredTargetData != null && preferredTargetData.GetDataType() == DataType.BUILDING_CLASS)
 										{
 											LogicBuildingClassData buildingClassData = (LogicBuildingClassData)preferredTargetData;
 
@@ -283,7 +283,7 @@ namespace Supercell.Magic.Logic.Command.Debug
 				case LogicDebugActionType.INCREASE_HERO_LEVELS:
 					if (level.GetState() == 1)
 					{
-						LogicDataTable heroTable = LogicDataTables.GetTable(LogicDataType.HERO);
+						LogicDataTable heroTable = LogicDataTables.GetTable(DataType.HERO);
 
 						for (int i = 0; i < heroTable.GetItemCount(); i++)
 						{
@@ -302,7 +302,7 @@ namespace Supercell.Magic.Logic.Command.Debug
 						playerAvatar.SetDiamonds(0);
 						playerAvatar.GetChangeListener().FreeDiamondsAdded(-diamonds, 3);
 
-						LogicDataTable resourceTable = LogicDataTables.GetTable(LogicDataType.RESOURCE);
+						LogicDataTable resourceTable = LogicDataTables.GetTable(DataType.RESOURCE);
 
 						for (int i = 0; i < resourceTable.GetItemCount(); i++)
 						{
@@ -319,7 +319,7 @@ namespace Supercell.Magic.Logic.Command.Debug
 					}
 				case LogicDebugActionType.RESET_MAP_PROGRESS:
 					{
-						LogicDataTable npcTable = LogicDataTables.GetTable(LogicDataType.NPC);
+						LogicDataTable npcTable = LogicDataTables.GetTable(DataType.NPC);
 
 						for (int i = 0; i < npcTable.GetItemCount(); i++)
 						{
@@ -520,7 +520,7 @@ namespace Supercell.Magic.Logic.Command.Debug
 				case LogicDebugActionType.RESET_HERO_LEVELS:
 					if (level.GetState() == 1)
 					{
-						LogicDataTable heroTable = LogicDataTables.GetTable(LogicDataType.HERO);
+						LogicDataTable heroTable = LogicDataTables.GetTable(DataType.HERO);
 
 						for (int i = 0; i < heroTable.GetItemCount(); i++)
 						{
@@ -575,7 +575,7 @@ namespace Supercell.Magic.Logic.Command.Debug
 					break;
 				case LogicDebugActionType.ADD_WAR_RESOURCES:
 					{
-						LogicDataTable resourceTable = LogicDataTables.GetTable(LogicDataType.RESOURCE);
+						LogicDataTable resourceTable = LogicDataTables.GetTable(DataType.RESOURCE);
 
 						for (int i = 0; i < resourceTable.GetItemCount(); i++)
 						{
@@ -600,7 +600,7 @@ namespace Supercell.Magic.Logic.Command.Debug
 					}
 				case LogicDebugActionType.REMOVE_WAR_RESOURCES:
 					{
-						LogicDataTable resourceTable = LogicDataTables.GetTable(LogicDataType.RESOURCE);
+						LogicDataTable resourceTable = LogicDataTables.GetTable(DataType.RESOURCE);
 
 						for (int i = 0; i < resourceTable.GetItemCount(); i++)
 						{
@@ -694,7 +694,7 @@ namespace Supercell.Magic.Logic.Command.Debug
 							playerAvatar.GetChangeListener().FreeDiamondsAdded(genDiamonds - prevDiamonds, 3);
 						}
 
-						LogicDataTable resourceTable = LogicDataTables.GetTable(LogicDataType.RESOURCE);
+						LogicDataTable resourceTable = LogicDataTables.GetTable(DataType.RESOURCE);
 
 						for (int i = 0; i < resourceTable.GetItemCount(); i++)
 						{
@@ -765,7 +765,7 @@ namespace Supercell.Magic.Logic.Command.Debug
 				case LogicDebugActionType.SET_MAX_HERO_LEVELS:
 					if (level.GetState() == 1)
 					{
-						LogicDataTable heroTable = LogicDataTables.GetTable(LogicDataType.HERO);
+						LogicDataTable heroTable = LogicDataTables.GetTable(DataType.HERO);
 
 						for (int i = 0; i < heroTable.GetItemCount(); i++)
 						{
@@ -1045,8 +1045,8 @@ namespace Supercell.Magic.Logic.Command.Debug
 		public static void AddUnits(LogicLevel level, int unitCount, int spellCount, bool requireDonation)
 		{
 			LogicCalendar calendar = level.GetGameMode().GetCalendar();
-			LogicDataTable characterTable = LogicDataTables.GetTable(LogicDataType.CHARACTER);
-			LogicDataTable spellTable = LogicDataTables.GetTable(LogicDataType.SPELL);
+			LogicDataTable characterTable = LogicDataTables.GetTable(DataType.CHARACTER);
+			LogicDataTable spellTable = LogicDataTables.GetTable(DataType.SPELL);
 			LogicClientAvatar playerAvatar = level.GetPlayerAvatar();
 
 			int villageType = level.GetVillageType();
@@ -1124,8 +1124,8 @@ namespace Supercell.Magic.Logic.Command.Debug
 		public static void UpgradeUnitsToMaxUpgradeLevel(LogicLevel level)
 		{
 			LogicClientAvatar playerAvatar = level.GetPlayerAvatar();
-			LogicDataTable characterTable = LogicDataTables.GetTable(LogicDataType.CHARACTER);
-			LogicDataTable spellTable = LogicDataTables.GetTable(LogicDataType.SPELL);
+			LogicDataTable characterTable = LogicDataTables.GetTable(DataType.CHARACTER);
+			LogicDataTable spellTable = LogicDataTables.GetTable(DataType.SPELL);
 
 			for (int i = 0; i < characterTable.GetItemCount(); i++)
 			{
@@ -1170,8 +1170,8 @@ namespace Supercell.Magic.Logic.Command.Debug
 
 				if (unitUpgradeComponent != null)
 				{
-					LogicDataTable characterTable = LogicDataTables.GetTable(LogicDataType.CHARACTER);
-					LogicDataTable spellTable = LogicDataTables.GetTable(LogicDataType.SPELL);
+					LogicDataTable characterTable = LogicDataTables.GetTable(DataType.CHARACTER);
+					LogicDataTable spellTable = LogicDataTables.GetTable(DataType.SPELL);
 
 					for (int i = 0; i < characterTable.GetItemCount(); i++)
 					{
@@ -1216,11 +1216,11 @@ namespace Supercell.Magic.Logic.Command.Debug
 
 		public static void AddFreeUnit(LogicLevel level, int villageType, LogicClientAvatar playerAvatar)
 		{
-			LogicArrayList<LogicDataType> dataTypes = new LogicArrayList<LogicDataType>();
+			LogicArrayList<DataType> dataTypes = new LogicArrayList<DataType>();
 
-			dataTypes.Add(LogicDataType.CHARACTER);
-			dataTypes.Add(LogicDataType.SPELL);
-			dataTypes.Add(LogicDataType.HERO);
+			dataTypes.Add(DataType.CHARACTER);
+			dataTypes.Add(DataType.SPELL);
+			dataTypes.Add(DataType.HERO);
 
 			for (int i = 0; i < dataTypes.Size(); i++)
 			{

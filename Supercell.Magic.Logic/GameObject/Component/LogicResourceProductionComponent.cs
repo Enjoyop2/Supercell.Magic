@@ -155,7 +155,7 @@ namespace Supercell.Magic.Logic.GameObject.Component
 
 			if (clockBoostTime > 0 && !m_parent.GetLevel().IsClockTowerBoostPaused())
 			{
-				if (m_parent.GetData().GetDataType() == LogicDataType.BUILDING && m_parent.GetData().GetVillageType() == 1)
+				if (m_parent.GetData().GetDataType() == DataType.BUILDING && m_parent.GetData().GetVillageType() == 1)
 				{
 					time += (LogicDataTables.GetGlobals().GetClockTowerBoostMultiplier() - 1) * LogicMath.Min(time, clockBoostTime);
 				}
@@ -259,7 +259,7 @@ namespace Supercell.Magic.Logic.GameObject.Component
 
 			if (m_parent.GetLevel().GetRemainingClockTowerBoostTime() > 0)
 			{
-				if (m_parent.GetData().GetDataType() == LogicDataType.BUILDING && m_parent.GetData().GetVillageType() == 1)
+				if (m_parent.GetData().GetDataType() == DataType.BUILDING && m_parent.GetData().GetVillageType() == 1)
 				{
 					m_resourceTimer.FastForwardSubticks(4 * LogicDataTables.GetGlobals().GetClockTowerBoostMultiplier() - 4);
 				}

@@ -97,7 +97,7 @@ namespace Supercell.Magic.Logic.GameObject
 			=> LogicGameObjectType.CHARACTER;
 
 		public override bool IsHero()
-			=> GetCharacterData().GetDataType() == LogicDataType.HERO;
+			=> GetCharacterData().GetDataType() == DataType.HERO;
 
 		public override bool IsFlying()
 			=> m_flying;

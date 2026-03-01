@@ -35,7 +35,7 @@ namespace Supercell.Magic.Logic.Command.Server
 
 			m_deliverableBundle = new LogicDeliverableBundle();
 			m_deliverableBundle.Decode(stream);
-			m_billingPackageData = (LogicBillingPackageData)ByteStreamHelper.ReadDataReference(stream, LogicDataType.BILLING_PACKAGE);
+			m_billingPackageData = (LogicBillingPackageData)ByteStreamHelper.ReadDataReference(stream, DataType.BILLING_PACKAGE);
 		}
 
 		public override void Encode(ChecksumEncoder encoder)

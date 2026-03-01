@@ -25,7 +25,7 @@ namespace Supercell.Magic.Servers.Core
 			}
 			catch (Exception)
 			{
-				Logging.Warning(string.Format("ServerHttpClient: file {0} doesn't exist", path));
+				Logging.Warning(string.Format("ServerHttpClient: file {0} doesn't exist (byte)", path));
 			}
 
 			return null;
@@ -42,7 +42,7 @@ namespace Supercell.Magic.Servers.Core
 			}
 			catch (Exception)
 			{
-				Logging.Warning(string.Format("ServerHttpClient: file {0} doesn't exist", path));
+				Logging.Warning(string.Format("ServerHttpClient: file {0} doesn't exist (string)", path));
 			}
 
 			return null;
@@ -59,7 +59,7 @@ namespace Supercell.Magic.Servers.Core
 			}
 			catch (Exception)
 			{
-				Logging.Warning(string.Format("ServerHttpClient: file {0} doesn't exist", path));
+				Logging.Warning(string.Format("ServerHttpClient: file {0} doesn't exist (json)", path));
 			}
 
 			return null;
@@ -76,7 +76,7 @@ namespace Supercell.Magic.Servers.Core
 			}
 			catch (Exception)
 			{
-				Logging.Warning(string.Format("ServerHttpClient: file {0} doesn't exist", path));
+				Logging.Warning(string.Format("ServerHttpClient: file {0} doesn't exist (asset)", path));
 			}
 
 			return null;

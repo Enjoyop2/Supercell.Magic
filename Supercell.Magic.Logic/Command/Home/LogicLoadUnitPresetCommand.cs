@@ -92,7 +92,7 @@ namespace Supercell.Magic.Logic.Command.Home
 
 			LogicAvatar homeOwnerAvatar = m_level.GetHomeOwnerAvatar();
 			LogicCalendar calendar = m_level.GetCalendar();
-			LogicDataTable table = LogicDataTables.GetTable(LogicDataType.CHARACTER);
+			LogicDataTable table = LogicDataTables.GetTable(DataType.CHARACTER);
 
 			for (int i = 0; i < table.GetItemCount(); i++)
 			{
@@ -112,7 +112,7 @@ namespace Supercell.Magic.Logic.Command.Home
 				}
 			}
 
-			table = LogicDataTables.GetTable(LogicDataType.SPELL);
+			table = LogicDataTables.GetTable(DataType.SPELL);
 
 			for (int i = 0; i < table.GetItemCount(); i++)
 			{
@@ -138,8 +138,8 @@ namespace Supercell.Magic.Logic.Command.Home
 		public void TrainUnits()
 		{
 			LogicAvatar homeOwnerAvatar = m_level.GetHomeOwnerAvatar();
-			LogicDataTable characterTable = LogicDataTables.GetTable(LogicDataType.CHARACTER);
-			LogicDataTable spellTable = LogicDataTables.GetTable(LogicDataType.SPELL);
+			LogicDataTable characterTable = LogicDataTables.GetTable(DataType.CHARACTER);
+			LogicDataTable spellTable = LogicDataTables.GetTable(DataType.SPELL);
 			LogicArrayList<LogicCombatItemData> productionUnits = new LogicArrayList<LogicCombatItemData>(characterTable.GetItemCount());
 			LogicArrayList<LogicCombatItemData> productionSpells = new LogicArrayList<LogicCombatItemData>(spellTable.GetItemCount());
 
@@ -227,7 +227,7 @@ namespace Supercell.Magic.Logic.Command.Home
 			LogicCalendar calendar = m_level.GetCalendar();
 			LogicAvatar homeOwnerAvatar = m_level.GetHomeOwnerAvatar();
 			LogicUnitProduction unitProduction = m_level.GetGameObjectManagerAt(0).GetUnitProduction();
-			LogicDataTable characterTable = LogicDataTables.GetTable(LogicDataType.CHARACTER);
+			LogicDataTable characterTable = LogicDataTables.GetTable(DataType.CHARACTER);
 
 			int freeHousingSpace = unitProduction.GetMaxTrainCount() - (homeOwnerAvatar.GetUnitsTotalCapacity() - unitProduction.GetTotalCount());
 			int requiredHousingSpace = 0;
@@ -250,7 +250,7 @@ namespace Supercell.Magic.Logic.Command.Home
 			if (requiredHousingSpace <= freeHousingSpace)
 			{
 				LogicUnitProduction spellProduction = m_level.GetGameObjectManagerAt(0).GetSpellProduction();
-				LogicDataTable spellTable = LogicDataTables.GetTable(LogicDataType.SPELL);
+				LogicDataTable spellTable = LogicDataTables.GetTable(DataType.SPELL);
 
 				int freeSpellHousingSpace = spellProduction.GetMaxTrainCount() - (homeOwnerAvatar.GetSpellsTotalCapacity() - spellProduction.GetTotalCount());
 				int requiredSpellHousingSpace = 0;

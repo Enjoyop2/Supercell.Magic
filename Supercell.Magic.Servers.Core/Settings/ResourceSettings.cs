@@ -37,14 +37,15 @@ namespace Supercell.Magic.Servers.Core.Settings
 		}
 
 		public static string GetContentUrl()
-		{
+			=> "http://127.0.0.1:8000/supercell/assets";
+		/*{
 			if (ResourceSettings.ContentUrlList.Size() > 1)
 			{
 				return ResourceSettings.ContentUrlList[1];
 			}
 
 			return null;
-		}
+		}*/
 
 		public static string GetAppStoreUrl(bool androidVersion)
 			=> ResourceSettings.AppStoreUrlList[androidVersion ? 1 : 0];

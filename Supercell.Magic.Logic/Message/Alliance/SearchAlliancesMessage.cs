@@ -36,7 +36,7 @@ namespace Supercell.Magic.Logic.Message.Alliance
 
 			m_searchString = m_stream.ReadString(900000);
 			m_warFrequency = m_stream.ReadInt();
-			m_originData = ByteStreamHelper.ReadDataReference(m_stream, LogicDataType.REGION);
+			m_originData = ByteStreamHelper.ReadDataReference(m_stream, DataType.REGION);
 			m_minMemberCount = m_stream.ReadInt();
 			m_maxMemberCount = m_stream.ReadInt();
 			m_requiredScore = m_stream.ReadInt();

@@ -22,13 +22,13 @@ namespace Supercell.Magic.Logic.Unit
 		private readonly LogicArrayList<LogicUnitProductionSlot> m_slots;
 
 		private readonly int m_villageType;
-		private readonly LogicDataType m_unitProductionType;
+		private readonly DataType m_unitProductionType;
 		private int m_nextProduction;
 
 		private bool m_locked;
 		private bool m_boostPause;
 
-		public LogicUnitProduction(LogicLevel level, LogicDataType unitProductionType, int villageType)
+		public LogicUnitProduction(LogicLevel level, DataType unitProductionType, int villageType)
 		{
 			m_level = level;
 			m_villageType = villageType;
@@ -60,7 +60,7 @@ namespace Supercell.Magic.Logic.Unit
 			m_level = null;
 		}
 
-		public LogicDataType GetUnitProductionType()
+		public DataType GetUnitProductionType()
 			=> m_unitProductionType;
 
 		public bool IsLocked()
@@ -91,12 +91,12 @@ namespace Supercell.Magic.Logic.Unit
 
 		public int GetMaxBoostTimeSecs()
 		{
-			if (m_unitProductionType == LogicDataType.SPELL)
+			if (m_unitProductionType == DataType.SPELL)
 			{
 				return LogicDataTables.GetGlobals().GetSpellFactoryBoostSecs();
 			}
 
-			if (m_unitProductionType == LogicDataType.CHARACTER)
+			if (m_unitProductionType == DataType.CHARACTER)
 			{
 				return LogicDataTables.GetGlobals().GetBarracksBoostSecs();
 			}
@@ -156,8 +156,8 @@ namespace Supercell.Magic.Logic.Unit
 			LogicAvatar homeOwnerAvatar = m_level.GetHomeOwnerAvatar();
 			LogicComponentManager componentManager = m_level.GetComponentManagerAt(m_villageType);
 
-			int totalMaxHousing = componentManager.GetTotalMaxHousing(m_unitProductionType != LogicDataType.CHARACTER ? 1 : 0);
-			int totalUsedCapacity = m_unitProductionType == LogicDataType.CHARACTER ? homeOwnerAvatar.GetUnitsTotalCapacity() : homeOwnerAvatar.GetSpellsTotalCapacity();
+			int totalMaxHousing = componentManager.GetTotalMaxHousing(m_unitProductionType != DataType.CHARACTER ? 1 : 0);
+			int totalUsedCapacity = m_unitProductionType == DataType.CHARACTER ? homeOwnerAvatar.GetUnitsTotalCapacity() : homeOwnerAvatar.GetSpellsTotalCapacity();
 			int freeCapacity = totalMaxHousing - totalUsedCapacity;
 			int remainingSecs = 0;
 
@@ -203,7 +203,7 @@ namespace Supercell.Magic.Logic.Unit
 			=> m_level.GetHomeOwnerAvatar().GetUnitsTotalCapacity() + GetTotalCount() >= LogicUnitProduction.TUTORIAL_MAX_CAPACITY;
 
 		public int GetMaxTrainCount()
-			=> m_level.GetComponentManagerAt(m_villageType).GetTotalMaxHousing(m_unitProductionType != LogicDataType.CHARACTER ? 1 : 0) * 2;
+			=> m_level.GetComponentManagerAt(m_villageType).GetTotalMaxHousing(m_unitProductionType != DataType.CHARACTER ? 1 : 0) * 2;
 
 		public int GetTutorialMax()
 			=> LogicUnitProduction.TUTORIAL_MAX_CAPACITY;
@@ -293,7 +293,7 @@ namespace Supercell.Magic.Logic.Unit
 
 		public int GetBoostMultiplier()
 		{
-			if (m_unitProductionType == LogicDataType.SPELL)
+			if (m_unitProductionType == DataType.SPELL)
 			{
 				if (LogicDataTables.GetGlobals().UseNewTraining())
 				{
@@ -303,7 +303,7 @@ namespace Supercell.Magic.Logic.Unit
 				return LogicDataTables.GetGlobals().GetSpellFactoryBoostMultiplier();
 			}
 
-			if (m_unitProductionType != LogicDataType.CHARACTER)
+			if (m_unitProductionType != DataType.CHARACTER)
 			{
 				return 1;
 			}
@@ -608,8 +608,8 @@ namespace Supercell.Magic.Logic.Unit
 			LogicAvatar homeOwnerAvatar = m_level.GetHomeOwnerAvatar();
 			LogicComponentManager componentManager = m_level.GetComponentManagerAt(m_villageType);
 
-			int totalMaxHousing = componentManager.GetTotalMaxHousing(m_unitProductionType != LogicDataType.CHARACTER ? 1 : 0);
-			int totalUsedCapacity = m_unitProductionType == LogicDataType.CHARACTER ? homeOwnerAvatar.GetUnitsTotalCapacity() : homeOwnerAvatar.GetSpellsTotalCapacity();
+			int totalMaxHousing = componentManager.GetTotalMaxHousing(m_unitProductionType != DataType.CHARACTER ? 1 : 0);
+			int totalUsedCapacity = m_unitProductionType == DataType.CHARACTER ? homeOwnerAvatar.GetUnitsTotalCapacity() : homeOwnerAvatar.GetSpellsTotalCapacity();
 			int freeCapacity = totalMaxHousing - totalUsedCapacity;
 
 			bool armyCampFull = false;
@@ -681,8 +681,8 @@ namespace Supercell.Magic.Logic.Unit
 
 			LogicComponentManager componentManager = m_level.GetComponentManagerAt(m_villageType);
 
-			int usedCapacity = m_unitProductionType == LogicDataType.SPELL ? homeOwnerAvatar.GetSpellsTotalCapacity() : homeOwnerAvatar.GetUnitsTotalCapacity();
-			int totalCapacity = componentManager.GetTotalMaxHousing(m_unitProductionType != LogicDataType.CHARACTER ? 1 : 0);
+			int usedCapacity = m_unitProductionType == DataType.SPELL ? homeOwnerAvatar.GetSpellsTotalCapacity() : homeOwnerAvatar.GetUnitsTotalCapacity();
+			int totalCapacity = componentManager.GetTotalMaxHousing(m_unitProductionType != DataType.CHARACTER ? 1 : 0);
 			int freeCapacity = totalCapacity - usedCapacity;
 
 			for (int i = 0, j = freeCapacity; i < m_slots.Size(); i++)
@@ -972,8 +972,8 @@ namespace Supercell.Magic.Logic.Unit
 
 						LogicAvatar avatar = m_level.GetHomeOwnerAvatar();
 						LogicComponentManager componentManager = m_level.GetComponentManagerAt(m_villageType);
-						int totalMaxHousing = componentManager.GetTotalMaxHousing(m_unitProductionType != LogicDataType.CHARACTER ? 1 : 0) * 2;
-						int totalUsedCapacity = GetTotalCount() + data.GetHousingSpace() + (m_unitProductionType == LogicDataType.CHARACTER
+						int totalMaxHousing = componentManager.GetTotalMaxHousing(m_unitProductionType != DataType.CHARACTER ? 1 : 0) * 2;
+						int totalUsedCapacity = GetTotalCount() + data.GetHousingSpace() + (m_unitProductionType == DataType.CHARACTER
 													? avatar.GetUnitsTotalCapacity()
 													: avatar.GetSpellsTotalCapacity());
 
@@ -1002,7 +1002,7 @@ namespace Supercell.Magic.Logic.Unit
 
 		public int GetBoostCost()
 		{
-			if (m_unitProductionType == LogicDataType.CHARACTER)
+			if (m_unitProductionType == DataType.CHARACTER)
 				return m_level.GetGameMode().GetCalendar().GetUnitProductionBoostCost();
 			return m_level.GetGameMode().GetCalendar().GetSpellProductionBoostCost();
 		}

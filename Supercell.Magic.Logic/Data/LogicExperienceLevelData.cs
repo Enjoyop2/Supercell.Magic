@@ -21,6 +21,6 @@ namespace Supercell.Magic.Logic.Data
 			=> m_expPoints;
 
 		public static int GetLevelCap()
-			=> LogicDataTables.GetTable(LogicDataType.EXPERIENCE_LEVEL).GetItemCount();
+			=> LogicDataTables.GetTable(DataType.EXPERIENCE_LEVEL).GetItemCount();
 	}
 }

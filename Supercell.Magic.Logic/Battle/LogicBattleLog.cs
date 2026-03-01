@@ -300,7 +300,7 @@ namespace Supercell.Magic.Logic.Battle
 				m_availableLootCount.Remove(i);
 			}
 
-			LogicDataTable resourceTable = LogicDataTables.GetTable(LogicDataType.RESOURCE);
+			LogicDataTable resourceTable = LogicDataTables.GetTable(DataType.RESOURCE);
 
 			for (int i = 0; i < resourceTable.GetItemCount(); i++)
 			{

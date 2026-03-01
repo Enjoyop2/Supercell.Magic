@@ -259,7 +259,7 @@ namespace Supercell.Magic.Logic.GameObject.Component
 				{
 					LogicGameObjectData data = m_parent.GetData();
 
-					if (data.GetDataType() == LogicDataType.BUILDING)
+					if (data.GetDataType() == DataType.BUILDING)
 					{
 						if (data.GetVillageType() == 1)
 						{
@@ -358,7 +358,7 @@ namespace Supercell.Magic.Logic.GameObject.Component
 			{
 				if (m_parent.GetLevel().GetRemainingClockTowerBoostTime() > 0)
 				{
-					if (m_parent.GetData().GetDataType() == LogicDataType.BUILDING && m_parent.GetData().GetVillageType() == 1)
+					if (m_parent.GetData().GetDataType() == DataType.BUILDING && m_parent.GetData().GetVillageType() == 1)
 					{
 						m_productionTimer.FastForwardSubticks(4 * LogicDataTables.GetGlobals().GetClockTowerBoostMultiplier() - 4);
 					}
@@ -410,7 +410,7 @@ namespace Supercell.Magic.Logic.GameObject.Component
 						if (cntObject != null)
 						{
 							LogicData data = LogicDataTables.GetDataById(dataObject.GetIntValue(),
-																		 m_productionType != 0 ? LogicDataType.SPELL : LogicDataType.CHARACTER);
+																		 m_productionType != 0 ? DataType.SPELL : DataType.CHARACTER);
 
 							if (data == null)
 							{

@@ -15,7 +15,7 @@ namespace Supercell.Magic.Logic.Command.Battle
 
 		public override void Decode(ByteStream stream)
 		{
-			m_data = (LogicHeroData)ByteStreamHelper.ReadDataReference(stream, LogicDataType.HERO);
+			m_data = (LogicHeroData)ByteStreamHelper.ReadDataReference(stream, DataType.HERO);
 			base.Decode(stream);
 		}
 
@@ -72,7 +72,7 @@ namespace Supercell.Magic.Logic.Command.Battle
 
 			if (dataNumber != null)
 			{
-				m_data = (LogicHeroData)LogicDataTables.GetDataById(dataNumber.GetIntValue(), LogicDataType.HERO);
+				m_data = (LogicHeroData)LogicDataTables.GetDataById(dataNumber.GetIntValue(), DataType.HERO);
 			}
 
 			if (m_data == null)

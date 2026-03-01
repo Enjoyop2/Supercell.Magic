@@ -164,8 +164,8 @@ namespace Supercell.Magic.Logic.Util
 		{
 			if (playerAvatar != null)
 			{
-				LogicDataTable characterTable = LogicDataTables.GetTable(LogicDataType.CHARACTER);
-				LogicDataTable spellTable = LogicDataTables.GetTable(LogicDataType.SPELL);
+				LogicDataTable characterTable = LogicDataTables.GetTable(DataType.CHARACTER);
+				LogicDataTable spellTable = LogicDataTables.GetTable(DataType.SPELL);
 				LogicBuildingData laboratoryData = LogicDataTables.GetBuildingByName("Laboratory", null);
 
 				int laboratoryLevel = laboratoryData.GetMaxUpgradeLevelForTownHallLevel(townHallLevel);
@@ -217,7 +217,7 @@ namespace Supercell.Magic.Logic.Util
 		public static int GetTotalCharacterMaxHousing(int townHallLevel, bool includeAllianceCastle)
 		{
 			LogicTownhallLevelData townhallLevelData = LogicDataTables.GetTownHallLevel(townHallLevel);
-			LogicDataTable table = LogicDataTables.GetTable(LogicDataType.BUILDING);
+			LogicDataTable table = LogicDataTables.GetTable(DataType.BUILDING);
 
 			int housingSpace = 0;
 

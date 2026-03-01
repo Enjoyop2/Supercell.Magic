@@ -4,10 +4,10 @@ namespace Supercell.Magic.Logic.Data
 	{
 		private string m_fileName;
 
-		private LogicDataType m_tableIndex;
+		private DataType m_tableIndex;
 		private int m_type;
 
-		public LogicDataTableResource(string fileName, LogicDataType tableIndex, int type)
+		public LogicDataTableResource(string fileName, DataType tableIndex, int type)
 		{
 			m_fileName = fileName;
 			m_tableIndex = tableIndex;
@@ -24,7 +24,7 @@ namespace Supercell.Magic.Logic.Data
 		public string GetFileName()
 			=> m_fileName;
 
-		public LogicDataType GetTableIndex()
+		public DataType GetTableIndex()
 			=> m_tableIndex;
 
 		public int GetTableType()

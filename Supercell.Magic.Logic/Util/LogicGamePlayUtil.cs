@@ -46,7 +46,7 @@ namespace Supercell.Magic.Logic.Util
 
 		public static LogicLeagueVillage2Data GetLeagueVillage2(int score)
 		{
-			LogicDataTable table = LogicDataTables.GetTable(LogicDataType.LEAGUE_VILLAGE2);
+			LogicDataTable table = LogicDataTables.GetTable(DataType.LEAGUE_VILLAGE2);
 
 			for (int i = table.GetItemCount() - 1; i >= 0; i--)
 			{
@@ -223,7 +223,7 @@ namespace Supercell.Magic.Logic.Util
 		{
 			if (LogicDataTables.GetGlobals().EnableLeagues())
 			{
-				LogicDataTable leagueTable = LogicDataTables.GetTable(LogicDataType.LEAGUE);
+				LogicDataTable leagueTable = LogicDataTables.GetTable(DataType.LEAGUE);
 				LogicLeagueData data = clientAvatar.GetLeagueTypeData();
 
 				int leagueType = clientAvatar.GetLeagueType();

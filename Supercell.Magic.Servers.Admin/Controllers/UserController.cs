@@ -14,6 +14,7 @@ using Supercell.Magic.Logic.Message.Home;
 using Supercell.Magic.Servers.Admin.Attributes;
 using Supercell.Magic.Servers.Admin.Helper;
 using Supercell.Magic.Servers.Admin.Logic;
+using Supercell.Magic.Servers.Admin.Logic.Entry;
 using Supercell.Magic.Servers.Core;
 using Supercell.Magic.Servers.Core.Database.Document;
 using Supercell.Magic.Servers.Core.Network;

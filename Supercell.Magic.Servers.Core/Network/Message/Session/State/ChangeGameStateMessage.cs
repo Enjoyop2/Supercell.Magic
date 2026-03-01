@@ -99,7 +99,7 @@ namespace Supercell.Magic.Servers.Core.Network.Message.Session
 					break;
 				case GameStateType.NPC_ATTACK:
 				case GameStateType.NPC_DUEL:
-					NpcData = (LogicNpcData)ByteStreamHelper.ReadDataReference(stream, LogicDataType.NPC);
+					NpcData = (LogicNpcData)ByteStreamHelper.ReadDataReference(stream, DataType.NPC);
 					break;
 				case GameStateType.VISIT:
 					HomeId = stream.ReadLong();

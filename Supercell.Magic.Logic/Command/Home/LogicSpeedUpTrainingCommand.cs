@@ -85,7 +85,7 @@ namespace Supercell.Magic.Logic.Command.Home
 				{
 					playerAvatar.UseDiamonds(speedUpCost);
 					unitProduction.SpeedUp();
-					playerAvatar.GetChangeListener().DiamondPurchaseMade(unitProduction.GetUnitProductionType() == LogicDataType.CHARACTER ? 2 : 7, 0, 0, speedUpCost, level.GetVillageType());
+					playerAvatar.GetChangeListener().DiamondPurchaseMade(unitProduction.GetUnitProductionType() == DataType.CHARACTER ? 2 : 7, 0, 0, speedUpCost, level.GetVillageType());
 
 					return 0;
 				}

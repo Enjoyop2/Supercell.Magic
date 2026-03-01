@@ -7,6 +7,7 @@ using Microsoft.Extensions.Primitives;
 
 using Supercell.Magic.Servers.Admin.Controllers;
 using Supercell.Magic.Servers.Admin.Logic;
+using Supercell.Magic.Servers.Admin.Logic.Entry;
 
 namespace Supercell.Magic.Servers.Admin.Attributes
 {

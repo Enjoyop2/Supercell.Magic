@@ -370,7 +370,7 @@ namespace Supercell.Magic.Logic.Avatar
 			=> m_cumulativePurchasedDiamonds;
 
 		public int GetLeagueType()
-			=> LogicMath.Clamp(m_leagueType, 0, LogicDataTables.GetTable(LogicDataType.LEAGUE).GetItemCount() - 1);
+			=> LogicMath.Clamp(m_leagueType, 0, LogicDataTables.GetTable(DataType.LEAGUE).GetItemCount() - 1);
 
 		public void SetLeagueType(int value)
 		{
@@ -523,7 +523,7 @@ namespace Supercell.Magic.Logic.Avatar
 
 		public override LogicLeagueData GetLeagueTypeData()
 		{
-			LogicDataTable table = LogicDataTables.GetTable(LogicDataType.LEAGUE);
+			LogicDataTable table = LogicDataTables.GetTable(DataType.LEAGUE);
 			Debugger.DoAssert(m_leagueType > -1 && table.GetItemCount() > m_leagueType, "Player league ranking out of bounds");
 			return (LogicLeagueData)table.GetItemAt(m_leagueType);
 		}
@@ -575,7 +575,7 @@ namespace Supercell.Magic.Logic.Avatar
 
 		public void RemoveUnitsVillage2()
 		{
-			LogicDataTable table = LogicDataTables.GetTable(LogicDataType.CHARACTER);
+			LogicDataTable table = LogicDataTables.GetTable(DataType.CHARACTER);
 
 			for (int i = 0; i < table.GetItemCount(); i++)
 			{
@@ -1314,7 +1314,7 @@ namespace Supercell.Magic.Logic.Avatar
 
 			for (int i = 0, size = stream.ReadInt(); i < size; i++)
 			{
-				LogicMissionData data = (LogicMissionData)ByteStreamHelper.ReadDataReference(stream, LogicDataType.MISSION);
+				LogicMissionData data = (LogicMissionData)ByteStreamHelper.ReadDataReference(stream, DataType.MISSION);
 
 				if (data != null)
 				{
@@ -1324,7 +1324,7 @@ namespace Supercell.Magic.Logic.Avatar
 
 			for (int i = 0, size = stream.ReadInt(); i < size; i++)
 			{
-				LogicAchievementData data = (LogicAchievementData)ByteStreamHelper.ReadDataReference(stream, LogicDataType.ACHIEVEMENT);
+				LogicAchievementData data = (LogicAchievementData)ByteStreamHelper.ReadDataReference(stream, DataType.ACHIEVEMENT);
 
 				if (data != null)
 				{

@@ -90,7 +90,7 @@ namespace Supercell.Magic.Logic.Command.Server
 				{
 					if (m_billingPackageId > 0)
 					{
-						LogicBillingPackageData billingPackageData = (LogicBillingPackageData)LogicDataTables.GetDataById(m_billingPackageId, LogicDataType.BILLING_PACKAGE);
+						LogicBillingPackageData billingPackageData = (LogicBillingPackageData)LogicDataTables.GetDataById(m_billingPackageId, DataType.BILLING_PACKAGE);
 
 						if (billingPackageData != null)
 						{

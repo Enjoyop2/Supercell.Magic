@@ -331,7 +331,7 @@ namespace Supercell.Magic.Logic.Avatar
 		{
 			switch (data.GetDataType())
 			{
-				case LogicDataType.RESOURCE:
+				case DataType.RESOURCE:
 					{
 						switch (commodityType)
 						{
@@ -372,8 +372,8 @@ namespace Supercell.Magic.Logic.Avatar
 						break;
 					}
 
-				case LogicDataType.CHARACTER:
-				case LogicDataType.SPELL:
+				case DataType.CHARACTER:
+				case DataType.SPELL:
 					switch (commodityType)
 					{
 						case 0:
@@ -422,7 +422,7 @@ namespace Supercell.Magic.Logic.Avatar
 
 					break;
 
-				case LogicDataType.NPC:
+				case DataType.NPC:
 					switch (commodityType)
 					{
 						case 0:
@@ -452,13 +452,13 @@ namespace Supercell.Magic.Logic.Avatar
 					}
 
 					break;
-				case LogicDataType.ACHIEVEMENT:
+				case DataType.ACHIEVEMENT:
 					int tmp = LogicMath.Max(GetAchievementProgress((LogicAchievementData)data) + count, 0);
 
 					SetAchievementProgress((LogicAchievementData)data, tmp);
 					m_listener.CommodityCountChanged(0, data, tmp);
 					break;
-				case LogicDataType.HERO:
+				case DataType.HERO:
 					LogicHeroData heroData = (LogicHeroData)data;
 
 					switch (commodityType)
@@ -489,7 +489,7 @@ namespace Supercell.Magic.Logic.Avatar
 		{
 			switch (data.GetDataType())
 			{
-				case LogicDataType.RESOURCE:
+				case DataType.RESOURCE:
 					switch (commodityType)
 					{
 						case 0:
@@ -504,8 +504,8 @@ namespace Supercell.Magic.Logic.Avatar
 					}
 
 					break;
-				case LogicDataType.CHARACTER:
-				case LogicDataType.SPELL:
+				case DataType.CHARACTER:
+				case DataType.SPELL:
 					switch (commodityType)
 					{
 						case 0:
@@ -544,7 +544,7 @@ namespace Supercell.Magic.Logic.Avatar
 					}
 
 					break;
-				case LogicDataType.NPC:
+				case DataType.NPC:
 					switch (commodityType)
 					{
 						case 0:
@@ -559,14 +559,14 @@ namespace Supercell.Magic.Logic.Avatar
 					}
 
 					break;
-				case LogicDataType.MISSION:
+				case DataType.MISSION:
 					if (commodityType == 0)
 					{
 						SetMissionCompleted((LogicMissionData)data, count != 0);
 					}
 
 					break;
-				case LogicDataType.ACHIEVEMENT:
+				case DataType.ACHIEVEMENT:
 					switch (commodityType)
 					{
 						case 0:
@@ -578,7 +578,7 @@ namespace Supercell.Magic.Logic.Avatar
 					}
 
 					break;
-				case LogicDataType.HERO:
+				case DataType.HERO:
 					switch (commodityType)
 					{
 						case 0:
@@ -596,7 +596,7 @@ namespace Supercell.Magic.Logic.Avatar
 					}
 
 					break;
-				case LogicDataType.VARIABLE:
+				case DataType.VARIABLE:
 					if (commodityType == 0)
 					{
 						SetVariable(data, count);
@@ -1124,7 +1124,7 @@ namespace Supercell.Magic.Logic.Avatar
 		{
 			int cnt = 0;
 
-			LogicDataTable table = LogicDataTables.GetTable(LogicDataType.SPELL);
+			LogicDataTable table = LogicDataTables.GetTable(DataType.SPELL);
 
 			for (int i = 0; i < table.GetItemCount(); i++)
 			{
@@ -2194,9 +2194,9 @@ namespace Supercell.Magic.Logic.Avatar
 			LogicArrayList<LogicCharacterData> unlockedCharacterData = new LogicArrayList<LogicCharacterData>();
 			LogicArrayList<LogicSpellData> unlockedSpellData = new LogicArrayList<LogicSpellData>();
 
-			LogicDataTable heroTable = LogicDataTables.GetTable(LogicDataType.HERO);
-			LogicDataTable characterTable = LogicDataTables.GetTable(LogicDataType.CHARACTER);
-			LogicDataTable spellTable = LogicDataTables.GetTable(LogicDataType.SPELL);
+			LogicDataTable heroTable = LogicDataTables.GetTable(DataType.HERO);
+			LogicDataTable characterTable = LogicDataTables.GetTable(DataType.CHARACTER);
+			LogicDataTable spellTable = LogicDataTables.GetTable(DataType.SPELL);
 
 			int maxBarrackLevel = componentManager.GetMaxBarrackLevel();
 			int maxDarkBarrackLevel = componentManager.GetMaxDarkBarrackLevel();

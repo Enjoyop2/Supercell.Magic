@@ -55,7 +55,7 @@ namespace Supercell.Magic.Logic.GameObject.Component
 			{
 				LogicGameObjectData data = m_parent.GetData();
 
-				if (data.GetDataType() == LogicDataType.BUILDING && data.GetVillageType() == 1)
+				if (data.GetDataType() == DataType.BUILDING && data.GetVillageType() == 1)
 				{
 					regenTime /= LogicDataTables.GetGlobals().GetClockTowerBoostMultiplier();
 
@@ -368,7 +368,7 @@ namespace Supercell.Magic.Logic.GameObject.Component
 			{
 				LogicGameObjectData data = m_parent.GetData();
 
-				if (data.GetDataType() == LogicDataType.BUILDING && data.GetVillageType() == 1)
+				if (data.GetDataType() == DataType.BUILDING && data.GetVillageType() == 1)
 				{
 					int boost = LogicMath.Min(clockTowerBoostTime, time) * (LogicDataTables.GetGlobals().GetClockTowerBoostMultiplier() - 1);
 

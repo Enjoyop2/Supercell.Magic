@@ -41,7 +41,7 @@ namespace Supercell.Magic.Logic.Avatar
 
 		public void Decode(ByteStream stream)
 		{
-			SetNpcData((LogicNpcData)ByteStreamHelper.ReadDataReference(stream, LogicDataType.NPC));
+			SetNpcData((LogicNpcData)ByteStreamHelper.ReadDataReference(stream, DataType.NPC));
 		}
 
 		public static LogicNpcAvatar GetNpcAvatar(LogicNpcData data)

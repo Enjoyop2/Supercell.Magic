@@ -18,8 +18,8 @@ namespace Supercell.Magic.Logic.Command.Battle
 
 		public override void Decode(ByteStream stream)
 		{
-			m_newUnitData = (LogicCharacterData)ByteStreamHelper.ReadDataReference(stream, LogicDataType.CHARACTER);
-			m_oldUnitData = (LogicCharacterData)ByteStreamHelper.ReadDataReference(stream, LogicDataType.CHARACTER);
+			m_newUnitData = (LogicCharacterData)ByteStreamHelper.ReadDataReference(stream, DataType.CHARACTER);
+			m_oldUnitData = (LogicCharacterData)ByteStreamHelper.ReadDataReference(stream, DataType.CHARACTER);
 
 			base.Decode(stream);
 		}
@@ -119,14 +119,14 @@ namespace Supercell.Magic.Logic.Command.Battle
 
 			if (newDataNumber != null)
 			{
-				m_newUnitData = (LogicCharacterData)LogicDataTables.GetDataById(newDataNumber.GetIntValue(), LogicDataType.CHARACTER);
+				m_newUnitData = (LogicCharacterData)LogicDataTables.GetDataById(newDataNumber.GetIntValue(), DataType.CHARACTER);
 			}
 
 			LogicJSONNumber oldDataNumber = jsonRoot.GetJSONNumber("o");
 
 			if (oldDataNumber != null)
 			{
-				m_oldUnitData = (LogicCharacterData)LogicDataTables.GetDataById(oldDataNumber.GetIntValue(), LogicDataType.CHARACTER);
+				m_oldUnitData = (LogicCharacterData)LogicDataTables.GetDataById(oldDataNumber.GetIntValue(), DataType.CHARACTER);
 			}
 		}
 

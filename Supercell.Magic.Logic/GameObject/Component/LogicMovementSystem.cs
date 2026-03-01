@@ -800,7 +800,7 @@ namespace Supercell.Magic.Logic.GameObject.Component
 
 					int housingSpace = 1;
 
-					if (data.GetDataType() == LogicDataType.CHARACTER)
+					if (data.GetDataType() == DataType.CHARACTER)
 					{
 						housingSpace = ((LogicCombatItemData)data).GetHousingSpace();
 

@@ -12,7 +12,7 @@ namespace Supercell.Magic.Logic.Command.Home
 	{
 		private LogicCombatItemData m_unitData;
 
-		private LogicDataType m_unitType;
+		private DataType m_unitType;
 		private int m_gameObjectId;
 
 		public LogicUpgradeUnitCommand()
@@ -30,8 +30,8 @@ namespace Supercell.Magic.Logic.Command.Home
 		public override void Decode(ByteStream stream)
 		{
 			m_gameObjectId = stream.ReadInt();
-			m_unitType = (LogicDataType)stream.ReadInt();
-			m_unitData = (LogicCombatItemData)ByteStreamHelper.ReadDataReference(stream, m_unitType != 0 ? LogicDataType.SPELL : LogicDataType.CHARACTER);
+			m_unitType = (DataType)stream.ReadInt();
+			m_unitData = (LogicCombatItemData)ByteStreamHelper.ReadDataReference(stream, m_unitType != 0 ? DataType.SPELL : DataType.CHARACTER);
 
 			base.Decode(stream);
 		}

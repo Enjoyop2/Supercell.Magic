@@ -169,7 +169,7 @@ namespace Supercell.Magic.Logic.Data
 			m_achievementLevel = new LogicArrayList<LogicAchievementData>();
 
 			string achievementName = GetName().Substring(0, GetName().Length - 1);
-			LogicDataTable table = LogicDataTables.GetTable(LogicDataType.ACHIEVEMENT);
+			LogicDataTable table = LogicDataTables.GetTable(DataType.ACHIEVEMENT);
 
 			for (int i = 0; i < table.GetItemCount(); i++)
 			{

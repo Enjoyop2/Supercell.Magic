@@ -21,6 +21,6 @@ namespace Supercell.Magic.Servers.Admin.Controllers
 					   .AddAttribute("totalUsers", DashboardManager.TotalUsers)
 					   .AddAttribute("dailyActiveUsers", DashboardManager.DailyActiveUsers)
 					   .AddAttribute("newUsers", DashboardManager.NewUsers)
-					   .AddAttribute("onlineUsers", ServerManager.OnlineUsers);
+					   .AddAttribute("onlineUsers", ServerManager.GetOnlineUsers());
 	}
 }

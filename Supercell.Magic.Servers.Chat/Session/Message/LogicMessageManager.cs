@@ -96,7 +96,7 @@ namespace Supercell.Magic.Servers.Chat.Session.Message
 											{
 												case 0:
 													LogicBuildingData buildingData =
-														(LogicBuildingData)LogicDataTables.GetDataById(GlobalID.CreateGlobalID((int)LogicDataType.BUILDING + 1, id), LogicDataType.BUILDING);
+														(LogicBuildingData)LogicDataTables.GetDataById(GlobalID.CreateGlobalID((int)DataType.BUILDING + 1, id), DataType.BUILDING);
 
 													if (buildingData.IsTownHall() || buildingData.IsTownHallVillage2())
 														return;
@@ -108,7 +108,7 @@ namespace Supercell.Magic.Servers.Chat.Session.Message
 													gameObjectData = buildingData;
 													break;
 												case 1:
-													gameObjectData = (LogicGameObjectData)LogicDataTables.GetDataById(GlobalID.CreateGlobalID((int)LogicDataType.TRAP + 1, id), LogicDataType.TRAP);
+													gameObjectData = (LogicGameObjectData)LogicDataTables.GetDataById(GlobalID.CreateGlobalID((int)DataType.TRAP + 1, id), DataType.TRAP);
 													break;
 											}
 

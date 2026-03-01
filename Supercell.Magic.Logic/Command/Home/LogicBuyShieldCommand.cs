@@ -24,7 +24,7 @@ namespace Supercell.Magic.Logic.Command.Home
 
 		public override void Decode(ByteStream stream)
 		{
-			m_shieldData = (LogicShieldData)ByteStreamHelper.ReadDataReference(stream, LogicDataType.SHIELD);
+			m_shieldData = (LogicShieldData)ByteStreamHelper.ReadDataReference(stream, DataType.SHIELD);
 			base.Decode(stream);
 		}
 

@@ -57,7 +57,7 @@ namespace Supercell.Magic.Logic.Data
 				previousItem = (LogicTownhallLevelData)m_table.GetItemAt(GetInstanceID() - 1);
 			}
 
-			LogicDataTable buildingTable = LogicDataTables.GetTable(LogicDataType.BUILDING);
+			LogicDataTable buildingTable = LogicDataTables.GetTable(DataType.BUILDING);
 
 			for (int i = 0; i < buildingTable.GetItemCount(); i++)
 			{
@@ -83,7 +83,7 @@ namespace Supercell.Magic.Logic.Data
 				m_buildingGearupCaps.Add(gearup);
 			}
 
-			LogicDataTable trapTable = LogicDataTables.GetTable(LogicDataType.TRAP);
+			LogicDataTable trapTable = LogicDataTables.GetTable(DataType.TRAP);
 
 			for (int i = 0; i < trapTable.GetItemCount(); i++)
 			{
@@ -100,7 +100,7 @@ namespace Supercell.Magic.Logic.Data
 				m_trapCaps.Add(cap);
 			}
 
-			LogicDataTable resourceTable = LogicDataTables.GetTable(LogicDataType.RESOURCE);
+			LogicDataTable resourceTable = LogicDataTables.GetTable(DataType.RESOURCE);
 
 			for (int i = 0; i < resourceTable.GetItemCount(); i++)
 			{
@@ -220,7 +220,7 @@ namespace Supercell.Magic.Logic.Data
 				m_table.GetItemAt(GetInstanceID() - 1); // Thx supercell for the crappy code.
 			}
 
-			LogicDataTable buildingTable = LogicDataTables.GetTable(LogicDataType.BUILDING);
+			LogicDataTable buildingTable = LogicDataTables.GetTable(DataType.BUILDING);
 			int dataTableCount = m_table.GetItemCount();
 
 			if (dataTableCount > 0)

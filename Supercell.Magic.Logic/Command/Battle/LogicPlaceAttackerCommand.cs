@@ -21,7 +21,7 @@ namespace Supercell.Magic.Logic.Command.Battle
 		{
 			m_x = stream.ReadInt();
 			m_y = stream.ReadInt();
-			m_data = (LogicCharacterData)ByteStreamHelper.ReadDataReference(stream, LogicDataType.CHARACTER);
+			m_data = (LogicCharacterData)ByteStreamHelper.ReadDataReference(stream, DataType.CHARACTER);
 
 			base.Decode(stream);
 		}
@@ -174,7 +174,7 @@ namespace Supercell.Magic.Logic.Command.Battle
 
 			if (dataNumber != null)
 			{
-				m_data = (LogicCharacterData)LogicDataTables.GetDataById(dataNumber.GetIntValue(), LogicDataType.CHARACTER);
+				m_data = (LogicCharacterData)LogicDataTables.GetDataById(dataNumber.GetIntValue(), DataType.CHARACTER);
 			}
 
 			if (m_data == null)

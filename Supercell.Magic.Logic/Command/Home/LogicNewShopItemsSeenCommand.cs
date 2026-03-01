@@ -6,7 +6,7 @@ namespace Supercell.Magic.Logic.Command.Home
 {
 	public sealed class LogicNewShopItemsSeenCommand : LogicCommand
 	{
-		private LogicDataType m_newShopItemsType;
+		private DataType m_newShopItemsType;
 		private int m_newShopItemsIndex;
 		private int m_newShopItemsCount;
 
@@ -19,14 +19,14 @@ namespace Supercell.Magic.Logic.Command.Home
 		public LogicNewShopItemsSeenCommand(int index, int type, int count)
 		{
 			m_newShopItemsIndex = index;
-			m_newShopItemsType = (LogicDataType)type;
+			m_newShopItemsType = (DataType)type;
 			m_newShopItemsCount = count;
 		}
 
 		public override void Decode(ByteStream stream)
 		{
 			m_newShopItemsIndex = stream.ReadInt();
-			m_newShopItemsType = (LogicDataType)stream.ReadInt();
+			m_newShopItemsType = (DataType)stream.ReadInt();
 			m_newShopItemsCount = stream.ReadInt();
 
 			base.Decode(stream);
@@ -51,9 +51,9 @@ namespace Supercell.Magic.Logic.Command.Home
 
 		public override int Execute(LogicLevel level)
 		{
-			if (m_newShopItemsType == LogicDataType.BUILDING ||
-				m_newShopItemsType == LogicDataType.TRAP ||
-				m_newShopItemsType == LogicDataType.DECO)
+			if (m_newShopItemsType == DataType.BUILDING ||
+				m_newShopItemsType == DataType.TRAP ||
+				m_newShopItemsType == DataType.DECO)
 			{
 				if (level.SetUnlockedShopItemCount((LogicGameObjectData)LogicDataTables.GetTable(m_newShopItemsType).GetItemAt(m_newShopItemsIndex),
 					m_newShopItemsIndex,

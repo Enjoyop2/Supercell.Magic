@@ -192,7 +192,7 @@ namespace Supercell.Magic.Logic.Command.Home
 		{
 			if (level.GetVillageType() == 1)
 			{
-				LogicDataTable buildingTable = LogicDataTables.GetTable(LogicDataType.BUILDING);
+				LogicDataTable buildingTable = LogicDataTables.GetTable(DataType.BUILDING);
 
 				for (int i = 0; i < buildingTable.GetItemCount(); i++)
 				{
@@ -205,7 +205,7 @@ namespace Supercell.Magic.Logic.Command.Home
 					}
 				}
 
-				LogicDataTable trapTable = LogicDataTables.GetTable(LogicDataType.TRAP);
+				LogicDataTable trapTable = LogicDataTables.GetTable(DataType.TRAP);
 
 				for (int i = 0; i < trapTable.GetItemCount(); i++)
 				{

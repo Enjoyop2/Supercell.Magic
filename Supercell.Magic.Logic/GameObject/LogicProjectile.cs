@@ -428,7 +428,7 @@ namespace Supercell.Magic.Logic.GameObject
 					totalDamage = damage * m_preferredTargetDamageMod / 100;
 				}
 
-				if (totalDamage >= 0 || target.GetData().GetDataType() == LogicDataType.HERO &&
+				if (totalDamage >= 0 || target.GetData().GetDataType() == DataType.HERO &&
 					(totalDamage = totalDamage * LogicDataTables.GetGlobals().GetHeroHealMultiplier() / 100) > 0 || !target.IsPreventsHealing())
 				{
 					if (m_damageRadius <= 0)

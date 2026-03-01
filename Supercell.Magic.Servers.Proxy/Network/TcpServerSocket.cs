@@ -15,6 +15,8 @@ namespace Supercell.Magic.Servers.Proxy.Network
 
 		public TcpServerSocket(string host, int port)
 		{
+			Logging.Warning($"Listening on {host}:{port}. Let's play Clash of Calns");
+
 			m_listener = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 			m_listener.Bind(new IPEndPoint(IPAddress.Parse(host), port));
 			m_listener.Listen(TcpServerSocket.BACKLOG_SIZE);

@@ -28,14 +28,14 @@ namespace Supercell.Magic.Logic.Command.Home
 			m_unitData = combatItemData;
 			m_gameObjectId = gameObjectId;
 			m_slotId = slotId;
-			m_unitType = m_unitData.GetDataType() == LogicDataType.SPELL ? 1 : 0;
+			m_unitType = m_unitData.GetDataType() == DataType.SPELL ? 1 : 0;
 		}
 
 		public override void Decode(ByteStream stream)
 		{
 			m_gameObjectId = stream.ReadInt();
 			m_unitType = stream.ReadInt();
-			m_unitData = (LogicCombatItemData)ByteStreamHelper.ReadDataReference(stream, m_unitType != 0 ? LogicDataType.SPELL : LogicDataType.CHARACTER);
+			m_unitData = (LogicCombatItemData)ByteStreamHelper.ReadDataReference(stream, m_unitType != 0 ? DataType.SPELL : DataType.CHARACTER);
 			m_trainCount = stream.ReadInt();
 			m_slotId = stream.ReadInt();
 

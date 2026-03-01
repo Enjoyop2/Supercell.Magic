@@ -26,7 +26,7 @@ namespace Supercell.Magic.Logic.Offer
 
 		public void Init()
 		{
-			LogicDataTable table = LogicDataTables.GetTable(LogicDataType.GEM_BUNDLE);
+			LogicDataTable table = LogicDataTables.GetTable(DataType.GEM_BUNDLE);
 
 			for (int i = 0; i < table.GetItemCount(); i++)
 			{

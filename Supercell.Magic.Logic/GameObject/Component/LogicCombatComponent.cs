@@ -158,7 +158,7 @@ namespace Supercell.Magic.Logic.GameObject.Component
 			m_enemyFilter.PassEnemyOnly(gameObject);
 			m_enemyList = new LogicArrayList<LogicGameObject>(20);
 
-			if (m_parent.GetData().GetDataType() == LogicDataType.CHARACTER)
+			if (m_parent.GetData().GetDataType() == DataType.CHARACTER)
 			{
 				LogicCharacterData characterData = (LogicCharacterData)m_parent.GetData();
 
@@ -534,7 +534,7 @@ namespace Supercell.Magic.Logic.GameObject.Component
 		}
 
 		public bool IsWallBreaker()
-			=> !m_preferredTargetNotTargeting && m_preferredTarget != null && m_preferredTarget.GetDataType() == LogicDataType.BUILDING_CLASS &&
+			=> !m_preferredTargetNotTargeting && m_preferredTarget != null && m_preferredTarget.GetDataType() == DataType.BUILDING_CLASS &&
 				   ((LogicBuildingClassData)m_preferredTarget).IsWall();
 
 		public void SearchTarget(int idx, LogicGameObject prevTarget)
@@ -757,7 +757,7 @@ namespace Supercell.Magic.Logic.GameObject.Component
 				{
 					if (target == null)
 					{
-						if (m_preferredTarget != null && m_preferredTarget.GetDataType() == LogicDataType.BUILDING)
+						if (m_preferredTarget != null && m_preferredTarget.GetDataType() == DataType.BUILDING)
 						{
 							m_preferredTarget = ((LogicBuildingData)m_preferredTarget).GetBuildingClass();
 							return;
@@ -1417,7 +1417,7 @@ namespace Supercell.Magic.Logic.GameObject.Component
 
 		public void ForceNewTarget()
 		{
-			if (m_preferredTarget == null || m_preferredTarget.GetDataType() != LogicDataType.BUILDING_CLASS ||
+			if (m_preferredTarget == null || m_preferredTarget.GetDataType() != DataType.BUILDING_CLASS ||
 				!((LogicBuildingClassData)m_preferredTarget).IsWall())
 			{
 				m_forceNewTarget[0] = true;
@@ -2309,7 +2309,7 @@ namespace Supercell.Magic.Logic.GameObject.Component
 			{
 				LogicGameObjectData data = gameObject.GetData();
 
-				if (data.GetDataType() == LogicDataType.BUILDING)
+				if (data.GetDataType() == DataType.BUILDING)
 				{
 					return ((LogicBuildingData)data).IsWall();
 				}
@@ -2415,7 +2415,7 @@ namespace Supercell.Magic.Logic.GameObject.Component
 						LogicCharacter character = (LogicCharacter)characters[i];
 						LogicCombatComponent combatComponent = character.GetCombatComponent();
 
-						if (combatComponent != null && combatComponent.m_preferredTarget != null && combatComponent.m_preferredTarget.GetDataType() == LogicDataType.BUILDING_CLASS &&
+						if (combatComponent != null && combatComponent.m_preferredTarget != null && combatComponent.m_preferredTarget.GetDataType() == DataType.BUILDING_CLASS &&
 							((LogicBuildingClassData)combatComponent.m_preferredTarget).IsWall())
 						{
 							if (character.IsAlive())
@@ -3330,7 +3330,7 @@ namespace Supercell.Magic.Logic.GameObject.Component
 						{
 							LogicGameObjectData targetData = target.GetData();
 
-							if (targetData.GetDataType() == LogicDataType.HERO)
+							if (targetData.GetDataType() == DataType.HERO)
 							{
 								damage = LogicDataTables.GetGlobals().GetHeroHealMultiplier() * damage / 100;
 							}
@@ -3340,7 +3340,7 @@ namespace Supercell.Magic.Logic.GameObject.Component
 						{
 							LogicGameObjectData targetData = target.GetData();
 
-							if (targetData.GetDataType() == LogicDataType.BUILDING)
+							if (targetData.GetDataType() == DataType.BUILDING)
 							{
 								LogicBuildingData buildingData = (LogicBuildingData)targetData;
 
@@ -4084,9 +4084,9 @@ namespace Supercell.Magic.Logic.GameObject.Component
 			{
 				LogicGameObjectData data = gameObject.GetData();
 
-				if (target.GetDataType() != LogicDataType.BUILDING_CLASS || data.GetDataType() != LogicDataType.BUILDING)
+				if (target.GetDataType() != DataType.BUILDING_CLASS || data.GetDataType() != DataType.BUILDING)
 				{
-					if (target.GetDataType() != LogicDataType.CHARACTER || data.GetDataType() != LogicDataType.CHARACTER ||
+					if (target.GetDataType() != DataType.CHARACTER || data.GetDataType() != DataType.CHARACTER ||
 						((LogicCharacterData)data).IsSecondaryTroop() ||
 						((LogicCharacter)gameObject).GetSecondaryTroopTeam() == 0)
 					{

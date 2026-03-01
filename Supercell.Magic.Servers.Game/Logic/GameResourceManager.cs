@@ -21,9 +21,9 @@ namespace Supercell.Magic.Servers.Game.Logic
 		public static void Init()
 		{
 			GameResourceManager.CompressedStartingHomeJSON = GameResourceManager.Compress(ServerHttpClient.DownloadBytes("data/level/starting_home.json"));
-			GameResourceManager.NpcHomes = new LogicClientHome[LogicDataTables.GetTable(LogicDataType.NPC).GetItemCount()];
+			GameResourceManager.NpcHomes = new LogicClientHome[LogicDataTables.GetTable(DataType.NPC).GetItemCount()];
 
-			LogicDataTable table = LogicDataTables.GetTable(LogicDataType.NPC);
+			LogicDataTable table = LogicDataTables.GetTable(DataType.NPC);
 
 			for (int i = 0; i < table.GetItemCount(); i++)
 			{

@@ -22,7 +22,7 @@ namespace Supercell.Magic.Logic.Command.Home
 
 		public override void Decode(ByteStream stream)
 		{
-			m_missionData = (LogicMissionData)ByteStreamHelper.ReadDataReference(stream, LogicDataType.MISSION);
+			m_missionData = (LogicMissionData)ByteStreamHelper.ReadDataReference(stream, DataType.MISSION);
 			base.Decode(stream);
 		}
 

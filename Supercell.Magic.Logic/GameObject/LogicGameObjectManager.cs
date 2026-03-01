@@ -112,8 +112,8 @@ namespace Supercell.Magic.Logic.GameObject
 
 			if (LogicDataTables.GetGlobals().UseNewTraining())
 			{
-				m_unitProduction = new LogicUnitProduction(level, LogicDataType.CHARACTER, m_villageType);
-				m_spellProduction = new LogicUnitProduction(level, LogicDataType.SPELL, m_villageType);
+				m_unitProduction = new LogicUnitProduction(level, DataType.CHARACTER, m_villageType);
+				m_spellProduction = new LogicUnitProduction(level, DataType.SPELL, m_villageType);
 			}
 		}
 
@@ -853,7 +853,7 @@ namespace Supercell.Magic.Logic.GameObject
 
 		public void LoadVillageObjects()
 		{
-			LogicDataTable dataTable = LogicDataTables.GetTable(LogicDataType.VILLAGE_OBJECT);
+			LogicDataTable dataTable = LogicDataTables.GetTable(DataType.VILLAGE_OBJECT);
 
 			for (int i = 0; i < dataTable.GetItemCount(); i++)
 			{
@@ -1244,7 +1244,7 @@ namespace Supercell.Magic.Logic.GameObject
 				Debugger.Warning("invalid village type home (2)!");
 			}
 
-			LogicDataTable table = LogicDataTables.GetTable(LogicDataType.OBSTACLE);
+			LogicDataTable table = LogicDataTables.GetTable(DataType.OBSTACLE);
 			int respawnWeights = 0;
 
 			for (int i = 0; i < table.GetItemCount(); i++)
@@ -1294,7 +1294,7 @@ namespace Supercell.Magic.Logic.GameObject
 				Debugger.Warning("invalid village type home (2)!");
 			}
 
-			LogicDataTable table = LogicDataTables.GetTable(LogicDataType.OBSTACLE);
+			LogicDataTable table = LogicDataTables.GetTable(DataType.OBSTACLE);
 			int respawnWeights = 0;
 
 			for (int i = 0; i < table.GetItemCount(); i++)
@@ -1339,7 +1339,7 @@ namespace Supercell.Magic.Logic.GameObject
 
 		public void CreateTallGrass()
 		{
-			LogicDataTable obstacleTable = LogicDataTables.GetTable(LogicDataType.OBSTACLE);
+			LogicDataTable obstacleTable = LogicDataTables.GetTable(DataType.OBSTACLE);
 			int respawnWeights = 0;
 
 			for (int i = 0; i < obstacleTable.GetItemCount(); i++)
@@ -2197,13 +2197,13 @@ namespace Supercell.Magic.Logic.GameObject
 
 						if (data != null)
 						{
-							LogicDataType dataType = data.GetDataType();
+							DataType dataType = data.GetDataType();
 
-							if (dataType != LogicDataType.BUILDING &&
-								dataType != LogicDataType.OBSTACLE &&
-								dataType != LogicDataType.TRAP &&
-								dataType != LogicDataType.DECO &&
-								dataType != LogicDataType.VILLAGE_OBJECT)
+							if (dataType != DataType.BUILDING &&
+								dataType != DataType.OBSTACLE &&
+								dataType != DataType.TRAP &&
+								dataType != DataType.DECO &&
+								dataType != DataType.VILLAGE_OBJECT)
 							{
 								return;
 							}
@@ -2241,7 +2241,7 @@ namespace Supercell.Magic.Logic.GameObject
 									}
 								}
 
-								if (dataType == LogicDataType.OBSTACLE)
+								if (dataType == DataType.OBSTACLE)
 								{
 									LogicObstacleData obstacleData = (LogicObstacleData)data;
 
@@ -2253,7 +2253,7 @@ namespace Supercell.Magic.Logic.GameObject
 										}
 									}
 								}
-								else if (dataType == LogicDataType.VILLAGE_OBJECT)
+								else if (dataType == DataType.VILLAGE_OBJECT)
 								{
 									LogicVillageObjectData villageObjectData = (LogicVillageObjectData)data;
 

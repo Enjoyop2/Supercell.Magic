@@ -21,7 +21,7 @@ namespace Supercell.Magic.Logic.Helper
 		public static LogicData ReadDataReference(ByteStream stream)
 			=> LogicDataTables.GetDataById(stream.ReadInt());
 
-		public static LogicData ReadDataReference(ByteStream stream, LogicDataType tableIndex)
+		public static LogicData ReadDataReference(ByteStream stream, DataType tableIndex)
 		{
 			int globalId = stream.ReadInt();
 

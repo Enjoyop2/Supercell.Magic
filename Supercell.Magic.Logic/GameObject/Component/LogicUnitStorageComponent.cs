@@ -314,7 +314,7 @@ namespace Supercell.Magic.Logic.GameObject.Component
 							if (countObject != null)
 							{
 								LogicData data = LogicDataTables.GetDataById(dataObject.GetIntValue(),
-																			 m_storageType != 0 ? LogicDataType.SPELL : LogicDataType.CHARACTER);
+																			 m_storageType != 0 ? DataType.SPELL : DataType.CHARACTER);
 
 								if (data == null)
 								{

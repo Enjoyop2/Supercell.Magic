@@ -17,7 +17,7 @@ namespace Supercell.Magic.Logic.GameObject.Component
 		public bool IsNotEmpty()
 		{
 			LogicAvatar homeOwnerAvatar = m_parent.GetLevel().GetHomeOwnerAvatar();
-			LogicDataTable table = LogicDataTables.GetTable(LogicDataType.RESOURCE);
+			LogicDataTable table = LogicDataTables.GetTable(DataType.RESOURCE);
 
 			for (int i = 0; i < table.GetItemCount(); i++)
 			{
@@ -58,7 +58,7 @@ namespace Supercell.Magic.Logic.GameObject.Component
 		public override void RecalculateAvailableLoot()
 		{
 			LogicAvatar homeOwnerAvatar = m_parent.GetLevel().GetHomeOwnerAvatar();
-			LogicDataTable resourceTable = LogicDataTables.GetTable(LogicDataType.RESOURCE);
+			LogicDataTable resourceTable = LogicDataTables.GetTable(DataType.RESOURCE);
 
 			for (int i = 0; i < m_resourceCount.Size(); i++)
 			{
@@ -133,7 +133,7 @@ namespace Supercell.Magic.Logic.GameObject.Component
 		{
 			if (damage > 0 && hp > 0)
 			{
-				LogicDataTable table = LogicDataTables.GetTable(LogicDataType.RESOURCE);
+				LogicDataTable table = LogicDataTables.GetTable(DataType.RESOURCE);
 
 				for (int i = 0; i < m_stealableResourceCount.Size(); i++)
 				{
@@ -172,7 +172,7 @@ namespace Supercell.Magic.Logic.GameObject.Component
 				collected = 0;
 
 				LogicClientAvatar playerAvatar = (LogicClientAvatar)m_parent.GetLevel().GetHomeOwnerAvatar();
-				LogicDataTable table = LogicDataTables.GetTable(LogicDataType.RESOURCE);
+				LogicDataTable table = LogicDataTables.GetTable(DataType.RESOURCE);
 
 				for (int i = 0; i < table.GetItemCount(); i++)
 				{

@@ -17,7 +17,7 @@ namespace Supercell.Magic.Servers.Admin.Controllers
 		public JObject Index()
 			=> this.BuildResponse(HttpStatusCode.OK)
 					   .AddAttribute("totalUsers", DashboardManager.TotalUsers)
-					   .AddAttribute("onlineUsers", ServerManager.OnlineUsers)
-					   .AddAttribute("averagePings", ServerManager.AveragePings);
+					   .AddAttribute("onlineUsers", ServerManager.GetOnlineUsers())
+					   .AddAttribute("averagePings", ServerManager.GetAveragePings());
 	}
 }

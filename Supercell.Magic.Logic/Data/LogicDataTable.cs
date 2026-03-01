@@ -6,7 +6,7 @@ namespace Supercell.Magic.Logic.Data
 {
 	public class LogicDataTable
 	{
-		private LogicDataType m_tableIndex;
+		private DataType m_tableIndex;
 		private string m_tableName;
 		private bool m_loaded;
 		private bool m_loaded2;
@@ -14,7 +14,7 @@ namespace Supercell.Magic.Logic.Data
 		protected CSVTable m_table;
 		protected LogicArrayList<LogicData> m_items;
 
-		public LogicDataTable(CSVTable table, LogicDataType index)
+		public LogicDataTable(CSVTable table, DataType index)
 		{
 			m_tableIndex = index;
 			m_table = table;
@@ -59,250 +59,250 @@ namespace Supercell.Magic.Logic.Data
 
 			switch (m_tableIndex)
 			{
-				case LogicDataType.BUILDING:
+				case DataType.BUILDING:
 					{
 						data = new LogicBuildingData(row, this);
 						break;
 					}
 
-				case LogicDataType.LOCALE:
+				case DataType.LOCALE:
 					{
 						data = new LogicLocaleData(row, this);
 						break;
 					}
 
-				case LogicDataType.RESOURCE:
+				case DataType.RESOURCE:
 					{
 						data = new LogicResourceData(row, this);
 						break;
 					}
 
-				case LogicDataType.CHARACTER:
+				case DataType.CHARACTER:
 					{
 						data = new LogicCharacterData(row, this);
 						break;
 					}
 
-				case LogicDataType.ANIMATION:
+				case DataType.ANIMATION:
 					{
 						data = new LogicAnimationData(row, this);
 						break;
 					}
 
-				case LogicDataType.PROJECTILE:
+				case DataType.PROJECTILE:
 					{
 						data = new LogicProjectileData(row, this);
 						break;
 					}
 
-				case LogicDataType.BUILDING_CLASS:
+				case DataType.BUILDING_CLASS:
 					{
 						data = new LogicBuildingClassData(row, this);
 						break;
 					}
 
-				case LogicDataType.OBSTACLE:
+				case DataType.OBSTACLE:
 					{
 						data = new LogicObstacleData(row, this);
 						break;
 					}
 
-				case LogicDataType.EFFECT:
+				case DataType.EFFECT:
 					{
 						data = new LogicEffectData(row, this);
 						break;
 					}
 
-				case LogicDataType.PARTICLE_EMITTER:
+				case DataType.PARTICLE_EMITTER:
 					{
 						data = new LogicParticleEmitterData(row, this);
 						break;
 					}
 
-				case LogicDataType.EXPERIENCE_LEVEL:
+				case DataType.EXPERIENCE_LEVEL:
 					{
 						data = new LogicExperienceLevelData(row, this);
 						break;
 					}
 
-				case LogicDataType.TRAP:
+				case DataType.TRAP:
 					{
 						data = new LogicTrapData(row, this);
 						break;
 					}
 
-				case LogicDataType.ALLIANCE_BADGE:
+				case DataType.ALLIANCE_BADGE:
 					{
 						data = new LogicAllianceBadgeData(row, this);
 						break;
 					}
 
-				case LogicDataType.GLOBAL:
-				case LogicDataType.CLIENT_GLOBAL:
+				case DataType.GLOBAL:
+				case DataType.CLIENT_GLOBAL:
 					{
 						data = new LogicGlobalData(row, this);
 						break;
 					}
 
-				case LogicDataType.TOWNHALL_LEVEL:
+				case DataType.TOWNHALL_LEVEL:
 					{
 						data = new LogicTownhallLevelData(row, this);
 						break;
 					}
 
-				case LogicDataType.ALLIANCE_PORTAL:
+				case DataType.ALLIANCE_PORTAL:
 					{
 						data = new LogicAlliancePortalData(row, this);
 						break;
 					}
 
-				case LogicDataType.NPC:
+				case DataType.NPC:
 					{
 						data = new LogicNpcData(row, this);
 						break;
 					}
 
-				case LogicDataType.DECO:
+				case DataType.DECO:
 					{
 						data = new LogicDecoData(row, this);
 						break;
 					}
 
-				case LogicDataType.RESOURCE_PACK:
+				case DataType.RESOURCE_PACK:
 					{
 						data = new LogicResourcePackData(row, this);
 						break;
 					}
 
-				case LogicDataType.SHIELD:
+				case DataType.SHIELD:
 					{
 						data = new LogicShieldData(row, this);
 						break;
 					}
 
-				case LogicDataType.MISSION:
+				case DataType.MISSION:
 					{
 						data = new LogicMissionData(row, this);
 						break;
 					}
 
-				case LogicDataType.BILLING_PACKAGE:
+				case DataType.BILLING_PACKAGE:
 					{
 						data = new LogicBillingPackageData(row, this);
 						break;
 					}
 
-				case LogicDataType.ACHIEVEMENT:
+				case DataType.ACHIEVEMENT:
 					{
 						data = new LogicAchievementData(row, this);
 						break;
 					}
 
-				case LogicDataType.SPELL:
+				case DataType.SPELL:
 					{
 						data = new LogicSpellData(row, this);
 						break;
 					}
 
-				case LogicDataType.HINT:
+				case DataType.HINT:
 					{
 						data = new LogicHintData(row, this);
 						break;
 					}
 
-				case LogicDataType.HERO:
+				case DataType.HERO:
 					{
 						data = new LogicHeroData(row, this);
 						break;
 					}
 
-				case LogicDataType.LEAGUE:
+				case DataType.LEAGUE:
 					{
 						data = new LogicLeagueData(row, this);
 						break;
 					}
 
-				case LogicDataType.NEWS:
+				case DataType.NEWS:
 					{
 						data = new LogicNewsData(row, this);
 						break;
 					}
 
-				case LogicDataType.WAR:
+				case DataType.WAR:
 					{
 						data = new LogicWarData(row, this);
 						break;
 					}
 
-				case LogicDataType.REGION:
+				case DataType.REGION:
 					{
 						data = new LogicRegionData(row, this);
 						break;
 					}
 
-				case LogicDataType.ALLIANCE_BADGE_LAYER:
+				case DataType.ALLIANCE_BADGE_LAYER:
 					{
 						data = new LogicAllianceBadgeLayerData(row, this);
 						break;
 					}
 
-				case LogicDataType.ALLIANCE_LEVEL:
+				case DataType.ALLIANCE_LEVEL:
 					{
 						data = new LogicAllianceLevelData(row, this);
 						break;
 					}
 
-				case LogicDataType.HELPSHIFT:
+				case DataType.HELPSHIFT:
 					{
 						data = new LogicHelpshiftData(row, this);
 						break;
 					}
 
-				case LogicDataType.CREDIT:
-				case LogicDataType.FAQ:
-				case LogicDataType.VARIABLE:
+				case DataType.CREDIT:
+				case DataType.FAQ:
+				case DataType.VARIABLE:
 					{
 						data = new LogicData(row, this);
 						break;
 					}
 
-				case LogicDataType.GEM_BUNDLE:
+				case DataType.GEM_BUNDLE:
 					{
 						data = new LogicGemBundleData(row, this);
 						break;
 					}
 
-				case LogicDataType.VILLAGE_OBJECT:
+				case DataType.VILLAGE_OBJECT:
 					{
 						data = new LogicVillageObjectData(row, this);
 						break;
 					}
 
-				case LogicDataType.CALENDAR_EVENT_FUNCTION:
+				case DataType.CALENDAR_EVENT_FUNCTION:
 					{
 						data = new LogicCalendarEventFunctionData(row, this);
 						break;
 					}
 
-				case LogicDataType.BOOMBOX:
+				case DataType.BOOMBOX:
 					{
 						data = new LogicBoomboxData(row, this);
 						break;
 					}
 
-				case LogicDataType.EVENT_ENTRY:
+				case DataType.EVENT_ENTRY:
 					{
 						data = new LogicEventEntryData(row, this);
 						break;
 					}
 
-				case LogicDataType.DEEPLINK:
+				case DataType.DEEPLINK:
 					{
 						data = new LogicDeeplinkData(row, this);
 						break;
 					}
 
-				case LogicDataType.LEAGUE_VILLAGE2:
+				case DataType.LEAGUE_VILLAGE2:
 					{
 						data = new LogicLeagueVillage2Data(row, this);
 						break;
@@ -386,7 +386,7 @@ namespace Supercell.Magic.Logic.Data
 		public int GetItemCount()
 			=> m_items.Size();
 
-		public LogicDataType GetTableIndex()
+		public DataType GetTableIndex()
 			=> m_tableIndex;
 
 		public string GetTableName()

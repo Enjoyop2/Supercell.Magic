@@ -14,7 +14,7 @@ namespace Supercell.Magic.Logic.GameObject.Component
 
 		public LogicResourceStorageComponent(LogicGameObject gameObject) : base(gameObject)
 		{
-			int resourceCount = LogicDataTables.GetTable(LogicDataType.RESOURCE).GetItemCount();
+			int resourceCount = LogicDataTables.GetTable(DataType.RESOURCE).GetItemCount();
 
 			m_maxResourceCount = new LogicArrayList<int>(resourceCount);
 			m_stealableResourceCount = new LogicArrayList<int>(resourceCount);
@@ -47,7 +47,7 @@ namespace Supercell.Magic.Logic.GameObject.Component
 		{
 			if (damage > 0 && hp > 0)
 			{
-				LogicDataTable table = LogicDataTables.GetTable(LogicDataType.RESOURCE);
+				LogicDataTable table = LogicDataTables.GetTable(DataType.RESOURCE);
 
 				for (int i = 0; i < m_stealableResourceCount.Size(); i++)
 				{
@@ -165,7 +165,7 @@ namespace Supercell.Magic.Logic.GameObject.Component
 
 			LogicAvatar homeOwnerAvatar = m_parent.GetLevel().GetHomeOwnerAvatar();
 			LogicAvatar visitorAvatar = m_parent.GetLevel().GetVisitorAvatar();
-			LogicDataTable resourceTable = LogicDataTables.GetTable(LogicDataType.RESOURCE);
+			LogicDataTable resourceTable = LogicDataTables.GetTable(DataType.RESOURCE);
 
 			for (int i = 0; i < m_resourceCount.Size(); i++)
 			{

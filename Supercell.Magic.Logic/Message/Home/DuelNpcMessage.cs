@@ -23,7 +23,7 @@ namespace Supercell.Magic.Logic.Message.Home
 		public override void Decode()
 		{
 			base.Decode();
-			m_npcData = (LogicNpcData)ByteStreamHelper.ReadDataReference(m_stream, LogicDataType.NPC);
+			m_npcData = (LogicNpcData)ByteStreamHelper.ReadDataReference(m_stream, DataType.NPC);
 		}
 
 		public override void Encode()

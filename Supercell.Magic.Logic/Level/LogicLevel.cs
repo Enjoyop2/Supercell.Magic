@@ -159,9 +159,9 @@ namespace Supercell.Magic.Logic.Level
 			m_newShopTraps = new LogicArrayList<int>();
 			m_newShopDecos = new LogicArrayList<int>();
 
-			LogicDataTable buildingTable = LogicDataTables.GetTable(LogicDataType.BUILDING);
-			LogicDataTable trapTable = LogicDataTables.GetTable(LogicDataType.TRAP);
-			LogicDataTable decoTable = LogicDataTables.GetTable(LogicDataType.DECO);
+			LogicDataTable buildingTable = LogicDataTables.GetTable(DataType.BUILDING);
+			LogicDataTable trapTable = LogicDataTables.GetTable(DataType.TRAP);
+			LogicDataTable decoTable = LogicDataTables.GetTable(DataType.DECO);
 
 			m_newShopBuildings.EnsureCapacity(buildingTable.GetItemCount());
 
@@ -1352,9 +1352,9 @@ namespace Supercell.Magic.Logic.Level
 
 		private void SaveShopNewItems(LogicJSONObject jsonObject)
 		{
-			LogicDataTable buildingTable = LogicDataTables.GetTable(LogicDataType.BUILDING);
-			LogicDataTable trapTable = LogicDataTables.GetTable(LogicDataType.TRAP);
-			LogicDataTable decoTable = LogicDataTables.GetTable(LogicDataType.DECO);
+			LogicDataTable buildingTable = LogicDataTables.GetTable(DataType.BUILDING);
+			LogicDataTable trapTable = LogicDataTables.GetTable(DataType.TRAP);
+			LogicDataTable decoTable = LogicDataTables.GetTable(DataType.DECO);
 
 			int townHallLevelVillage2 = m_homeOwnerAvatar.GetVillage2TownHallLevel();
 			int townHallLevel = m_homeOwnerAvatar.GetTownHallLevel();
@@ -1420,9 +1420,9 @@ namespace Supercell.Magic.Logic.Level
 					m_newShopDecos[i] = 0;
 				}
 
-				LogicDataTable buildingTable = LogicDataTables.GetTable(LogicDataType.BUILDING);
-				LogicDataTable trapTable = LogicDataTables.GetTable(LogicDataType.TRAP);
-				LogicDataTable decoTable = LogicDataTables.GetTable(LogicDataType.DECO);
+				LogicDataTable buildingTable = LogicDataTables.GetTable(DataType.BUILDING);
+				LogicDataTable trapTable = LogicDataTables.GetTable(DataType.TRAP);
+				LogicDataTable decoTable = LogicDataTables.GetTable(DataType.DECO);
 
 				int townHallLevelVillage2 = m_homeOwnerAvatar.GetVillage2TownHallLevel();
 				int townHallLevel = m_homeOwnerAvatar.GetTownHallLevel();
@@ -1506,13 +1506,13 @@ namespace Supercell.Magic.Logic.Level
 			{
 				switch (data.GetDataType())
 				{
-					case LogicDataType.BUILDING:
+					case DataType.BUILDING:
 						m_newShopBuildings[index] = count;
 						break;
-					case LogicDataType.TRAP:
+					case DataType.TRAP:
 						m_newShopTraps[index] = count;
 						break;
-					case LogicDataType.DECO:
+					case DataType.DECO:
 						m_newShopDecos[index] = count;
 						break;
 					default:
@@ -1574,7 +1574,7 @@ namespace Supercell.Magic.Logic.Level
 
 			if (m_homeOwnerAvatar.GetExpLevel() > 0)
 			{
-				LogicDataTable table = LogicDataTables.GetTable(LogicDataType.DECO);
+				LogicDataTable table = LogicDataTables.GetTable(DataType.DECO);
 
 				for (int i = 0; i < m_newShopDecos.Size(); i++)
 				{
@@ -1606,7 +1606,7 @@ namespace Supercell.Magic.Logic.Level
 
 				if (thUpgradeLevel > 0)
 				{
-					LogicDataTable buildingTable = LogicDataTables.GetTable(LogicDataType.BUILDING);
+					LogicDataTable buildingTable = LogicDataTables.GetTable(DataType.BUILDING);
 
 					for (int i = 0; i < m_newShopBuildings.Size(); i++)
 					{
@@ -1622,7 +1622,7 @@ namespace Supercell.Magic.Logic.Level
 						}
 					}
 
-					LogicDataTable trapTable = LogicDataTables.GetTable(LogicDataType.TRAP);
+					LogicDataTable trapTable = LogicDataTables.GetTable(DataType.TRAP);
 
 					for (int i = 0; i < m_newShopTraps.Size(); i++)
 					{
@@ -1646,7 +1646,7 @@ namespace Supercell.Magic.Logic.Level
 			if (m_homeOwnerAvatar != null && m_homeOwnerAvatar.IsClientAvatar())
 			{
 				LogicClientAvatar clientAvatar = (LogicClientAvatar)m_homeOwnerAvatar;
-				LogicDataTable table = LogicDataTables.GetTable(LogicDataType.RESOURCE);
+				LogicDataTable table = LogicDataTables.GetTable(DataType.RESOURCE);
 
 				for (int i = 0, cnt = 0; i < table.GetItemCount(); i++, cnt = 0)
 				{
@@ -1844,7 +1844,7 @@ namespace Supercell.Magic.Logic.Level
 
 			switch (data.GetDataType())
 			{
-				case LogicDataType.BUILDING:
+				case DataType.BUILDING:
 					LogicBuildingData buildingData = (LogicBuildingData)data;
 
 					if (!buildingData.IsLocked())
@@ -1856,10 +1856,10 @@ namespace Supercell.Magic.Logic.Level
 					}
 
 					break;
-				case LogicDataType.TRAP:
+				case DataType.TRAP:
 					unlock = LogicDataTables.GetTownHallLevel(arg).GetUnlockedTrapCount((LogicTrapData)data);
 					break;
-				case LogicDataType.DECO:
+				case DataType.DECO:
 					LogicDecoData decoData = (LogicDecoData)data;
 
 					if (decoData.GetRequiredExpLevel() <= arg && decoData.IsInShop())
@@ -2723,7 +2723,7 @@ namespace Supercell.Magic.Logic.Level
 					}
 				}
 
-				if (gameObject.GetData().GetDataType() == LogicDataType.CHARACTER && ((LogicCharacter)gameObject).GetAttackerItemData().GetPreferredTargetData() != null)
+				if (gameObject.GetData().GetDataType() == DataType.CHARACTER && ((LogicCharacter)gameObject).GetAttackerItemData().GetPreferredTargetData() != null)
 				{
 					if (movementComponent != null)
 					{
@@ -2845,7 +2845,7 @@ namespace Supercell.Magic.Logic.Level
 						{
 							if (abilityAffectsHero != null || !character.IsHero())
 							{
-								if (abilityAffectsCharacter != null || characterData.GetDataType() == LogicDataType.HERO)
+								if (abilityAffectsCharacter != null || characterData.GetDataType() == DataType.HERO)
 								{
 									if (characterData == data || !character.IsHero())
 									{
@@ -2870,7 +2870,7 @@ namespace Supercell.Magic.Logic.Level
 													combatComponent.Boost(damageBoostPercent, 0, time);
 												}
 
-												if (characterData.GetDataType() == LogicDataType.CHARACTER &&
+												if (characterData.GetDataType() == DataType.CHARACTER &&
 													character.GetAttackerItemData().GetPreferredTargetData() != null)
 												{
 													movementComponent.GetMovementSystem().Boost(speedBoost2, speedTime);
@@ -3471,7 +3471,7 @@ namespace Supercell.Magic.Logic.Level
 
 							if (leagueData == null)
 							{
-								leagueData = (LogicLeagueData)LogicDataTables.GetTable(LogicDataType.LEAGUE).GetItemAt(0);
+								leagueData = (LogicLeagueData)LogicDataTables.GetTable(DataType.LEAGUE).GetItemAt(0);
 							}
 
 							int villageGuardMins = leagueData.GetVillageGuardInMins();
@@ -3549,7 +3549,7 @@ namespace Supercell.Magic.Logic.Level
 			{
 				availableUnitCount = m_visitorAvatar.GetUnitsTotalVillage2();
 
-				LogicDataTable dataTable = LogicDataTables.GetTable(LogicDataType.HERO);
+				LogicDataTable dataTable = LogicDataTables.GetTable(DataType.HERO);
 
 				for (int i = 0; i < dataTable.GetItemCount(); i++)
 				{
@@ -3577,7 +3577,7 @@ namespace Supercell.Magic.Logic.Level
 					availableUnitCount += m_visitorAvatar.GetAllianceCastleUsedCapacity();
 				}
 
-				LogicDataTable heroTable = LogicDataTables.GetTable(LogicDataType.HERO);
+				LogicDataTable heroTable = LogicDataTables.GetTable(DataType.HERO);
 
 				for (int i = 0; i < heroTable.GetItemCount(); i++)
 				{

@@ -99,28 +99,28 @@ namespace Supercell.Magic.Logic.Calendar
 						GetStringParameter(i);
 						break;
 					case LogicCalendarEventFunctionData.PARAMETER_TYPE_TROOP:
-						GetDataParameter(i, LogicDataType.CHARACTER);
+						GetDataParameter(i, DataType.CHARACTER);
 						break;
 					case LogicCalendarEventFunctionData.PARAMETER_TYPE_SPELL:
-						GetDataParameter(i, LogicDataType.SPELL);
+						GetDataParameter(i, DataType.SPELL);
 						break;
 					case LogicCalendarEventFunctionData.PARAMETER_TYPE_BUILDING:
-						GetDataParameter(i, LogicDataType.BUILDING);
+						GetDataParameter(i, DataType.BUILDING);
 						break;
 					case LogicCalendarEventFunctionData.PARAMETER_TYPE_TRAP:
-						GetDataParameter(i, LogicDataType.TRAP);
+						GetDataParameter(i, DataType.TRAP);
 						break;
 					case LogicCalendarEventFunctionData.PARAMETER_TYPE_BUNDLE:
-						GetDataParameter(i, LogicDataType.GEM_BUNDLE);
+						GetDataParameter(i, DataType.GEM_BUNDLE);
 						break;
 					case LogicCalendarEventFunctionData.PARAMETER_TYPE_BILLING_PACKAGE:
-						GetDataParameter(i, LogicDataType.BILLING_PACKAGE);
+						GetDataParameter(i, DataType.BILLING_PACKAGE);
 						break;
 					case LogicCalendarEventFunctionData.PARAMETER_TYPE_ANIMATION:
 						// TODO: Implement this (client)
 						break;
 					case LogicCalendarEventFunctionData.PARAMETER_TYPE_HERO:
-						GetDataParameter(i, LogicDataType.HERO);
+						GetDataParameter(i, DataType.HERO);
 						break;
 					default:
 						m_errorHandler.ErrorFunction(m_calendarEvent, this, m_functionData.GetParameterName(i),
@@ -158,34 +158,34 @@ namespace Supercell.Magic.Logic.Calendar
 					calendarEvent.SetNewTrainingBoostSpellCost(GetIntParameter(0));
 					break;
 				case LogicCalendarEventFunctionData.FUNCTION_TYPE_BUILDING_BOOST:
-					calendarEvent.AddBuildingBoost(GetDataParameter(0, LogicDataType.BUILDING), GetIntParameter(1));
+					calendarEvent.AddBuildingBoost(GetDataParameter(0, DataType.BUILDING), GetIntParameter(1));
 					break;
 				case LogicCalendarEventFunctionData.FUNCTION_TYPE_TROOP_DISCOUNT:
-					calendarEvent.AddTroopDiscount(GetDataParameter(0, LogicDataType.CHARACTER), GetIntParameter(1));
+					calendarEvent.AddTroopDiscount(GetDataParameter(0, DataType.CHARACTER), GetIntParameter(1));
 					break;
 				case LogicCalendarEventFunctionData.FUNCTION_TYPE_SPELL_DISCOUNT:
-					calendarEvent.AddTroopDiscount(GetDataParameter(0, LogicDataType.SPELL), GetIntParameter(1));
+					calendarEvent.AddTroopDiscount(GetDataParameter(0, DataType.SPELL), GetIntParameter(1));
 					break;
 				case LogicCalendarEventFunctionData.FUNCTION_TYPE_CLAN_XP_MULTIPLIER:
 					calendarEvent.SetAllianceXpMultiplier(GetIntParameter(0));
 					break;
 				case LogicCalendarEventFunctionData.FUNCTION_TYPE_OFFER_BUNDLE:
-					calendarEvent.AddEnabledData(GetDataParameter(0, LogicDataType.GEM_BUNDLE));
+					calendarEvent.AddEnabledData(GetDataParameter(0, DataType.GEM_BUNDLE));
 					break;
 				case LogicCalendarEventFunctionData.FUNCTION_TYPE_STAR_BONUS_MULTIPLIER:
 					calendarEvent.SetStarBonusMultiplier(GetIntParameter(0));
 					break;
 				case LogicCalendarEventFunctionData.FUNCTION_TYPE_ENABLE_TROOP:
-					calendarEvent.AddEnabledData(GetDataParameter(0, LogicDataType.CHARACTER));
+					calendarEvent.AddEnabledData(GetDataParameter(0, DataType.CHARACTER));
 					break;
 				case LogicCalendarEventFunctionData.FUNCTION_TYPE_ENABLE_SPELL:
-					calendarEvent.AddEnabledData(GetDataParameter(0, LogicDataType.SPELL));
+					calendarEvent.AddEnabledData(GetDataParameter(0, DataType.SPELL));
 					break;
 				case LogicCalendarEventFunctionData.FUNCTION_TYPE_ENABLE_TRAP:
-					calendarEvent.AddEnabledData(GetDataParameter(0, LogicDataType.TRAP));
+					calendarEvent.AddEnabledData(GetDataParameter(0, DataType.TRAP));
 					break;
 				case LogicCalendarEventFunctionData.FUNCTION_TYPE_USE_TROOP:
-					calendarEvent.AddUseTroop((LogicCombatItemData)GetDataParameter(0, LogicDataType.CHARACTER), GetIntParameter(1), GetIntParameter(2),
+					calendarEvent.AddUseTroop((LogicCombatItemData)GetDataParameter(0, DataType.CHARACTER), GetIntParameter(1), GetIntParameter(2),
 											  GetIntParameter(3), GetIntParameter(4));
 					break;
 				case LogicCalendarEventFunctionData.FUNCTION_TYPE_TARGETING_TOWN_HALL_LEVEL:
@@ -193,25 +193,25 @@ namespace Supercell.Magic.Logic.Calendar
 					Debugger.Warning("You should no longer target thru event functions.");
 					break;
 				case LogicCalendarEventFunctionData.FUNCTION_TYPE_ENABLE_BILLING_PACKAGE:
-					calendarEvent.AddEnabledData(GetDataParameter(0, LogicDataType.BILLING_PACKAGE));
+					calendarEvent.AddEnabledData(GetDataParameter(0, DataType.BILLING_PACKAGE));
 					break;
 				case LogicCalendarEventFunctionData.FUNCTION_TYPE_CHANGE_WORKER_LOOK:
 					// TODO: Implement this (client).
 					break;
 				case LogicCalendarEventFunctionData.FUNCTION_TYPE_GIVE_FREE_TROOPS:
-					calendarEvent.AddFreeTroop((LogicCombatItemData)GetDataParameter(0, LogicDataType.CHARACTER), GetIntParameter(1));
+					calendarEvent.AddFreeTroop((LogicCombatItemData)GetDataParameter(0, DataType.CHARACTER), GetIntParameter(1));
 					break;
 				case LogicCalendarEventFunctionData.FUNCTION_TYPE_GIVE_FREE_SPELLS:
-					calendarEvent.AddFreeTroop((LogicCombatItemData)GetDataParameter(0, LogicDataType.SPELL), GetIntParameter(1));
+					calendarEvent.AddFreeTroop((LogicCombatItemData)GetDataParameter(0, DataType.SPELL), GetIntParameter(1));
 					break;
 				case LogicCalendarEventFunctionData.FUNCTION_TYPE_GIVE_FREE_HERO_HEALTH:
-					if (GetDataParameter(0, LogicDataType.HERO) != null)
+					if (GetDataParameter(0, DataType.HERO) != null)
 					{
-						calendarEvent.AddFreeTroop((LogicCombatItemData)GetDataParameter(0, LogicDataType.HERO), 1);
+						calendarEvent.AddFreeTroop((LogicCombatItemData)GetDataParameter(0, DataType.HERO), 1);
 					}
 					else
 					{
-						LogicDataTable table = LogicDataTables.GetTable(LogicDataType.HERO);
+						LogicDataTable table = LogicDataTables.GetTable(DataType.HERO);
 
 						for (int i = 0; i < table.GetItemCount(); i++)
 						{
@@ -224,12 +224,12 @@ namespace Supercell.Magic.Logic.Calendar
 					// TODO: Implement this (client).
 					break;
 				case LogicCalendarEventFunctionData.FUNCTION_TYPE_BUILDING_DESTROYED_SPAWN_UNIT:
-					calendarEvent.AddBuildingDestroyedSpawnUnit((LogicBuildingData)GetDataParameter(0, LogicDataType.BUILDING),
-																(LogicCharacterData)GetDataParameter(1, LogicDataType.CHARACTER),
+					calendarEvent.AddBuildingDestroyedSpawnUnit((LogicBuildingData)GetDataParameter(0, DataType.BUILDING),
+																(LogicCharacterData)GetDataParameter(1, DataType.CHARACTER),
 																GetIntParameter(2));
 					break;
 				case LogicCalendarEventFunctionData.FUNCTION_TYPE_USE_SPELL:
-					calendarEvent.AddUseTroop((LogicCombatItemData)GetDataParameter(0, LogicDataType.SPELL), GetIntParameter(1), GetIntParameter(2),
+					calendarEvent.AddUseTroop((LogicCombatItemData)GetDataParameter(0, DataType.SPELL), GetIntParameter(1), GetIntParameter(2),
 											  GetIntParameter(3), GetIntParameter(4));
 					break;
 				case LogicCalendarEventFunctionData.FUNCTION_TYPE_CLAN_WAR_LOOT_MULTIPLIER:
@@ -243,7 +243,7 @@ namespace Supercell.Magic.Logic.Calendar
 			}
 		}
 
-		public LogicData GetDataParameter(int idx, LogicDataType tableIdx)
+		public LogicData GetDataParameter(int idx, DataType tableIdx)
 		{
 			if (IsValidParameter(idx))
 			{

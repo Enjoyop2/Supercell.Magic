@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "Supercell.Magic.Servers.Admin": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:53059;http://localhost:53060"
+    }
+  }
+}
