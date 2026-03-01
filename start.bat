@@ -1,5 +1,5 @@
 start dotnet Supercell.Magic.Servers.Proxy/bin/Debug/netcoreapp2.2/Supercell.Magic.Servers.Proxy.dll
-start dotnet Supercell.Magic.Servers.Account/bin/Debug/netcoreapp2.2/Supercell.Magic.Servers.Account.dll
+start dotnet Supercell.Magic.Servers.Battle/bin/Debug/netcoreapp2.2/Supercell.Magic.Servers.Battle.dll
 start dotnet Supercell.Magic.Servers.Game/bin/Debug/netcoreapp2.2/Supercell.Magic.Servers.Game.dll
 start dotnet Supercell.Magic.Servers.Home/bin/Debug/netcoreapp2.2/Supercell.Magic.Servers.Home.dll
 start dotnet Supercell.Magic.Servers.Chat/bin/Debug/netcoreapp2.2/Supercell.Magic.Servers.Chat.dll

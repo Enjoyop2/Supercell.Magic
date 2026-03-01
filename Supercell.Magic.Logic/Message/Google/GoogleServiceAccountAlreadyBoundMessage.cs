@@ -6,7 +6,7 @@ namespace Supercell.Magic.Logic.Message.Google
 {
 	public class GoogleServiceAccountAlreadyBoundMessage : PiranhaMessage
 	{
-		public const int MESSAGE_TYPE = 20262;
+		public const int MESSAGE_TYPE = 24262;
 
 		private LogicLong m_accountId;
 		private LogicClientAvatar m_avatar;

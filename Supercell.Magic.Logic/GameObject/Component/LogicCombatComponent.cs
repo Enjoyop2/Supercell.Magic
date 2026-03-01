@@ -1553,7 +1553,7 @@ namespace Supercell.Magic.Logic.GameObject.Component
 					{
 						LogicGameObject gameObject = m_targetGroups[i];
 
-						if (m_targetGroups[i].GetGameObjectType() == LogicGameObjectType.CHARACTER)
+						if (gameObject.GetGameObjectType() == LogicGameObjectType.CHARACTER)
 						{
 							LogicCharacter character = (LogicCharacter)gameObject;
 

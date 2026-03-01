@@ -1,6 +1,7 @@
 using Supercell.Magic.Logic.Avatar;
 using Supercell.Magic.Logic.Home;
 using Supercell.Magic.Titan.DataStream;
+using Supercell.Magic.Titan.Math;
 
 namespace Supercell.Magic.Servers.Core.Network.Message.Session
 {
@@ -14,14 +15,23 @@ namespace Supercell.Magic.Servers.Core.Network.Message.Session
 		{
 			get; set;
 		}
+		public LogicLong HomeId
+		{
+			get; set;
+		}
+		public byte[] HomeData
+		{
+			get; set;
+		}
 
 		public int SaveTime { get; set; } = -1;
+
 
 		public virtual void Encode(ByteStream stream)
 		{
 			PlayerAvatar.Encode(stream);
-			Home.Encode(stream);
-
+			stream.WriteLong(HomeId);
+			stream.WriteBytes(HomeData, HomeData.Length);
 			stream.WriteVInt(SaveTime);
 		}
 
@@ -29,8 +39,8 @@ namespace Supercell.Magic.Servers.Core.Network.Message.Session
 		{
 			PlayerAvatar = new LogicClientAvatar();
 			PlayerAvatar.Decode(stream);
-			Home = new LogicClientHome();
-			Home.Decode(stream);
+			HomeId = stream.ReadLong();
+			HomeData = stream.ReadBytes(stream.ReadBytesLength(), 900000);
 			SaveTime = stream.ReadVInt();
 		}
 

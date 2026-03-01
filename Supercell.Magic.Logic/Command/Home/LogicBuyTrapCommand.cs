@@ -59,7 +59,8 @@ namespace Supercell.Magic.Logic.Command.Home
 		{
 			if (m_trapData != null)
 			{
-				if (m_trapData.GetVillageType() == level.GetVillageType())
+				//if (m_trapData.GetVillageType() == level.GetVillageType())
+				if (m_trapData.IsEnabledInVillageType(level.GetVillageType()))
 				{
 					if (level.IsValidPlaceForBuilding(m_x, m_y, m_trapData.GetWidth(), m_trapData.GetHeight(), null))
 					{

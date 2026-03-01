@@ -89,7 +89,7 @@ namespace Supercell.Magic.Logic.Message.Chat
 			m_allianceId = null;
 		}
 
-		public string RemoveMessage(string message)
+		public string RemoveMessage()
 		{
 			string tmp = m_message;
 			m_message = null;

@@ -126,7 +126,7 @@ namespace Supercell.Magic.Logic
 			}
 		}
 
-		
+
 		public bool GetBattleWaitForProjectileDestruction()
 			=> m_battleWaitForProjectileDestruction;
 

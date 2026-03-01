@@ -7,6 +7,8 @@ namespace Supercell.Magic.Logic.Message.Account
 	{
 		public const int MESSAGE_TYPE = 10117;
 
+		private int m_reportSource;
+
 		private LogicLong m_reportedAvatarId;
 
 		public ReportUserMessage() : this(0)
@@ -22,12 +24,14 @@ namespace Supercell.Magic.Logic.Message.Account
 		public override void Decode()
 		{
 			base.Decode();
+			m_reportSource = m_stream.ReadInt();
 			m_reportedAvatarId = m_stream.ReadLong();
 		}
 
 		public override void Encode()
 		{
 			base.Encode();
+			m_stream.WriteInt(m_reportSource);
 			m_stream.WriteLong(m_reportedAvatarId);
 		}
 
@@ -40,6 +44,13 @@ namespace Supercell.Magic.Logic.Message.Account
 		public override void Destruct()
 		{
 			base.Destruct();
+		}
+		public int GetReportSource()
+			=> m_reportSource;
+
+		public void SetReportSource(int value)
+		{
+			m_reportSource = value;
 		}
 
 		public LogicLong RemoveReportedAvatarId()

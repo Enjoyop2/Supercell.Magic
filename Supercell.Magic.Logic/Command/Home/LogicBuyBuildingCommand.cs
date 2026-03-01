@@ -56,7 +56,8 @@ namespace Supercell.Magic.Logic.Command.Home
 		{
 			int villageType = level.GetVillageType();
 
-			if (m_buildingData.GetVillageType() == villageType)
+			//if (m_buildingData.GetVillageType() == villageType)
+			if (m_buildingData.IsEnabledInVillageType(villageType))
 			{
 				if (m_buildingData.GetWallBlockCount() <= 1 && m_buildingData.GetBuildingClass().CanBuy())
 				{

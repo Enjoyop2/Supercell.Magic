@@ -100,7 +100,7 @@ namespace Supercell.Magic.Logic.Command.Home
 
 										if (shapeIdx == -1 || shapeIdx != nIdx)
 										{
-											Debugger.Error("LogicBuyWallBlockCommand shape incorrect");
+											//Debugger.Error("LogicBuyWallBlockCommand shape incorrect");
 											return -4;
 										}
 
@@ -109,7 +109,7 @@ namespace Supercell.Magic.Logic.Command.Home
 
 									if (!level.IsValidPlaceForBuilding(position.m_x, position.m_y, m_buildingData.GetWidth(), m_buildingData.GetHeight(), null))
 									{
-										Debugger.Error("LogicBuyWallBlockCommand invalid place.");
+										//Debugger.Error("LogicBuyWallBlockCommand invalid place.");
 										return -5;
 									}
 								}

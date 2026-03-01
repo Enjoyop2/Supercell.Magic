@@ -462,6 +462,12 @@ namespace Supercell.Magic.Logic.Message
 							break;
 						}
 
+					case ChatAccountBanStatusMessage.MESSAGE_TYPE:
+						{
+							message = new ChatAccountBanStatusMessage();
+							break;
+						}
+
 					case UnlockAccountOkMessage.MESSAGE_TYPE:
 						{
 							message = new UnlockAccountOkMessage();

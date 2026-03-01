@@ -2,10 +2,10 @@ namespace Supercell.Magic.Logic.Level
 {
 	public sealed class LogicRect
 	{
-		private readonly int m_startX;
-		private readonly int m_startY;
-		private readonly int m_endX;
-		private readonly int m_endY;
+		public readonly int m_startX;
+		public readonly int m_startY;
+		public readonly int m_endX;
+		public readonly int m_endY;
 
 		public LogicRect(int startX, int startY, int endX, int endY)
 		{
@@ -31,6 +31,7 @@ namespace Supercell.Magic.Logic.Level
 
 		public int GetEndY()
 			=> m_endY;
+
 
 		public bool IsInside(int x, int y)
 		{

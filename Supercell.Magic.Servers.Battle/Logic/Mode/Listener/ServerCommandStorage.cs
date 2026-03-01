@@ -1,41 +1,41 @@
-﻿namespace Supercell.Magic.Servers.Battle.Logic.Mode.Listener
+using Supercell.Magic.Logic.Command;
+using Supercell.Magic.Logic.Command.Listener;
+using Supercell.Magic.Logic.Command.Server;
+using Supercell.Magic.Logic.Mode;
+
+using Supercell.Magic.Titan.Util;
+
+namespace Supercell.Magic.Servers.Battle.Logic.Mode.Listener
 {
-    using Supercell.Magic.Logic.Command;
-    using Supercell.Magic.Logic.Command.Listener;
-    using Supercell.Magic.Logic.Command.Server;
-    using Supercell.Magic.Logic.Mode;
+	public class ServerCommandStorage : LogicCommandManagerListener
+	{
+		private readonly GameMode m_gameMode;
+		private readonly LogicGameMode m_logicGameMode;
 
-    using Supercell.Magic.Titan.Util;
+		public ServerCommandStorage(GameMode gameMode, LogicGameMode logicGameMode)
+		{
+			m_gameMode = gameMode;
+			m_logicGameMode = logicGameMode;
+		}
 
-    public class ServerCommandStorage : LogicCommandManagerListener
-    {
-        private readonly GameMode m_gameMode;
-        private readonly LogicGameMode m_logicGameMode;
+		public override void Destruct()
+		{
+			base.Destruct();
+		}
 
-        public ServerCommandStorage(GameMode gameMode, LogicGameMode logicGameMode)
-        {
-            this.m_gameMode = gameMode;
-            this.m_logicGameMode = logicGameMode;
-        }
+		public override void CommandExecuted(LogicCommand command)
+		{
+		}
 
-        public override void Destruct()
-        {
-            base.Destruct();
-        }
+		public void CheckExecutableServerCommands(int endSubTick, LogicArrayList<LogicCommand> commands)
+		{
+			for (int i = 0; i < commands.Size(); i++)
+			{
+				LogicCommand command = commands[i];
 
-        public override void CommandExecuted(LogicCommand command)
-        {
-        }
-        
-        public void CheckExecutableServerCommands(int endSubTick, LogicArrayList<LogicCommand> commands)
-        {
-            for (int i = 0; i < commands.Size(); i++)
-            {
-                LogicCommand command = commands[i];
-                
-                if (command.IsServerCommand())
-                    commands.Remove(i--);
-            }
-        }
-    }
+				if (command.IsServerCommand())
+					commands.Remove(i--);
+			}
+		}
+	}
 }
