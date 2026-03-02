@@ -1,4 +1,94 @@
 ## Supercell.Magic - Project
+## 📦 Requirements:
+	- Basic knowledge of APK modification
+	- .[.NET Core SDK 2.2 and runtime ](https://dotnet.microsoft.com/download/dotnet-core/2.2)
+	- .[WAMP Server](https://wampserver.aviatechno.net)
+	- .[CouchBase Databse Server](https://www.couchbase.com/downloads/?family=couchbase-server)
+	- .[Redis Server](https://github.com/redis/redis)
+	- .[APK signing tool](https://github.com/mkcs121/APK-Easy-Tool)
+
+## 🖥️ Server Setup:
+---
+1️⃣ Building the Project
+ 1) You can either build the project yourself or use the prebuilt release version. .NET Core 2.2 must be installed.
+ 2) Install the WAMP server and start the services.
+ 3) Paste the `www` folder from the server software over the `www` folder in the WAMP server.
+ 4) Install the Couchbase database community edition or higher and create a user.
+ 4.1) The default user is Administrator, password: 123456. If you create a different user in the environment.json file, change this in the configuration.
+ 4.2) Open Couchbase in your browser and create 4 buckets: `magic-players`, `magic-alliances`, `magic-streams`, `magic-seasons`. You can see them in the buckets directory in the environment.json file.
+![Bucket](setup/Couchbase%20Add%20Bucket.png)
+
+```json
+{
+	"environment": "dev",
+	"servers": {
+		"settings": {
+			"contentValidationModeEnabled": false,
+			"proxy": {
+				"startMaintenanceTimeSecs": 0,
+				"sessionCapacity": 50
+			},
+			"admin": {
+				"presetLevelFiles": [
+					"/level/townhall8.json",
+					"/level/townhall9.json",
+					"/level/townhall10.json",
+					"/level/townhall11.json",
+					"/level/test/highlevel1.json",
+					"/level/test/highlevel2.json",
+					"/level/test/highlevel3.json",
+					"/level/test/highlevel4.json",
+					"/level/test/highlevel5.json",
+					"/level/test/highlevel6.json",
+					"/level/test/highlevel7.json",
+					"/level/test/highlevel8.json",
+					"/level/test/highlevel9.json",
+					"/level/test/playtest0.json",
+					"/level/test/playtest1.json",
+					"/level/test/playtest2.json",
+					"/level/test/playtest3.json",
+					"/level/test/playtest4.json",
+					"/level/test/playtest5.json"
+				]
+			}
+		},
+		"admin": ["127.0.0.1:10001"],
+		"proxy": ["127.0.0.1:10002"],
+		"chat": ["127.0.0.1:10003"],
+		"game": ["127.0.0.1:10004"],
+		"home": ["127.0.0.1:10005"],
+		"stream": ["127.0.0.1:10007"],
+		"battle": ["127.0.0.1:10008"],
+		"scoring": ["127.0.0.1:10009"],
+		"search": ["127.0.0.1:10010"]
+	},
+	"database": {
+		"higher_id_counter_size": 256,
+		"couchbase": {
+			"servers": [
+				{
+					"hosts": ["127.0.0.1"],
+					"username": "Administrator",
+					"password": "123456"
+				}
+			],
+			"buckets": [
+				"magic-players:0",
+				"magic-alliances:0",
+				"magic-streams:0",
+				"magic-seasons:0"
+			]
+		},
+		"redis": {
+			"databases": [
+				{"name": "magic-session", "connectionString": "127.0.0.1:6379"},
+				{"name": "magic-admin", "connectionString": "127.0.0.1:6379"}
+			]
+		}
+	}
+}
+```
+
 ***Supercell.Magic*** is a Clash of Clans Server.
 It was written by myself.
 The goal of this server was to implement all the features of Clash of Clans and support millions of players.
@@ -11,3 +101,18 @@ If you have any questions, you can contact me on discord (@Mimi8297#8726).
 You can use it to create your own private server if you wish. The current version has some logic bugs.
 Here is a site that uses this version: https://atrasis.net.
 I offer partnerships that allow you to have your own private server. Prices are $350/month. 
+
+---
+## 📜 Legal & Disclaimer
+This repository is created in accordance with **Supercell's Fan Content Policy**.
+🔗 https://supercell.com/en/fan-content-policy/
+
+- This project is **not affiliated with, endorsed, sponsored, or approved by Supercell**.
+- All game assets belong to their respective owners.
+- This repository is intended for **non-commercial fan and educational use only**.
+---
+
+---
+## ⭐ Support
+If you find this project useful, consider giving it a star ⭐ to support development.
+---
