@@ -19,6 +19,7 @@
   1. The default user is Administrator, password: 123456. If you create a different user in the environment.json file, change this in the configuration.
   2. Open Couchbase in your browser and create 4 buckets: `magic-players`, `magic-alliances`, `magic-streams`, `magic-seasons`. You can see them in the buckets directory in the environment.json file.
 ---
+![Bucket](/Setup/Couchbase%20Add%20Bucket.png)
 
 ```json
 {
