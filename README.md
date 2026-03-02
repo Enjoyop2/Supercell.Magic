@@ -92,7 +92,7 @@
 ---
 ![Bucket](/Setup/Couchbase%20Add%20Bucket.png)
 	3. Let's move on to Views. Actually, this file (https://github.com/Enjoyop2/Supercell.Magic/blob/master/Supercell.Magic.Servers.Scoring/Logic/ScoringSeason.cs) tells you what you need to do, but let's write it down anyway.
-   4. Create a player's leaderboard_0 file inside magic-players. Write the following inside it:
+	4. Create a player's leaderboard_0 file inside magic-players. Write the following inside it:
 
  ```javascript
 function (doc, meta) {
@@ -182,8 +182,19 @@ function (doc, meta) {
 }
 ```
 Yes, save the views. Publish the view.
-
+Start the redist database.
+Okay, now you can start the server using start.bat or start.sh.
 ---
+## 📱 Client Connection:
+[Client Download](https://www.mediafire.com/file/9ju0bhj0hfptvxk/client-v9.256.20.apk/file)
+Change the IP address in libg.so (2 x86 and 32-bit versions) to 192.168.1.85.
+This is compiled C code; do not edit it with a text editor, modify it with a hex editor.
+Put it into the APK and sign it. Install the APK; that's all.
+
+This code may have some shortcomings; I've tried to review it thoroughly. My goal with this code is to create a competitive local mod with 5-6 friends.
+For higher versions and versions with more features, contact the original author. I probably won't touch this again.
+
+
 ***Supercell.Magic*** is a Clash of Clans Server.
 It was written by myself.
 The goal of this server was to implement all the features of Clash of Clans and support millions of players.
