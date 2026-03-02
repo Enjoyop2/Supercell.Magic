@@ -181,6 +181,9 @@ function (doc, meta) {
   }
 }
 ```
+
+![Views](Setup/Couchbase%20Add%20Views.png)
+
 Yes, save the views. Publish the view.
 Start the redist database.
 Okay, now you can start the server using start.bat or start.sh.
