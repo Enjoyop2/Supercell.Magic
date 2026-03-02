@@ -1,22 +1,24 @@
 ## Supercell.Magic - Project
 ## 📦 Requirements:
-	- Basic knowledge of APK modification
-	- .[.NET Core SDK 2.2 and runtime ](https://dotnet.microsoft.com/download/dotnet-core/2.2)
-	- .[WAMP Server](https://wampserver.aviatechno.net)
-	- .[CouchBase Databse Server](https://www.couchbase.com/downloads/?family=couchbase-server)
-	- .[Redis Server](https://github.com/redis/redis)
-	- .[APK signing tool](https://github.com/mkcs121/APK-Easy-Tool)
+---
+ - Basic knowledge of APK modification
+ - [.NET Core SDK 2.2 and runtime ](https://dotnet.microsoft.com/download/dotnet-core/2.2)
+ - [WAMP Server](https://wampserver.aviatechno.net)
+ - [CouchBase Databse Server](https://www.couchbase.com/downloads/?family=couchbase-server)
+ - [Redis Server](https://github.com/redis/redis)
+ - [APK signing tool](https://github.com/mkcs121/APK-Easy-Tool)
+---
 
 ## 🖥️ Server Setup:
 ---
-1️⃣ Building the Project
- 1) You can either build the project yourself or use the prebuilt release version. .NET Core 2.2 must be installed.
- 2) Install the WAMP server and start the services.
- 3) Paste the `www` folder from the server software over the `www` folder in the WAMP server.
- 4) Install the Couchbase database community edition or higher and create a user.
- 4.1) The default user is Administrator, password: 123456. If you create a different user in the environment.json file, change this in the configuration.
- 4.2) Open Couchbase in your browser and create 4 buckets: `magic-players`, `magic-alliances`, `magic-streams`, `magic-seasons`. You can see them in the buckets directory in the environment.json file.
-![Bucket](setup/Couchbase%20Add%20Bucket.png)
+1️⃣Building the Project
+ 1. You can either build the project yourself or use the prebuilt release version. .NET Core 2.2 must be installed.
+ 2. Install the WAMP server and start the services.
+ 3. Paste the `www` folder from the server software over the `www` folder in the WAMP server.
+ 4. Install the Couchbase database community edition or higher and create a user.
+  1. The default user is Administrator, password: 123456. If you create a different user in the environment.json file, change this in the configuration.
+  2. Open Couchbase in your browser and create 4 buckets: `magic-players`, `magic-alliances`, `magic-streams`, `magic-seasons`. You can see them in the buckets directory in the environment.json file.
+---
 
 ```json
 {
