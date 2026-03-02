@@ -4,7 +4,7 @@
  - Basic knowledge of APK modification
  - [.NET Core SDK 2.2 and runtime ](https://dotnet.microsoft.com/download/dotnet-core/2.2)
  - [WAMP Server](https://wampserver.aviatechno.net)
- - [CouchBase Databse Server](https://www.couchbase.com/downloads/?family=couchbase-server)
+ - [CouchBase Database Server](https://www.couchbase.com/downloads/?family=couchbase-server)
  - [Redis Server](https://github.com/redis/redis)
  - [APK signing tool](https://github.com/mkcs121/APK-Easy-Tool)
 ---
@@ -20,6 +20,97 @@
   2. Open Couchbase in your browser and create 4 buckets: `magic-players`, `magic-alliances`, `magic-streams`, `magic-seasons`. You can see them in the buckets directory in the environment.json file.
 ---
 ![Bucket](/Setup/Couchbase%20Add%20Bucket.png)
+	3. Let's move on to Views. Actually, this file (https://github.com/Enjoyop2/Supercell.Magic/blob/master/Supercell.Magic.Servers.Scoring/Logic/ScoringSeason.cs) tells you what you need to do, but let's write it down anyway.
+   4. Create a player's leaderboard_0 file inside magic-players. Write the following inside it:
+
+ ```javascript
+function (doc, meta) {
+  if (meta.id.startsWith("game-") && doc.name_set) {
+    emit(doc.score, {
+    	id_hi: doc.id_hi,
+    	id_lo: doc.id_lo,
+    	name: doc.name,
+    	score: doc.score,
+      
+      xp_level: doc.xp_level,
+      attackWin: doc.attack_win_cnt,
+      attackLose: doc.attack_lose_cnt,
+      defenseWin: doc.defense_win_cnt,
+      defenseLose: doc.defense_lose_cnt,
+      leagueType: doc.league_type,
+      country: doc.country,
+      allianceId_High: doc.alliance_id_high,
+      allianceId_Low: doc.alliance_id_low,
+      allianceName: doc.alliance_name,
+      badgeId: doc.badge_id
+    });
+  }
+}
+ ```
+ 5. Create players leaderboard_1 inside magic-players
+ ```javascript
+function (doc, meta) {
+  if (meta.id.startsWith("game-") && doc.name_set) {
+    emit(doc.duel_score, {
+    	id_hi: doc.id_hi,
+    	id_lo: doc.id_lo,
+    	name: doc.name,
+    	score: doc.duel_score,
+      
+      xp_level: doc.xp_level,
+      duelWin: doc.duel_win_cnt,
+      duelDraw: doc.duel_draw_cnt,
+      duelLose: doc.duel_lose_cnt,
+      country: doc.country,
+      allianceId_High: doc.alliance_id_high,
+      allianceId_Low: doc.alliance_id_low,
+      allianceName: doc.alliance_name,
+      badgeId: doc.badge_id
+    });
+  }
+}
+ ```
+Yes, save the views.
+ 6. Create players leaderboard 0 inside magic-alliances
+ 
+ ```javascript
+function (doc, meta) {
+  if (meta.id.startsWith("data-") && doc.member_count > 0) {
+    emit(doc.score, {
+        id_hi: doc.id_hi,
+        id_lo: doc.id_lo,
+        name: doc.alliance_name,
+        score: doc.score,
+
+      badge_id: doc.badge_id,
+      member_count: doc.member_count,
+      xp_level: doc.xp_level,
+      origin: doc.origin,
+    });
+  }
+}
+```
+
+ 7. Create players leaderboard_1 inside magic-alliances
+ 
+ ```javascript
+function (doc, meta) {
+  if (meta.id.startsWith("data-") && doc.member_count > 0) {
+    emit(doc.score, {
+        id_hi: doc.id_hi,
+        id_lo: doc.id_lo,
+        name: doc.alliance_name,
+        score: doc.duel_score,
+
+      badge_id: doc.badge_id,
+      member_count: doc.member_count,
+      xp_level: doc.xp_level,
+      origin: doc.origin,
+    });
+  }
+}
+```
+Yes, save the views. Publish the view.
 
 ```json
 {
