@@ -1,11 +1,11 @@
 ## Supercell.Magic - Project
 ## 📦 Requirements:
 	- Basic knowledge of APK modification
-	- [.NET Core SDK 2.2 and runtime ](https://dotnet.microsoft.com/download/dotnet-core/2.2)
-	- [WAMP Server](https://wampserver.aviatechno.net)
-	- [CouchBase Databse Server](https://www.couchbase.com/downloads/?family=couchbase-server)
-	- [Redis Server](https://github.com/redis/redis)
-	- [APK signing tool](https://github.com/mkcs121/APK-Easy-Tool)
+	- .[.NET Core SDK 2.2 and runtime ](https://dotnet.microsoft.com/download/dotnet-core/2.2)
+	- .[WAMP Server](https://wampserver.aviatechno.net)
+	- .[CouchBase Databse Server](https://www.couchbase.com/downloads/?family=couchbase-server)
+	- .[Redis Server](https://github.com/redis/redis)
+	- .[APK signing tool](https://github.com/mkcs121/APK-Easy-Tool)
 
 ## 🖥️ Server Setup:
 ---
@@ -88,7 +88,7 @@
 	}
 }
 ```
-
+---
 ***Supercell.Magic*** is a Clash of Clans Server.
 It was written by myself.
 The goal of this server was to implement all the features of Clash of Clans and support millions of players.
