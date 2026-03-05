@@ -142,7 +142,7 @@ function (doc, meta) {
 }
  ```
 Yes, save the views.
- 6. Create players leaderboard 0 inside magic-alliances
+ 6. Create alliances leaderboard 0 inside magic-alliances
  
  ```javascript
 function (doc, meta) {
@@ -162,7 +162,7 @@ function (doc, meta) {
 }
 ```
 
- 7. Create players leaderboard_1 inside magic-alliances
+ 7. Create alliances leaderboard_1 inside magic-alliances
  
  ```javascript
 function (doc, meta) {
